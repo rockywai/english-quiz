@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE 英文詞彙自學系統 V3.0</title>
+    <title>DSE 英文詞彙自學系統 V3.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; }
@@ -18,8 +18,13 @@
         .content-padding { padding: 20px; flex-grow: 1; }
         
         /* 文章閱讀區 */
-        .article-section { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 20px; line-height: 1.7; font-size: 1.05rem; max-height: 250px; overflow-y: auto; }
-        .highlight { background: #fef08a; font-weight: bold; padding: 0 4px; border-radius: 4px; border-bottom: 2px solid #facc15; }
+        .article-section { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 10px; line-height: 1.8; font-size: 1.05rem; max-height: 250px; overflow-y: auto; }
+        /* 改動1：重點字改為粗體 + 底線 */
+        .highlight { font-weight: bold; text-decoration: underline; color: #1f2937; background: #fef08a; padding: 0 2px; }
+
+        /* 原文連結按鈕 */
+        .link-btn { display: inline-flex; align-items: center; color: #4f46e5; font-size: 0.9rem; text-decoration: none; margin-bottom: 20px; font-weight: 500; }
+        .link-btn:hover { text-decoration: underline; }
 
         /* 單字卡片 (預習用) */
         .vocab-card { border-left: 4px solid var(--primary); background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
@@ -28,8 +33,11 @@
 
         /* 按鈕與選項 */
         .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; }
+        .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; line-height: 1.4; }
         .option-btn:hover { border-color: var(--primary); background: #f0f7ff; }
+        /* 改動2：選項中的中文提示樣式 */
+        .cn-hint { font-size: 0.9rem; color: #6b7280; display: block; margin-top: 2px; }
+        
         .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #065f46 !important; }
         .wrong { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b !important; }
 
@@ -58,7 +66,9 @@
         <div id="study-screen" class="hidden">
             <h3 style="margin-top:0;">第一步：文章預習</h3>
             <div id="study-article" class="article-section"></div>
-            <h3 style="margin-size: 0.9rem;">重點單字表 (Vocab List)</h3>
+            <a id="source-link-study" href="#" target="_blank" class="link-btn">🔗 閱讀原文 (News in Levels)</a>
+            
+            <h3 style="font-size: 1.1rem;">重點單字表 (Vocab List)</h3>
             <div id="vocab-preview-list"></div>
             <button class="btn-primary" onclick="startQuiz()" style="margin-top:20px;">✅ 我讀完了，開始測試！</button>
         </div>
@@ -67,10 +77,11 @@
             <div class="progress-bar-wrap"><div id="progress-bar" class="progress-bar-fill"></div></div>
             <p id="progress-text" style="text-align:right; font-size:12px; color:#6b7280;"></p>
             
-            <div id="quiz-article" class="article-section" style="max-height: 150px; font-size: 0.95rem;"></div>
+            <div id="quiz-article" class="article-section" style="max-height: 180px; font-size: 0.95rem;"></div>
+            <a id="source-link-quiz" href="#" target="_blank" class="link-btn" style="margin-bottom:10px;">🔗 閱讀原文</a>
             
             <div style="text-align:center; margin: 15px 0;">
-                <span style="color:#6b7280; font-size:0.9rem;">文中黃色高亮字的意思是：</span>
+                <span style="color:#6b7280; font-size:0.9rem;">文中「<u>粗體底線</u>」字的意思是：</span>
                 <h2 id="current-word" style="font-size: 2.2rem; margin: 5px 0;"></h2>
             </div>
             
@@ -94,13 +105,14 @@
 
 <script>
 /* ==========================================
-   數據保存區：以後新文章直接加在陣列後面
+   數據保存區
    ========================================== */
 const newsData = [
     {
         id: "goretti-l1",
         title: "Storm Goretti Hits Europe",
         level: "Level 1 (Easy)",
+        url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-1/", // 新增網址欄位
         content: "A big storm is hitting Europe. It is called Storm Goretti. The **storm** is moving across many countries. It brings very strong wind and heavy rain. Many people have no **power** in their homes. This is because the wind broke the lines. The storm is **dangerous** for travelers. Many **flights** are not moving. The storm will **hit** more places tomorrow.",
         vocab: [
             { w: "storm", pos: "n.", d: "bad weather with wind and rain", cn: "風暴", ex: "The storm lasted for three days." },
@@ -108,21 +120,31 @@ const newsData = [
             { w: "dangerous", pos: "adj.", d: "not safe", cn: "危險的", ex: "It's dangerous to go out now." },
             { w: "flights", pos: "n.", d: "journeys in a plane", cn: "航班", ex: "All flights were delayed." },
             { w: "hit", pos: "v.", d: "to come to a place with force", cn: "侵襲", ex: "The storm hit the coast at midnight." }
+            
         ]
-    }
-    // 以後在此處加入新文章...
+    },
+    {
+        id: "denmark-books-l1",
+        title: "Denmark Schools Use Books Again",
+        level: "Level 1 (Easy)",
+        url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-1/",
+        content: "Schools in Denmark are making a big change. For many years, students used tablets and computers. Now, they are using **paper** books again. Many teachers think that screens make it hard for children to **concentrate**. They believe that reading from a real book is **better** for the brain. The government is also helping schools to buy more books. Some parents are happy because their children spend less **time** on digital devices. This is a new **trend** in many European countries.",
+        vocab: [
+            { w: "concentrate", pos: "v.", d: "to give all your attention to something", cn: "專注", ex: "It is hard to concentrate with all this noise." },
+            { w: "trend", pos: "n.", d: "a general direction in which something is changing", cn: "趨勢", ex: "The current trend is for schools to limit screen time." },
+            { w: "paper", pos: "n.", d: "material used for writing or printing", cn: "紙張 / 紙質的", ex: "Many students prefer reading on paper rather than screens." },
+            { w: "better", pos: "adj.", d: "higher in quality or more effective", cn: "較好的", ex: "Physical books are often better for deep learning." },
+            { w: "time", pos: "n.", d: "the period during which something happens", cn: "時間", ex: "Reducing screen time can improve students' mental health." }
+        ]
+    },
 ];
 
-/* ==========================================
-   核心邏輯
-   ========================================== */
 let currentArtIdx = 0;
 let quizWords = [];
 let quizIdx = 0;
 let wrongWords = [];
-let appState = "HOME"; // HOME, STUDY, QUIZ, RESULT
+let appState = "HOME";
 
-// 初始化列表
 function initHome() {
     const list = document.getElementById('article-list');
     list.innerHTML = "";
@@ -147,10 +169,9 @@ function renderStudy() {
     toggleScreen('study-screen');
     updateNavBar(art.title, true);
     
-    // 處理文章高亮
     document.getElementById('study-article').innerHTML = formatContent(art.content, art.vocab);
+    document.getElementById('source-link-study').href = art.url;
     
-    // 處理預習清單
     const list = document.getElementById('vocab-preview-list');
     list.innerHTML = "";
     art.vocab.forEach(v => {
@@ -176,18 +197,16 @@ function renderQuiz() {
     const art = newsData[currentArtIdx];
     const q = quizWords[quizIdx];
     
-    // 更新導航標題與文章
     document.getElementById('nav-title').innerText = `測驗中: ${quizIdx + 1}/5`;
-    document.getElementById('quiz-article').innerHTML = formatContent(art.content, [q]); // 僅高亮當前字
+    document.getElementById('quiz-article').innerHTML = formatContent(art.content, [q]);
+    document.getElementById('source-link-quiz').href = art.url;
     
-    // 進度條
     document.getElementById('progress-bar').style.width = `${(quizIdx / 5) * 100}%`;
     document.getElementById('progress-text').innerText = `Question ${quizIdx + 1} of 5`;
     
     document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
     
-    // 生成選項
     const container = document.getElementById('options-container');
     container.innerHTML = "";
     let options = shuffle([q, ...shuffle(art.vocab.filter(v => v.w !== q.w)).slice(0, 3)]);
@@ -195,7 +214,8 @@ function renderQuiz() {
     options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = "option-btn";
-        btn.innerText = opt.d;
+        // 改動：選項加入中文翻譯
+        btn.innerHTML = `${opt.d} <span class="cn-hint">(${opt.cn})</span>`;
         btn.onclick = () => checkAns(btn, opt, q);
         container.appendChild(btn);
     });
@@ -210,12 +230,14 @@ function checkAns(btn, selected, correct) {
     
     if (selected.w === correct.w) {
         btn.classList.add('correct');
-        document.getElementById('fb-result').innerHTML = "✅ Correct!";
+        document.getElementById('fb-result').innerHTML = "<span style='color:var(--success)'>✅ Correct! 答對了！</span>";
     } else {
         btn.classList.add('wrong');
         wrongWords.push(correct);
-        document.getElementById('fb-result').innerHTML = "❌ Wrong!";
-        allBtns.forEach(b => { if(b.innerText === correct.d) b.classList.add('correct'); });
+        document.getElementById('fb-result').innerHTML = "<span style='color:var(--danger)'>❌ Wrong! 答錯了！</span>";
+        allBtns.forEach(b => { 
+            if(b.innerText.includes(correct.d)) b.classList.add('correct'); 
+        });
     }
     document.getElementById('fb-detail').innerHTML = `<b>${correct.w}</b> (${correct.pos} ${correct.cn})<br><i>Ex: ${correct.ex}</i>`;
 }
@@ -236,13 +258,17 @@ function nextStep() {
     }
 }
 
-// 輔助功能
+// 輔助功能：格式化文章內容
 function formatContent(text, vocabList) {
+    // 1. 先將所有字眼中的 ** 標記替換為 Span 格式，同時移除 ** 符號
     let html = text;
     vocabList.forEach(v => {
+        // 使用正則表達式尋找 **word**，並將其替換為帶有底線粗體的 Span
         const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
         html = html.replace(regex, `<span class="highlight">$1</span>`);
     });
+    // 2. 清理掉任何殘留的 ** (防止老師手動輸入時留下的)
+    html = html.replace(/\*\*/g, "");
     return html;
 }
 
@@ -276,7 +302,6 @@ function goBack() {
 
 function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 
-// 啟動
 initHome();
 </script>
 </body>
