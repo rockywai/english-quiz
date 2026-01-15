@@ -38,6 +38,26 @@
     font-size: 0.9rem;
     color: #166534;
     line-height: 1.5;
+            .source-link-btn {
+    width: 100%;
+    padding: 12px;
+    background: #f0fdf4;       /* 淺綠色背景 */
+    color: #166534;            /* 深綠色文字 */
+    border: 1px solid #bbf7d0; /* 綠色邊框 */
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    transition: background 0.2s;
+}
+
+.source-link-btn:hover {
+    background: #dcfce7;      /* 滑鼠經過時變深一點點 */
+}
 }
 .ai-notice a {
     color: var(--primary);
@@ -60,11 +80,16 @@
 
     <div class="content-padding">
         <div id="home-screen">
-            <button class="leaderboard-btn" onclick="openLeaderboard()">📊 查看全班學習進度</button>
-            <h2 style="margin-top:0;">📚 DSE 詞彙自學庫</h2>
-            <div id="user-info-display" style="font-size: 0.9rem; color: var(--primary); margin-bottom: 10px; font-weight: bold;"></div>
-            <div id="topic-list"></div>
-        </div>
+    <button class="leaderboard-btn" onclick="openLeaderboard()">📊 查看全班學習進度</button>
+    
+    <button class="source-link-btn" onclick="window.open('https://www.newsinlevels.com/', '_blank')">
+        🌐 閱讀更多：News in Levels 原文網站
+    </button>
+
+    <h2 style="margin-top:20px;">📚 DSE 詞彙自學庫</h2>
+    <div id="user-info-display" style="font-size: 0.9rem; color: var(--primary); margin-bottom: 10px; font-weight: bold;"></div>
+    <div id="topic-list"></div>
+</div>
 
         <div id="study-screen" class="hidden">
             <h3 style="margin-top:0;">第一步：重點詞彙 (5個)</h3>
