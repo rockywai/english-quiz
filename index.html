@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE 英文詞彙自學系統 V3.2</title>
+    <title>DSE 英文詞彙自學系統 V3.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; --info-bg: #eff6ff; --info-border: #bfdbfe; }
@@ -16,8 +16,13 @@
 
         .content-padding { padding: 20px; flex-grow: 1; }
         
-        /* AI 提示區樣式 */
         .ai-notice { background: var(--info-bg); border: 1px solid var(--info-border); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; color: #1e40af; display: flex; align-items: flex-start; gap: 8px; }
+
+        /* 文章列表樣式優化 */
+        .list-item-btn { width: 100%; padding: 16px; margin: 10px 0; background: white; border: 1px solid #d1d5db; border-left: 5px solid var(--primary); border-radius: 12px; text-align: left; cursor: pointer; transition: 0.2s; }
+        .list-item-btn:hover { background: #f0f7ff; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .list-title { font-size: 1.1rem; font-weight: bold; color: #111827; display: block; margin-bottom: 4px; }
+        .list-level { font-size: 0.85rem; color: #6b7280; font-weight: normal; }
 
         .article-section { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 10px; line-height: 1.8; font-size: 1.05rem; max-height: 250px; overflow-y: auto; }
         .highlight { font-weight: bold; text-decoration: underline; color: #1f2937; background: #fef08a; padding: 0 2px; }
@@ -105,10 +110,10 @@
 
 <script>
 /* ==========================================
-   數據保存區 (包含 Storm Goretti Level 2)
+   數據保存區 (可隨時在此添加新物件)
    ========================================== */
 const newsData = [
-   {
+    {
         id: "goretti-l1",
         title: "Storm Goretti Hits Europe",
         level: "Level 1 (Easy)",
@@ -124,7 +129,7 @@ const newsData = [
     },
     {
         id: "goretti-l2",
-        title: "Storm Goretti Hits Europe (L2)",
+        title: "Storm Goretti Hits Europe",
         level: "Level 2 (Intermediate)",
         url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-2/",
         content: "Storm Goretti is causing **severe** problems across Europe. The storm moved from the Atlantic and brought intense winds and rainfall to multiple countries. Many households are currently without **electricity** as strong gusts knocked down power lines. Travel has been **disrupted**, with many airlines canceling flights for safety reasons. Authorities warn that the storm is still **active** and could cause more damage. Local residents are advised to stay indoors until the weather **improves**.",
@@ -162,12 +167,13 @@ function initHome() {
     const list = document.getElementById('article-list');
     list.innerHTML = "";
     newsData.forEach((art, index) => {
-        const div = document.createElement('div');
-        div.className = "option-btn";
-        div.style.borderLeft = "4px solid var(--primary)";
-        div.innerHTML = `<strong>${art.level}</strong><br>${art.title}`;
-        div.onclick = () => selectArticle(index);
-        list.appendChild(div);
+        // 改動：優化列表顯示格式
+        const btn = document.createElement('button');
+        btn.className = "list-item-btn";
+        btn.innerHTML = `<span class="list-title">${art.title}</span>
+                         <span class="list-level">${art.level}</span>`;
+        btn.onclick = () => selectArticle(index);
+        list.appendChild(btn);
     });
 }
 
