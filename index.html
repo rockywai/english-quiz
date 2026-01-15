@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSE English Vocab Builder</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 500px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .btn { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 16px; background: white; transition: all 0.2s; text-align: left; }
+        .btn:hover { background: #f1f5f9; border-color: var(--primary); }
+        .correct { background: #dcfce7 !important; border-color: #22c55e !important; }
+        .wrong { background: #fee2e2 !important; border-color: #ef4444 !important; }
+        .hidden { display: none; }
+        .progress { font-size: 14px; color: #64748b; margin-bottom: 10px; }
+        .article-title { font-weight: bold; color: var(--primary); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="setup-screen">
+        <div class="header">
+            <h2>每日詞彙挑戰</h2>
+            <p>對象：中五級學生 (Form 5)</p>
+        </div>
+        <p>請選擇今天的文章與難度：</p>
+        <div id="article-list"></div>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="article-title" id="current-article-display"></div>
+        <div class="progress" id="progress-text"></div>
+        <h2 id="word-display" style="font-size: 28px; margin: 10px 0;"></h2>
+        <div id="options-box"></div>
+        <p id="feedback" style="margin-top: 15px; font-weight: 500; min-height: 24px;"></p>
+    </div>
+
+    <div id="result-screen" class="hidden" style="text-align: center;">
+        <h2 style="color: #059669;">🎉 任務完成！</h2>
+        <p>你已經掌握了本次文章的所有重點詞彙。</p>
+        <button class="btn" style="text-align: center; background: var(--primary); color: white;" onclick="location.reload()">回到主頁</button>
+    </div>
+</div>
+
+<script>
+/* ==========================================
+   老師更新數據區：每天只需在這裡添加新文章
+   ========================================== */
+const newsData = [
+    {
+        title: "Japan's Empty Houses",
+        level: 1,
+        vocab: [
+            { w: "empty", d: "with nothing inside" },
+            { w: "owner", d: "a person who has something / boss" },
+            { w: "area", d: "a part of a place" },
+            { w: "problem", d: "something bad" },
+            { w: "solution", d: "an answer to a problem" }
+        ]
+    },
+    {
+        title: "Global Warming Effects",
+        level: 2,
+        vocab: [
+            { w: "consequence", d: "a result of an action" },
+            { w: "dramatic", d: "sudden and striking" },
+            { w: "essential", d: "extremely important / necessary" },
+            { w: "expand", d: "to become larger" },
+            { w: "predict", d: "to say what will happen" }
+        ]
+    },
+    {
+        title: "The Future of AI",
+        level: 3,
+        vocab: [
+            { w: "unprecedented", d: "never done or known before" },
+            { w: "innovation", d: "a new method or idea" },
+            { w: "ethical", d: "relating to moral principles / right or wrong" },
+            { w: "implement", d: "to put into effect" },
+            { w: "ubiquitous", d: "present everywhere" }
+        ]
+    }
+];
+
+/* ==========================================
+   程式邏輯區：請勿隨意更動
+   ========================================== */
+let currentPool = []; // 當前要考的詞
+let allWordsInArticle = []; // 該篇文章全部詞彙（作干擾項）
+let wrongFromLastRound = [];
+let currentIndex = 0;
+
+// 初始化：生成文章列表
+const articleList = document.getElementById('article-list');
+newsData.forEach((item, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.innerHTML = `<strong>Level ${item.level}</strong>: ${item.title}`;
+    btn.onclick = () => initQuiz(index);
+    articleList.appendChild(btn);
+});
+
+function initQuiz(index) {
+    const selected = newsData[index];
+    allWordsInArticle = selected.vocab;
+    document.getElementById('current-article-display').innerText = `正在練習：${selected.title} (Level ${selected.level})`;
+    document.getElementById('setup-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    
+    // 第一輪：隨機選5題
+    startNewRound(shuffle([...allWordsInArticle]).slice(0, 5));
+}
+
+function startNewRound(words) {
+    currentPool = shuffle(words);
+    wrongFromLastRound = [];
+    currentIndex = 0;
+    showQuestion();
+}
+
+function showQuestion() {
+    if (currentIndex >= currentPool.length) {
+        checkRoundEnd();
+        return;
+    }
+
+    const currentQ = currentPool[currentIndex];
+    document.getElementById('progress-text').innerText = `進度：${currentIndex + 1} / ${currentPool.length}`;
+    document.getElementById('word-display').innerText = currentQ.w;
+    document.getElementById('feedback').innerText = "";
+    
+    const optionsBox = document.getElementById('options-box');
+    optionsBox.innerHTML = "";
+
+    // 生成選項：1正 + 3誤
+    let options = [currentQ];
+    let distractors = allWordsInArticle.filter(v => v.w !== currentQ.w);
+    options.push(...shuffle(distractors).slice(0, 3));
+    options = shuffle(options);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        // 處理 「/」：只取第一個
+        btn.innerText = opt.d.split('/')[0].trim();
+        btn.onclick = () => {
+            if (opt.w === currentQ.w) {
+                btn.classList.add('correct');
+                document.getElementById('feedback').innerText = "Correct! ✅";
+                setTimeout(nextQuestion, 1000);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('feedback').innerText = `Wrong! Correct: ${currentQ.d.split('/')[0].trim()}`;
+                if (!wrongFromLastRound.find(x => x.w === currentQ.w)) {
+                    wrongFromLastRound.push(currentQ);
+                }
+                setTimeout(nextQuestion, 2000);
+            }
+            disableButtons();
+        };
+        optionsBox.appendChild(btn);
+    });
+}
+
+function nextQuestion() {
+    currentIndex++;
+    showQuestion();
+}
+
+function disableButtons() {
+    const btns = document.querySelectorAll('#options-box .btn');
+    btns.forEach(b => b.style.pointerEvents = 'none');
+}
+
+function checkRoundEnd() {
+    if (wrongFromLastRound.length === 0) {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+    } else {
+        alert(`這輪完成！你有 ${wrongFromLastRound.length} 題答錯，現在開始重考。`);
+        // 準備下一輪：包含錯題，若不足5題則補新題
+        let nextRound = [...wrongFromLastRound];
+        let remaining = allWordsInArticle.filter(v => !nextRound.includes(v));
+        while (nextRound.length < 5 && remaining.length > 0) {
+            nextRound.push(remaining.pop());
+        }
+        startNewRound(nextRound);
+    }
+}
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+</script>
+</body>
+</html>
