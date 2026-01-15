@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE 英文詞彙自學系統 V3.4</title>
+    <title>DSE 英文詞彙自學系統 V3.8</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; --info-bg: #eff6ff; --info-border: #bfdbfe; }
@@ -16,12 +16,11 @@
 
         .content-padding { padding: 20px; flex-grow: 1; }
         
-        /* 兩層式選單樣式 */
         .topic-card { margin-bottom: 15px; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: white; }
         .topic-header { width: 100%; padding: 18px; background: white; border: none; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .topic-title { font-size: 1.15rem; font-weight: bold; color: #111827; }
+        .topic-title { font-size: 1.1rem; font-weight: bold; color: #111827; }
         .level-container { background: #f9fafb; display: none; padding: 10px; border-top: 1px solid #eee; gap: 8px; flex-direction: column; }
-        .level-btn { width: 100%; padding: 12px; border: 1px solid #d1d5db; background: white; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; transition: 0.2s; }
+        .level-btn { width: 100%; padding: 12px; border: 1px solid #d1d5db; background: white; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
         .level-btn:hover { border-color: var(--primary); color: var(--primary); background: #f0f7ff; }
 
         .ai-notice { background: var(--info-bg); border: 1px solid var(--info-border); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; color: #1e40af; display: flex; align-items: flex-start; gap: 8px; }
@@ -54,6 +53,7 @@
     <div class="content-padding">
         <div id="home-screen">
             <h2 style="margin-top:0;">📚 DSE 詞彙自學庫</h2>
+            <div id="user-info-display" style="font-size: 0.9rem; color: var(--primary); margin-bottom: 10px; font-weight: bold;"></div>
             <p style="color:#6b7280;">選擇主題後，再選擇適合的難度：</p>
             <div id="topic-list"></div>
         </div>
@@ -88,6 +88,7 @@
         <div id="result-screen" class="hidden" style="text-align:center;">
             <div style="font-size:60px;">🌟</div>
             <h2>完成學習！</h2>
+            <p id="upload-status" style="font-size: 0.9rem; color: #6b7280;">正在同步進度...</p>
             <button class="btn-primary" onclick="goHome()">返回主題列表</button>
         </div>
     </div>
@@ -95,8 +96,11 @@
 
 <script>
 /* ==========================================
-   數據保存區 (包含 2 個主題，各 3 個 Level)
+   設定區
    ========================================== */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxojsJO9MFd4DlE4bc7IpHl9vXCe1IIi_m-B4sTP2g1ykiv05f6fqiMxwx1kS8e6rRl/exec'; // <--- 請填寫你部署的網址
+let studentID = ""; 
+
 const newsGroups = [
     {
         topic: "15/01/2026 Why Many People are Single",
@@ -139,11 +143,12 @@ const newsGroups = [
             }
         ]
     },
+   const newsGroups = [
     {
-        topic: "13/01/2026 Storm Goretti Hits Europe",
+        topic: 13/01/2026 "Storm Goretti Hits Europe",
         levels: [
             {
-                id: "goretti-l1", level: "DSE Level 1 (Foundation)",
+                id: "goretti-l1", level: "Level 1 (Basic)",
                 url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-1/",
                 content: "A big storm is hitting Europe. It is called Storm Goretti. The **storm** is moving across many countries. It brings very strong wind and heavy rain. Many people have no **power** in their homes. This is because the wind broke the lines. The storm is **dangerous** for travelers. Many **flights** are not moving. The storm will **hit** more places tomorrow.",
                 vocab: [
@@ -155,36 +160,36 @@ const newsGroups = [
                 ]
             },
             {
-                id: "goretti-l2", level: "DSE Level 2-3 (Intermediate)",
+                id: "goretti-l2", level: "Level 2 (Intermediate)",
                 url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-2/",
-                content: "Storm Goretti is currently causing **severe** disruptions as it tears across the European continent. Moving rapidly from the Atlantic, the storm has brought a combination of intense gusts and torrential rain. Thousands of households are struggling without **electricity** after wind-damaged lines failed. Air travel has been significantly **impacted**, with major carriers forced to cancel dozens of flights. As the storm remains **active**, authorities have urged citizens to stay **indoors** until the conditions improve.",
+                content: "Storm Goretti is bringing **severe** weather to many European countries. The storm is moving from the Atlantic and it is bringing very strong winds and heavy rain. Thousands of homes are without **electricity** because the wind damaged power lines. Travel is also difficult. Many airlines had to cancel **flights**. The storm is still **active** and it is moving across the continent. People should stay **indoors** until the weather gets better.",
                 vocab: [
-                    { w: "severe", pos: "adj.", d: "very serious or intense", cn: "嚴重的", ex: "The storm caused severe damage." },
-                    { w: "electricity", pos: "n.", d: "power used for lighting/heating", cn: "電力", ex: "The city lost electricity during the storm." },
-                    { w: "impacted", pos: "v.", d: "strongly affected by something", cn: "影響", ex: "The delay impacted our schedule." },
-                    { w: "active", pos: "adj.", d: "continuing to happen or move", cn: "活躍的", ex: "The storm is still active in the north." },
-                    { w: "indoors", pos: "adv.", d: "inside a building", cn: "戶內", ex: "It is safer to stay indoors." }
+                    { w: "severe", pos: "adj.", d: "very serious or bad", cn: "嚴重的", ex: "The storm caused severe damage." },
+                    { w: "electricity", pos: "n.", d: "power used for lighting/heating", cn: "電力", ex: "The storm cut off the electricity." },
+                    { w: "flights", pos: "n.", d: "plane journeys", cn: "航班", ex: "Airlines canceled all flights." },
+                    { w: "active", pos: "adj.", d: "moving or happening now", cn: "活躍的/仍在進行", ex: "The storm remains active." },
+                    { w: "indoors", pos: "adv.", d: "inside a building", cn: "戶內", ex: "It's safer to stay indoors." }
                 ]
             },
             {
-                id: "goretti-l3", level: "DSE Level 4-5 (Advanced)",
+                id: "goretti-l3", level: "Level 3 (Advanced)",
                 url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-3/",
-                content: "Storm Goretti is currently **wreaking havoc** across the European landscape, leaving a trail of destruction that has caught many regions off guard. Meteorological services have issued urgent warnings, noting that the storm’s **unprecedented** intensity is a rare occurrence for this time of year. This extreme weather has severely compromised the region's **infrastructure**, leading to widespread blackouts and the total paralysis of transport networks. While emergency teams work to **mitigate** the damage, officials warn that the storm’s path remains **unpredictable**, urging the public to exercise extreme caution as the weather system evolves.",
+                content: "Storm Goretti is currently **wreaking havoc** across Europe, with meteorological services warning of hurricane-force winds and torrential rain. The storm has severely **disrupted** travel, leading to the cancellation of hundreds of flights and train services. **Infrastructure** has also been affected, with widespread power outages reported. Authorities have urged residents to take **precautions** as the storm remains **unpredictable** and continues its path across the continent.",
                 vocab: [
-                    { w: "wreaking havoc", pos: "phr.", d: "causing widespread destruction and chaos", cn: "造成嚴重破壞", ex: "The economic crisis is wreaking havoc on small businesses." },
-                    { w: "unprecedented", pos: "adj.", d: "never having happened or existed in the past", cn: "史無前例的", ex: "The scale of the disaster was unprecedented." },
-                    { w: "infrastructure", pos: "n.", d: "the basic physical and organizational structures (e.g. buildings, roads, power supplies)", cn: "基礎建設", ex: "Investment in infrastructure is vital for growth." },
-                    { w: "mitigate", pos: "v.", d: "to make something less harmful or serious", cn: "減輕 / 緩解", ex: "New laws were passed to mitigate the effects of climate change." },
-                    { w: "unpredictable", pos: "adj.", d: "likely to change suddenly and without reason", cn: "難以預測的", ex: "The stock market can be highly unpredictable." }
+                    { w: "wreaking havoc", pos: "phr.", d: "causing great damage or chaos", cn: "造成嚴重破壞", ex: "The storm is wreaking havoc on the coast." },
+                    { w: "disrupted", pos: "v.", d: "prevented from continuing normally", cn: "中斷", ex: "Train services were disrupted." },
+                    { w: "infrastructure", pos: "n.", d: "basic systems like roads/power", cn: "基礎設施", ex: "The storm damaged the city's infrastructure." },
+                    { w: "precautions", pos: "n.", d: "actions to prevent something bad", cn: "預防措施", ex: "Take precautions against the storm." },
+                    { w: "unpredictable", pos: "adj.", d: "likely to change suddenly", cn: "難以預測的", ex: "The weather is very unpredictable." }
                 ]
             }
         ]
     },
     {
-        topic: "12/01/2026 Denmark Schools Use Books Again",
+        topic: 12/01/2026 "Denmark Schools Use Books Again",
         levels: [
             {
-                id: "denmark-l1", level: "DSE Level 1 (Foundation)",
+                id: "denmark-l1", level: "Level 1 (Basic)",
                 url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-1/",
                 content: "Schools in Denmark are making a big change. For years, students used tablets, but now they are using **paper** books again. Many teachers think screens make it hard for children to **concentrate**. They believe that reading from a real book is **better** for the brain. Parents are happy because children spend less **time** on digital devices. This is a new **trend** in Europe.",
                 vocab: [
@@ -196,42 +201,55 @@ const newsGroups = [
                 ]
             },
             {
-                id: "denmark-l2", level: "DSE Level 2-3 (Intermediate)",
+                id: "denmark-l2", level: "Level 2 (Intermediate)",
                 url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-2/",
-                content: "Danish educational institutions are **reintroducing** physical textbooks after a long period of digital-only learning. Educational experts argue that tablets might **hinder** the development of deep reading skills in younger students. Teachers have observed that it is increasingly difficult for students to **focus** on lengthy texts when they are constantly distracted by digital notifications. Consequently, the government is **funding** new initiatives to stock school libraries. This shift reflects a growing **awareness** of the potential downsides of excessive technology use in early education.",
+                content: "Danish schools are **reintroducing** physical books after years of digital learning. Experts say that tablets might **hinder** the development of deep reading skills. Teachers have noticed that it is difficult for students to **focus** on long texts when they use screens. The government is now **funding** libraries to provide more printed books. There is a growing **awareness** of the impact of too much screen time on children.",
                 vocab: [
-                    { w: "reintroducing", pos: "v.", d: "to bring something back into use", cn: "重新引入", ex: "The brand is reintroducing its classic design." },
-                    { w: "hinder", pos: "v.", d: "to limit the ability of someone to do something", cn: "阻礙", ex: "A lack of confidence can hinder your performance." },
-                    { w: "focus", pos: "v.", d: "to give a lot of attention to one particular thing", cn: "集中", ex: "The meeting will focus on the new budget." },
-                    { w: "funding", pos: "v./n.", d: "providing money for a specific purpose", cn: "資助", ex: "The project is funding research into green energy." },
-                    { w: "awareness", pos: "n.", d: "knowledge or understanding of a particular situation", cn: "意識/覺醒", ex: "Public awareness of the disease is vital." }
+                    { w: "reintroducing", pos: "v.", d: "to bring back something again", cn: "重新引入", ex: "The school is reintroducing uniforms." },
+                    { w: "hinder", pos: "v.", d: "to make it difficult for something to happen", cn: "阻礙", ex: "Fear can hinder your progress." },
+                    { w: "focus", pos: "v.", d: "to give special attention", cn: "集中", ex: "You need to focus on your studies." },
+                    { w: "funding", pos: "v./n.", d: "providing money for a purpose", cn: "資助", ex: "The government is funding new libraries." },
+                    { w: "awareness", pos: "n.", d: "knowledge that something exists", cn: "意識/覺醒", ex: "Awareness of mental health is growing." }
                 ]
             },
             {
-                id: "denmark-l3", level: "DSE Level 4-5 (Advanced)",
+                id: "denmark-l3", level: "Level 3 (Advanced)",
                 url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-3/",
-                content: "In a move that signals a significant **paradigm shift** in modern education, Denmark has begun reversing its long-standing digital-first policy in classrooms. This strategic retreat is fueled by mounting evidence suggesting that **excessive** exposure to digital screens has **impaired** students' cognitive development and critical thinking skills. Education ministers are now **advocating** for a pedagogical return to tactile, printed materials to foster deeper reading comprehension. While some tech-advocates remain **skeptical** about the efficacy of returning to traditional methods, the consensus among many educators is that a balance must be struck to protect the mental well-being of the next generation.",
+                content: "Denmark is reversing its digital-first policy in education. This change comes after concerns that **excessive** screen time has **impaired** students' cognitive abilities. Education leaders are now **advocating** for a return to printed materials to improve comprehension. Some critics are **skeptical** about the move, but many believe it is a necessary **paradigm shift** in the digital age.",
                 vocab: [
-                    { w: "paradigm shift", pos: "n.", d: "a fundamental change in approach or underlying assumptions", cn: "重大變革", ex: "The invention of the internet led to a paradigm shift in communication." },
-                    { w: "excessive", pos: "adj.", d: "much more than is reasonable or necessary", cn: "過度的", ex: "Excessive consumption of sugar is bad for health." },
-                    { w: "impaired", pos: "v./adj.", d: "weakened or damaged in quality or ability", cn: "受損的/削弱的", ex: "His hearing was permanently impaired by the noise." },
-                    { w: "advocating", pos: "v.", d: "publicly recommending or supporting a particular cause", cn: "倡導/主張", ex: "She is advocating for a more flexible work schedule." },
-                    { w: "skeptical", pos: "adj.", d: "doubting that something is true or useful", cn: "懷疑的", ex: "Many people are skeptical about the new law's success." }
+                    { w: "excessive", pos: "adj.", d: "too much; more than reasonable", cn: "過度的", ex: "Excessive noise is harmful." },
+                    { w: "impaired", pos: "v./adj.", d: "damaged or made weaker", cn: "受損的/削弱的", ex: "Lack of sleep impaired his judgment." },
+                    { w: "advocating", pos: "v.", d: "publicly supporting a policy", cn: "倡導/主張", ex: "He is advocating for more books." },
+                    { w: "skeptical", pos: "adj.", d: "having doubts about something", cn: "懷疑的", ex: "I am skeptical about his plan." },
+                    { w: "paradigm shift", pos: "n.", d: "a fundamental change in approach", cn: "重大變革", ex: "This move is a paradigm shift in education." }
                 ]
             }
         ]
     }
 ];
 
-/* ==========================================
-   邏輯核心
-   ========================================== */
 let activeArt = null;
 let quizPool = [];
 let quizIdx = 0;
 let wrongs = [];
 
+function checkUserID() {
+    while (true) {
+        let input = prompt("請輸入 4 位學生編號 (5501 - 5540):");
+        if (input === null) continue; // 不允許按取消
+        let num = parseInt(input);
+        if (num >= 5501 && num <= 5540 && input.length === 4) {
+            studentID = input;
+            document.getElementById('user-info-display').innerText = `👤 學生編號: ${studentID}`;
+            break;
+        } else {
+            alert("⚠️ 輸入錯誤！請輸入 5501 至 5540 之間的 4 位數字。");
+        }
+    }
+}
+
 function initHome() {
+    if (!studentID) checkUserID();
     const list = document.getElementById('topic-list');
     list.innerHTML = "";
     newsGroups.forEach((group, gIdx) => {
@@ -243,11 +261,7 @@ function initHome() {
                 <span>▼</span>
             </button>
             <div id="levels-${gIdx}" class="level-container">
-                ${group.levels.map((l, lIdx) => `
-                    <button class="level-btn" onclick="selectLevel(${gIdx}, ${lIdx})">
-                        ${l.level}
-                    </button>
-                `).join('')}
+                ${group.levels.map((l, lIdx) => `<button class="level-btn" onclick="selectLevel(${gIdx}, ${lIdx})">${l.level}</button>`).join('')}
             </div>
         `;
         list.appendChild(card);
@@ -255,10 +269,9 @@ function initHome() {
 }
 
 function toggleTopic(idx) {
-    const containers = document.querySelectorAll('.level-container');
     const target = document.getElementById(`levels-${idx}`);
     const isVisible = target.style.display === 'flex';
-    containers.forEach(c => c.style.display = 'none'); // 關閉其他
+    document.querySelectorAll('.level-container').forEach(c => c.style.display = 'none');
     target.style.display = isVisible ? 'none' : 'flex';
 }
 
@@ -266,12 +279,9 @@ function selectLevel(gIdx, lIdx) {
     activeArt = newsGroups[gIdx].levels[lIdx];
     toggleScreen('study-screen');
     updateNav(activeArt.level, true);
-    
     document.getElementById('study-article').innerHTML = formatText(activeArt.content, activeArt.vocab);
     document.getElementById('source-link-study').href = activeArt.url;
-    
-    const vList = document.getElementById('vocab-preview-list');
-    vList.innerHTML = activeArt.vocab.map(v => `
+    document.getElementById('vocab-preview-list').innerHTML = activeArt.vocab.map(v => `
         <div class="vocab-card">
             <div class="vocab-header"><span>${v.w}</span><span>${v.pos} ${v.cn}</span></div>
             <div style="font-size:0.9rem">${v.d}</div>
@@ -282,8 +292,7 @@ function selectLevel(gIdx, lIdx) {
 
 function startQuiz() {
     quizPool = shuffle([...activeArt.vocab]);
-    quizIdx = 0;
-    wrongs = [];
+    quizIdx = 0; wrongs = [];
     renderQuiz();
 }
 
@@ -291,12 +300,10 @@ function renderQuiz() {
     toggleScreen('quiz-screen');
     const q = quizPool[quizIdx];
     updateNav(`測驗中 ${quizIdx+1}/${quizPool.length}`, true);
-    
     document.getElementById('progress-bar').style.width = `${(quizIdx/quizPool.length)*100}%`;
     document.getElementById('quiz-article').innerHTML = formatText(activeArt.content, [q]);
     document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
-    
     const opts = shuffle([q, ...shuffle(activeArt.vocab.filter(v=>v.w!==q.w)).slice(0,3)]);
     const container = document.getElementById('options-container');
     container.innerHTML = "";
@@ -330,10 +337,28 @@ function nextStep() {
     if(quizIdx < quizPool.length) renderQuiz();
     else if(wrongs.length > 0) {
         alert(`複習時間：重新挑戰 ${wrongs.length} 個剛才答錯的單字！`);
-        quizPool = shuffle([...wrongs]);
-        quizIdx = 0; wrongs = [];
-        renderQuiz();
-    } else toggleScreen('result-screen');
+        quizPool = shuffle([...wrongs]); quizIdx = 0; wrongs = []; renderQuiz();
+    } else {
+        uploadResult(); 
+        toggleScreen('result-screen');
+    }
+}
+
+function uploadResult() {
+    const status = document.getElementById('upload-status');
+    status.innerText = "正在同步進度到 Google Sheet...";
+    const data = { name: studentID, topic: `${activeArt.topic} (${activeArt.level})` };
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    }).then(() => {
+        status.innerText = "✅ 進度已成功同步！";
+    }).catch(() => {
+        status.innerText = "❌ 同步失敗，請檢查網路。";
+    });
 }
 
 function formatText(text, list) {
