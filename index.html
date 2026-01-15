@@ -98,13 +98,12 @@
 /* ==========================================
    設定區
    ========================================== */
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxojsJO9MFd4DlE4bc7IpHl9vXCe1IIi_m-B4sTP2g1ykiv05f6fqiMxwx1kS8e6rRl/exec'; // <--- 請填寫你部署的網址
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxojsJO9MFd4DlE4bc7IpHl9vXCe1IIi_m-B4sTP2g1ykiv05f6fqiMxwx1kS8e6rRl/exec'; 
 let studentID = ""; 
 
 const newsGroups = [
-   const newsGroups = [
     {
-        topic: "15/01/2026 Why Many People are Single", // 已加引號
+        topic: "15/01/2026 Why Many People are Single",
         levels: [
             {
                 id: "single-l1", level: "DSE Level 1 (Foundation)",
@@ -124,10 +123,10 @@ const newsGroups = [
                 content: "Recent data shows a significant increase in the number of single adults worldwide. Many individuals now **prioritize** their careers and personal interests over traditional marriage. For some, being single is a **deliberate** choice that allows them to enjoy their independence. However, the rise of dating apps has made finding a meaningful connection more **complicated** than before. Furthermore, the high **cost** of living makes it harder for young couples to start a family together. This growing **social** trend is reshaping how we think about relationships.",
                 vocab: [
                     { w: "prioritize", pos: "v.", d: "to treat something as more important than others", cn: "優先考慮", ex: "You should prioritize your health over work." },
-                    { w: "deliberate", pos: "adj.", d: "done on purpose; intentional", cn: "故意的 / 蓄意的", ex: "It was a deliberate decision to stay single." },
+                    { w: "deliberate", pos: "adj.", d: "done on purpose; intentional", cn: "故意的", ex: "It was a deliberate decision to stay single." },
                     { w: "complicated", pos: "adj.", d: "involved or difficult to understand", cn: "複雜的", ex: "The situation is more complicated than it looks." },
-                    { w: "cost", pos: "n.", d: "the amount of money needed for something", cn: "成本 / 代價", ex: "The cost of housing is rising rapidly." },
-                    { w: "social", pos: "adj.", d: "relating to society or its organization", cn: "社會的", ex: "Social media has changed how we communicate." }
+                    { w: "cost", pos: "n.", d: "the amount of money needed for something", cn: "成本", ex: "The cost of housing is rising rapidly." },
+                    { w: "social", pos: "adj.", d: "relating to society", cn: "社會的", ex: "Social media has changed how we communicate." }
                 ]
             },
             {
@@ -135,17 +134,17 @@ const newsGroups = [
                 url: "https://www.newsinlevels.com/products/why-many-people-are-single-level-3/",
                 content: "The global surge in singlehood is a multifaceted phenomenon that reflects a profound **transformation** in contemporary values. Sociologists suggest that many young professionals now **embrace** solo living as a means of achieving self-actualization and personal autonomy. However, this shift is not purely driven by choice; economic **instability** and the skyrocketing prices of urban real estate have created significant barriers to forming traditional households. While digital platforms promise to facilitate connections, many users find the experience **superficial**, leading to a sense of exhaustion. Ultimately, this trend signals a need for society to **adapt** to a future where diverse living arrangements become the new norm.",
                 vocab: [
-                    { w: "transformation", pos: "n.", d: "a complete change in form or appearance", cn: "轉變 / 變革", ex: "The city has undergone a huge transformation." },
-                    { w: "embrace", pos: "v.", d: "to accept something enthusiastically", cn: "擁抱 / 欣然接受", ex: "Many people embrace the idea of remote work." },
-                    { w: "instability", pos: "n.", d: "the state of being likely to change or fail", cn: "不穩定", ex: "Political instability can harm the economy." },
-                    { w: "superficial", pos: "adj.", d: "only on the surface; not deep or serious", cn: "表面化的 / 膚淺的", ex: "Their friendship was quite superficial." },
+                    { w: "transformation", pos: "n.", d: "a complete change in form", cn: "轉變 / 變革", ex: "The city has undergone a huge transformation." },
+                    { w: "embrace", pos: "v.", d: "to accept something enthusiastically", cn: "擁抱", ex: "Many people embrace the idea of remote work." },
+                    { w: "instability", pos: "n.", d: "the state of being likely to fail", cn: "不穩定", ex: "Political instability can harm the economy." },
+                    { w: "superficial", pos: "adj.", d: "only on the surface; not deep", cn: "膚淺的", ex: "Their friendship was quite superficial." },
                     { w: "adapt", pos: "v.", d: "to change to suit different conditions", cn: "適應", ex: "We must adapt to the changing climate." }
                 ]
             }
         ]
-    },
+    }, // <-- 確保這裡有逗號
     {
-        topic: "13/01/2026 Storm Goretti Hits Europe", // 已加引號
+        topic: "13/01/2026 Storm Goretti Hits Europe",
         levels: [
             {
                 id: "goretti-l1", level: "DSE Level 1",
@@ -162,40 +161,40 @@ const newsGroups = [
             {
                 id: "goretti-l2", level: "DSE Level 2-3",
                 url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-2/",
-                content: "Storm Goretti is currently causing **severe** disruptions as it tears across the European continent. Moving rapidly from the Atlantic, the storm has brought a combination of intense gusts and torrential rain. Thousands of households are struggling without **electricity** after wind-damaged lines failed. Air travel has been significantly **impacted**, with major carriers forced to cancel dozens of flights. As the storm remains **active**, authorities have urged citizens to stay **indoors** until the conditions improve.",
+                content: "Storm Goretti is currently causing **severe** disruptions. Moving rapidly from the Atlantic, the storm has brought a combination of intense gusts and torrential rain. Thousands of households are struggling without **electricity** after wind-damaged lines failed. Air travel has been significantly **impacted**. As the storm remains **active**, authorities have urged citizens to stay **indoors**.",
                 vocab: [
                     { w: "severe", pos: "adj.", d: "very serious or intense", cn: "嚴重的", ex: "The storm caused severe damage." },
-                    { w: "electricity", pos: "n.", d: "power used for lighting/heating", cn: "電力", ex: "The city lost electricity during the storm." },
-                    { w: "impacted", pos: "v.", d: "strongly affected by something", cn: "影響", ex: "The delay impacted our schedule." },
-                    { w: "active", pos: "adj.", d: "continuing to happen or move", cn: "活躍的", ex: "The storm is still active in the north." },
+                    { w: "electricity", pos: "n.", d: "power used for lighting", cn: "電力", ex: "The city lost electricity." },
+                    { w: "impacted", pos: "v.", d: "strongly affected", cn: "影響", ex: "The delay impacted our schedule." },
+                    { w: "active", pos: "adj.", d: "continuing to happen", cn: "活躍的", ex: "The storm is still active." },
                     { w: "indoors", pos: "adv.", d: "inside a building", cn: "戶內", ex: "It is safer to stay indoors." }
                 ]
             },
             {
                 id: "goretti-l3", level: "DSE Level 4-5",
                 url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-3/",
-                content: "Storm Goretti is currently **wreaking havoc** across the European landscape, leaving a trail of destruction that has caught many regions off guard. Meteorological services have issued urgent warnings, noting that the storm’s **unprecedented** intensity is a rare occurrence for this time of year. This extreme weather has severely compromised the region's **infrastructure**, leading to widespread blackouts and the total paralysis of transport networks. While emergency teams work to **mitigate** the damage, officials warn that the storm’s path remains **unpredictable**, urging the public to exercise extreme caution as the weather system evolves.",
+                content: "Storm Goretti is currently **wreaking havoc** across Europe. Meteorological services have issued warnings, noting that the storm’s **unprecedented** intensity is a rare occurrence. This weather has severely compromised the region's **infrastructure**, leading to widespread blackouts. While emergency teams work to **mitigate** the damage, the storm’s path remains **unpredictable**.",
                 vocab: [
-                    { w: "wreaking havoc", pos: "phr.", d: "causing widespread destruction and chaos", cn: "造成嚴重破壞", ex: "The economic crisis is wreaking havoc on small businesses." },
-                    { w: "unprecedented", pos: "adj.", d: "never having happened or existed in the past", cn: "史無前例的", ex: "The scale of the disaster was unprecedented." },
-                    { w: "infrastructure", pos: "n.", d: "the basic physical and organizational structures", cn: "基礎建設", ex: "Investment in infrastructure is vital for growth." },
-                    { w: "mitigate", pos: "v.", d: "to make something less harmful or serious", cn: "減輕 / 緩解", ex: "New laws were passed to mitigate the effects of climate change." },
-                    { w: "unpredictable", pos: "adj.", d: "likely to change suddenly and without reason", cn: "難以預測的", ex: "The stock market can be highly unpredictable." }
+                    { w: "wreaking havoc", pos: "phr.", d: "causing widespread destruction", cn: "造成嚴重破壞", ex: "The storm is wreaking havoc." },
+                    { w: "unprecedented", pos: "adj.", d: "never having happened before", cn: "史無前例的", ex: "The disaster was unprecedented." },
+                    { w: "infrastructure", pos: "n.", d: "basic physical structures", cn: "基礎建設", ex: "Investment in infrastructure is vital." },
+                    { w: "mitigate", pos: "v.", d: "to make something less harmful", cn: "減輕", ex: "New laws help mitigate climate change." },
+                    { w: "unpredictable", pos: "adj.", d: "likely to change suddenly", cn: "難以預測的", ex: "The market is unpredictable." }
                 ]
             }
         ]
     },
     {
-        topic: "12/01/2026 Denmark Schools Use Books Again", // 已加引號
+        topic: "12/01/2026 Denmark Schools Use Books Again",
         levels: [
             {
                 id: "denmark-l1", level: "DSE Level 1",
                 url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-1/",
                 content: "Schools in Denmark are making a big change. For years, students used tablets, but now they are using **paper** books again. Many teachers think screens make it hard for children to **concentrate**. They believe that reading from a real book is **better** for the brain. Parents are happy because children spend less **time** on digital devices. This is a new **trend** in Europe.",
                 vocab: [
-                    { w: "paper", pos: "n.", d: "material for writing/printing", cn: "紙張", ex: "I prefer reading on paper." },
-                    { w: "concentrate", pos: "v.", d: "to give all your attention", cn: "專注", ex: "It's hard to concentrate with noise." },
-                    { w: "better", pos: "adj.", d: "higher in quality", cn: "較好的", ex: "Real books are better for learning." },
+                    { w: "paper", pos: "n.", d: "material for writing", cn: "紙張", ex: "I prefer reading on paper." },
+                    { w: "concentrate", pos: "v.", d: "to give all your attention", cn: "專注", ex: "It's hard to concentrate." },
+                    { w: "better", pos: "adj.", d: "higher in quality", cn: "較好的", ex: "Real books are better." },
                     { w: "time", pos: "n.", d: "period of something", cn: "時間", ex: "Limit your screen time." },
                     { w: "trend", pos: "n.", d: "a general direction of change", cn: "趨勢", ex: "A new trend in education." }
                 ]
@@ -203,25 +202,25 @@ const newsGroups = [
             {
                 id: "denmark-l2", level: "DSE Level 2-3",
                 url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-2/",
-                content: "Danish educational institutions are **reintroducing** physical textbooks after a long period of digital-only learning. Educational experts argue that tablets might **hinder** the development of deep reading skills in younger students. Teachers have observed that it is increasingly difficult for students to **focus** on lengthy texts when they are constantly distracted by digital notifications. Consequently, the government is **funding** new initiatives to stock school libraries. This shift reflects a growing **awareness** of the potential downsides of excessive technology use in early education.",
+                content: "Danish schools are **reintroducing** physical textbooks. Educational experts argue that tablets might **hinder** the development of deep reading skills. Teachers have observed that it is difficult to **focus** on lengthy texts when distracted by notifications. Consequently, the government is **funding** new initiatives. This shift reflects a growing **awareness** of technology's downsides.",
                 vocab: [
-                    { w: "reintroducing", pos: "v.", d: "to bring something back into use", cn: "重新引入", ex: "The brand is reintroducing its classic design." },
-                    { w: "hinder", pos: "v.", d: "to limit the ability of someone to do something", cn: "阻礙", ex: "A lack of confidence can hinder your performance." },
-                    { w: "focus", pos: "v.", d: "to give a lot of attention to one particular thing", cn: "集中", ex: "The meeting will focus on the new budget." },
-                    { w: "funding", pos: "v./n.", d: "providing money for a specific purpose", cn: "資助", ex: "The project is funding research into green energy." },
-                    { w: "awareness", pos: "n.", d: "knowledge or understanding of a particular situation", cn: "意識/覺醒", ex: "Public awareness of the disease is vital." }
+                    { w: "reintroducing", pos: "v.", d: "to bring something back", cn: "重新引入", ex: "The brand is reintroducing the design." },
+                    { w: "hinder", pos: "v.", d: "to limit the ability of someone", cn: "阻礙", ex: "Fear can hinder your performance." },
+                    { w: "focus", pos: "v.", d: "to give a lot of attention", cn: "集中", ex: "The meeting will focus on the budget." },
+                    { w: "funding", pos: "v.", d: "providing money", cn: "資助", ex: "The project is funding research." },
+                    { w: "awareness", pos: "n.", d: "knowledge of a situation", cn: "意識", ex: "Public awareness is vital." }
                 ]
             },
             {
                 id: "denmark-l3", level: "DSE Level 4-5",
                 url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-3/",
-                content: "In a move that signals a significant **paradigm shift** in modern education, Denmark has begun reversing its long-standing digital-first policy in classrooms. This strategic retreat is fueled by mounting evidence suggesting that **excessive** exposure to digital screens has **impaired** students' cognitive development and critical thinking skills. Education ministers are now **advocating** for a pedagogical return to tactile, printed materials to foster deeper reading comprehension. While some tech-advocates remain **skeptical** about the efficacy of returning to traditional methods, the consensus among many educators is that a balance must be struck to protect the mental well-being of the next generation.",
+                content: "In a move that signals a significant **paradigm shift**, Denmark has begun reversing its digital-first policy. This retreat is fueled by evidence suggesting that **excessive** exposure to screens has **impaired** students' cognitive development. Education ministers are now **advocating** for printed materials. While some remain **skeptical**, the consensus is that a balance must be struck.",
                 vocab: [
-                    { w: "paradigm shift", pos: "n.", d: "a fundamental change in approach or underlying assumptions", cn: "重大變革", ex: "The invention of the internet led to a paradigm shift in communication." },
-                    { w: "excessive", pos: "adj.", d: "much more than is reasonable or necessary", cn: "過度的", ex: "Excessive consumption of sugar is bad for health." },
-                    { w: "impaired", pos: "v./adj.", d: "weakened or damaged in quality or ability", cn: "受損的/削弱的", ex: "His hearing was permanently impaired by the noise." },
-                    { w: "advocating", pos: "v.", d: "publicly recommending or supporting a particular cause", cn: "倡導/主張", ex: "She is advocating for a more flexible work schedule." },
-                    { w: "skeptical", pos: "adj.", d: "doubting that something is true or useful", cn: "懷疑的", ex: "Many people are skeptical about the new law's success." }
+                    { w: "paradigm shift", pos: "n.", d: "a fundamental change in approach", cn: "重大變革", ex: "The internet led to a paradigm shift." },
+                    { w: "excessive", pos: "adj.", d: "much more than reasonable", cn: "過度的", ex: "Excessive sugar is bad." },
+                    { w: "impaired", pos: "v./adj.", d: "weakened or damaged", cn: "受損的", ex: "His hearing was impaired." },
+                    { w: "advocating", pos: "v.", d: "publicly supporting a cause", cn: "倡導", ex: "She is advocating for a new schedule." },
+                    { w: "skeptical", pos: "adj.", d: "doubting that something is true", cn: "懷疑的", ex: "Many are skeptical about the law." }
                 ]
             }
         ]
@@ -236,7 +235,7 @@ let wrongs = [];
 function checkUserID() {
     while (true) {
         let input = prompt("請輸入 4 位學生編號 (5501 - 5540):");
-        if (input === null) continue; // 不允許按取消
+        if (input === null) continue; 
         let num = parseInt(input);
         if (num >= 5501 && num <= 5540 && input.length === 4) {
             studentID = input;
