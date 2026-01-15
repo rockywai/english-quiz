@@ -3,198 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE 英文詞彙挑戰 V2</title>
+    <title>DSE 英文詞彙挑戰 V2.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #4f46e5; --primary-light: #eef2ff; --success: #22c55e; --danger: #ef4444; --text: #374151; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #f3f4f6; display: flex; justify-content: center; padding: 20px; color: var(--text); }
-        .container { width: 100%; max-width: 550px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.1); transition: all 0.3s ease; }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #6b7280; margin-bottom: 25px; font-size: 0.9rem; }
-        .btn { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid transparent; border-radius: 12px; cursor: pointer; font-size: 16px; background: var(--primary-light); color: var(--primary); font-weight: 600; transition: all 0.2s; text-align: left; display: flex; align-items: center; }
-        .btn:hover { background: #e0e7ff; transform: translateY(-2px); }
-        .btn-icon { margin-right: 10px; font-size: 1.2rem; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #f3f4f6; display: flex; justify-content: center; padding: 15px; color: var(--text); line-height: 1.6; }
+        .container { width: 100%; max-width: 550px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--primary); margin-top: 0; }
+        .btn { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid transparent; border-radius: 12px; cursor: pointer; font-size: 16px; background: var(--primary-light); color: var(--primary); font-weight: 600; transition: all 0.2s; text-align: left; display: flex; align-items: center; }
+        .btn:hover { background: #e0e7ff; transform: translateY(-1px); }
         .option-btn { background: white; border: 1px solid #d1d5db; color: var(--text); font-weight: normal; }
-        .option-btn:hover { background: #f9fafb; border-color: var(--primary); }
         .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #166534 !important; }
         .wrong { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b !important; }
         .hidden { display: none; }
         
-        /* 學習模式樣式 */
-        .vocab-card { border: 1px solid #e5e7eb; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
-        .vocab-word { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
-        .vocab-pos { color: #6b7280; font-size: 0.9rem; font-style: italic; }
+        /* 文章閱讀區樣式 */
+        .article-box { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 20px; max-height: 200px; overflow-y: auto; font-size: 1rem; color: #4b5563; }
+        .highlight-word { background-color: #fef08a; font-weight: bold; border-bottom: 2px solid #facc15; padding: 0 2px; }
         
-        /* 進度條樣式 */
-        .progress-container { background: #e5e7eb; border-radius: 10px; height: 8px; margin: 15px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s ease; }
-        .progress-text { text-align: center; font-size: 0.9rem; color: #6b7280; }
+        /* 進度與提示 */
+        .progress-container { background: #e5e7eb; border-radius: 10px; height: 6px; margin-bottom: 5px; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: center; font-size: 0.8rem; color: #6b7280; margin-bottom: 15px; }
         
-        /* 反饋區樣式 */
-        .feedback-box { background: var(--primary-light); padding: 20px; border-radius: 15px; margin-top: 20px; display: none; }
-        .feedback-box.show { display: block; animation: fadeIn 0.3s ease; }
-        .fb-title { font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; }
-        .fb-pos { margin-left: 5px; font-size: 0.9rem; color: #6b7280; font-style: italic; }
-        .fb-def { margin-bottom: 10px; }
-        .fb-example { font-style: italic; color: #4b5563; background: white; padding: 10px; border-radius: 8px; border-left: 3px solid var(--primary); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 反饋區 */
+        .feedback-box { background: var(--primary-light); padding: 15px; border-radius: 15px; margin-top: 15px; display: none; border: 1px solid var(--primary); }
+        .feedback-box.show { display: block; animation: fadeIn 0.3s; }
+        .fb-example { font-style: italic; color: #4b5563; background: white; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div class="container" id="main-container">
+<div class="container">
     <div id="setup-screen">
-        <h2>DSE 詞彙挑戰站</h2>
-        <p class="subtitle">每日一篇 News in Levels，輕鬆提升詞彙量</p>
-        <p style="font-weight: bold; margin-bottom: 15px;">請選擇今日課題：</p>
-        <div id="article-list"></div>
-    </div>
-
-    <div id="study-screen" class="hidden">
-        <h2>📝 詞彙預習 (Word Bank)</h2>
-        <p class="subtitle">先學習以下單字，準備好後開始挑戰！</p>
-        <div id="study-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;"></div>
-        <button class="btn" style="background: var(--primary); color: white; text-align: center; justify-content: center;" onclick="startQuiz()">
-            <span class="btn-icon">🚀</span> 我準備好了，開始挑戰！
-        </button>
+        <h2>DSE 詞彙自學站</h2>
+        <p style="text-align:center; color: #6b7280;">閱讀原文並挑戰詞彙意思</p>
+        <div id="article-list" style="margin-top: 20px;"></div>
     </div>
 
     <div id="quiz-screen" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 id="quiz-title" style="margin: 0; font-size: 1rem; color: var(--primary);"></h3>
+        <div id="quiz-header">
+            <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+            <div class="progress-text" id="progress-text"></div>
         </div>
-        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-        <p class="progress-text" id="progress-text"></p>
-        
-        <h2 id="word-display" style="font-size: 2.5rem; margin: 20px 0; text-align: center;"></h2>
-        <p style="text-align: center; color: #6b7280; margin-bottom: 20px;">請選擇最合適的解釋：</p>
-        <div id="options-box"></div>
+
+        <div class="article-box" id="article-display"></div>
+
+        <div id="question-area">
+            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">文中粗體字意思為：</p>
+            <h2 id="word-display" style="font-size: 2.2rem; margin: 5px 0 15px 0;"></h2>
+            <div id="options-box"></div>
+        </div>
 
         <div id="feedback-box" class="feedback-box">
-            <div class="fb-title" id="fb-title"></div>
-            <div class="fb-def" id="fb-def"></div>
-            <div class="fb-example" id="fb-example"></div>
-            <button class="btn" id="next-btn" style="margin-top: 15px; background: var(--primary); color: white; text-align: center; justify-content: center;" onclick="nextQuestion()">
-                下一題 <span class="btn-icon" style="margin-left: 5px;">👉</span>
-            </button>
+            <div id="fb-content"></div>
+            <button class="btn" style="background: var(--primary); color: white; justify-content: center; margin-top: 15px;" onclick="nextQuestion()">下一題 👉</button>
         </div>
     </div>
 
-    <div id="result-screen" class="hidden" style="text-align: center; padding: 20px 0;">
-        <div style="font-size: 4rem;">🎉</div>
-        <h2 style="color: var(--success); margin: 10px 0;">挑戰成功！</h2>
-        <p>你已掌握了本篇文章的重點詞彙。</p>
-        <p style="color: #6b7280; margin-bottom: 20px;">(記得截圖傳給老師作為紀錄哦！)</p>
-        <button class="btn" style="background: var(--primary); color: white; text-align: center; justify-content: center;" onclick="location.reload()">
-            <span class="btn-icon">🏠</span> 回到主頁
-        </button>
+    <div id="result-screen" class="hidden" style="text-align: center;">
+        <div style="font-size: 4rem;">🏆</div>
+        <h2>完成挑戰！</h2>
+        <p>你已掌握本篇文章的所有重點單字。</p>
+        <button class="btn" style="background: var(--primary); color: white; justify-content: center;" onclick="location.reload()">挑戰其他文章</button>
     </div>
 </div>
 
 <script>
 /* ==================================================================
-   老師更新區 (V2.0 格式)：請複製我提供的完整資料塊替換這裡
+   老師更新數據區：我會根據你提供的連結為你生成這部分的內容
    ================================================================== */
 const newsData = [
     {
         title: "Storm Goretti Hits Europe",
         level: 1,
-        levelLabel: "基礎 (Level 1)",
+        content: "A big storm is hitting Europe. It is called Storm Goretti. The **storm** is moving across many countries. It brings very strong wind and heavy rain. Many people have no **power** in their homes. This is because the wind broke the lines. The storm is **dangerous** for travelers. Many **flights** are not moving. The storm will **hit** more places tomorrow.",
         vocab: [
-            { w: "storm", pos: "n.", d: "very bad weather with strong wind and rain", chinese: "風暴", example: "The storm caused a lot of damage to the small town." },
-            { w: "power", pos: "n.", d: "electricity", chinese: "電力", example: "The storm cut off power to thousands of homes." },
-            { w: "hit", pos: "v.", d: "to come to a place with force", chinese: "侵襲 / 打擊", example: "The hurricane is expected to hit the coast tomorrow." },
-            { w: "flight", pos: "n.", d: "a journey in a plane", chinese: "航班 / 飛行", example: "Their flight to London was cancelled due to bad weather." },
-            { w: "dangerous", pos: "adj.", d: "not safe", chinese: "危險的", example: "It is dangerous to drive in such heavy rain." }
-        ]
-    },
-    {
-        title: "Storm Goretti Hits Europe",
-        level: 2,
-        levelLabel: "中等 (Level 2)",
-        vocab: [
-            { w: "disrupt", pos: "v.", d: "to stop something from happening normally", chinese: "擾亂 / 中斷", example: "The strike will disrupt train services across the country." },
-            { w: "gust", pos: "n.", d: "a sudden strong wind", chinese: "陣風", example: "A sudden gust of wind blew his hat off." },
-            { w: "cancel", pos: "v.", d: "to stop a planned event", chinese: "取消", example: "They had to cancel the meeting because the boss was ill." },
-            { w: "severe", pos: "adj.", d: "very bad or serious", chinese: "嚴重的", example: "The patient is in severe pain." },
-            { w: "damage", pos: "v.", d: "to break something or make it bad", chinese: "損害 / 破壞", example: "Smoking can seriously damage your health." }
+            { w: "storm", pos: "n.", d: "bad weather with wind and rain", chinese: "風暴", example: "The storm lasted for three days." },
+            { w: "power", pos: "n.", d: "electricity", chinese: "電力", example: "The storm cut off the power." },
+            { w: "dangerous", pos: "adj.", d: "not safe", chinese: "危險的", example: "It's dangerous to go out now." },
+            { w: "flights", pos: "n.", d: "journeys in a plane", chinese: "航班", example: "All flights were delayed." },
+            { w: "hit", pos: "v.", d: "to come to a place with force", chinese: "侵襲", example: "The storm hit the coast at midnight." }
         ]
     },
     {
         title: "Storm Goretti Hits Europe",
         level: 3,
-        levelLabel: "進階 (Level 3)",
+        content: "Storm Goretti is currently **wreaking havoc** across the European continent, bringing winds of **unprecedented** strength. Experts from various **meteorological** stations are monitoring its path closely. The storm has severely impacted the region's **infrastructure**, causing widespread blackouts and transport chaos. Authorities are working to **verify** reports of damage in remote areas.",
         vocab: [
-            { w: "wreak havoc", pos: "phr.", d: "to cause a lot of trouble or damage", chinese: "造成嚴重破壞", example: "The virus wreaked havoc on the computer system." },
-            { w: "unprecedented", pos: "adj.", d: "never happened before", chinese: "史無前例的", example: "The team's success is unprecedented in the history of the sport." },
-            { w: "infrastructure", pos: "n.", d: "basic systems like roads or power", chinese: "基礎建設", example: "The country needs to invest more in its aging infrastructure." },
-            { w: "meteorological", pos: "adj.", d: "related to the weather", chinese: "氣象的", example: "Accurate meteorological data is crucial for predicting storms." },
-            { w: "verify", pos: "v.", d: "to check if something is true", chinese: "核實 / 驗證", example: "Please verify your account by clicking the link in the email." }
+            { w: "wreak havoc", pos: "phr.", d: "to cause a lot of damage", chinese: "造成嚴重破壞", example: "The hurricane wreaked havoc on the islands." },
+            { w: "unprecedented", pos: "adj.", d: "never happened before", chinese: "史無前例的", example: "This year's rainfall is unprecedented." },
+            { w: "meteorological", pos: "adj.", d: "related to the weather", chinese: "氣象的", example: "The meteorological office issued a warning." },
+            { w: "infrastructure", pos: "n.", d: "basic systems like roads/power", chinese: "基礎建設", example: "The earthquake destroyed the city's infrastructure." },
+            { w: "verify", pos: "v.", d: "to check if something is true", chinese: "核實", example: "We need to verify the information." }
         ]
     }
 ];
 
 /* ==========================================
-   程式邏輯區：請勿更動
+   程式邏輯區
    ========================================== */
 let currentArticle = null;
 let currentPool = [];
 let wrongFromLastRound = [];
 let currentIndex = 0;
-let isRetryRound = false;
 
-// 初始化：生成首頁文章列表
 const articleList = document.getElementById('article-list');
 newsData.forEach((item, index) => {
     const btn = document.createElement('button');
     btn.className = 'btn';
-    // 使用 Emoji 和中文標籤
-    let icon = item.level === 1 ? '🌱' : item.level === 2 ? '🌿' : '🌳';
-    btn.innerHTML = `<span class="btn-icon">${icon}</span> <div><strong>${item.levelLabel}</strong><br><span style="font-size: 0.9rem; font-weight: normal;">${item.title}</span></div>`;
-    btn.onclick = () => showStudyScreen(index);
+    btn.innerHTML = `<div><strong>Level ${item.level}</strong>: ${item.title}</div>`;
+    btn.onclick = () => startQuiz(index);
     articleList.appendChild(btn);
 });
 
-function showStudyScreen(index) {
+function startQuiz(index) {
     currentArticle = newsData[index];
     document.getElementById('setup-screen').classList.add('hidden');
-    document.getElementById('study-screen').classList.remove('hidden');
-    
-    const studyList = document.getElementById('study-list');
-    studyList.innerHTML = '';
-    currentArticle.vocab.forEach(v => {
-        const card = document.createElement('div');
-        card.className = 'vocab-card';
-        // 顯示單字、詞性和中文
-        card.innerHTML = `<span class="vocab-word">${v.w}</span> <span class="vocab-pos">(${v.pos} ${v.chinese})</span><br><span style="font-size: 0.9rem;">${v.d.split('/')[0]}</span>`;
-        studyList.appendChild(card);
-    });
-}
-
-function startQuiz() {
-    document.getElementById('study-screen').classList.add('hidden');
     document.getElementById('quiz-screen').classList.remove('hidden');
-    document.getElementById('quiz-title').innerText = `${currentArticle.title} - ${currentArticle.levelLabel}`;
     
-    // 第一輪：隨機選5題 (如果不足5題則全選)
-    let initialPool = shuffle([...currentArticle.vocab]);
-    startNewRound(initialPool.slice(0, 5));
+    // 初始化文章顯示（加入高亮）
+    let highlightedContent = currentArticle.content;
+    currentArticle.vocab.forEach(v => {
+        // 使用正則表達式進行不分大小寫的替換
+        const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
+        highlightedContent = highlightedContent.replace(regex, `<span class="highlight-word">$1</span>`);
+    });
+    document.getElementById('article-display').innerHTML = highlightedContent;
+    
+    startNewRound(shuffle([...currentArticle.vocab]).slice(0, 5));
 }
 
 function startNewRound(words) {
     currentPool = words;
     wrongFromLastRound = [];
     currentIndex = 0;
-    updateProgress();
     showQuestion();
-}
-
-function updateProgress() {
-    let total = currentPool.length;
-    let current = currentIndex + 1;
-    let percent = (currentIndex / total) * 100;
-    document.getElementById('progress-bar').style.width = `${percent}%`;
-    document.getElementById('progress-text').innerText = isRetryRound ? `🔥 錯題重溫：第 ${current} / ${total} 題` : `進度：第 ${current} / ${total} 題`;
 }
 
 function showQuestion() {
@@ -202,7 +147,11 @@ function showQuestion() {
         checkRoundEnd();
         return;
     }
-    updateProgress();
+    
+    // 更新進度條
+    const percent = (currentIndex / currentPool.length) * 100;
+    document.getElementById('progress-bar').style.width = `${percent}%`;
+    document.getElementById('progress-text').innerText = `題目 ${currentIndex + 1} / ${currentPool.length}`;
     document.getElementById('feedback-box').classList.remove('show');
     
     const currentQ = currentPool[currentIndex];
@@ -211,61 +160,41 @@ function showQuestion() {
     const optionsBox = document.getElementById('options-box');
     optionsBox.innerHTML = "";
 
-    // 生成選項：1正 + 3誤
-    let options = [currentQ];
-    let distractors = currentArticle.vocab.filter(v => v.w !== currentQ.w);
-    options.push(...shuffle(distractors).slice(0, 3));
-    options = shuffle(options);
+    let options = shuffle([currentQ, ...shuffle(currentArticle.vocab.filter(v => v.w !== currentQ.w)).slice(0, 3)]);
 
     options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'btn option-btn';
-        btn.innerText = opt.d.split('/')[0].trim(); // 只顯示第一個定義
-        btn.onclick = () => handleAnswer(btn, opt, currentQ);
+        btn.innerText = opt.d.split('/')[0].trim();
+        btn.onclick = () => {
+            disableButtons();
+            const isCorrect = opt.w === currentQ.w;
+            if (isCorrect) {
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('wrong');
+                wrongFromLastRound.push(currentQ);
+                // 顯示正確答案
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    if(b.innerText === currentQ.d.split('/')[0].trim()) b.classList.add('correct');
+                });
+            }
+            showFeedback(currentQ, isCorrect);
+        };
         optionsBox.appendChild(btn);
     });
 }
 
-function handleAnswer(selectedBtn, selectedOpt, correctQ) {
-    disableButtons();
-    const feedbackBox = document.getElementById('feedback-box');
-    const fbTitle = document.getElementById('fb-title');
-    
-    let isCorrect = selectedOpt.w === correctQ.w;
-    
-    if (isCorrect) {
-        selectedBtn.classList.add('correct');
-        fbTitle.innerHTML = `<span style="color: var(--success);">✅ Correct! 答對了！</span>`;
-    } else {
-        selectedBtn.classList.add('wrong');
-        fbTitle.innerHTML = `<span style="color: var(--danger);">❌ Keep trying! 加油！</span>`;
-        // 標示出正確答案的按鈕
-        document.querySelectorAll('.option-btn').forEach(btn => {
-            if (btn.innerText === correctQ.d.split('/')[0].trim()) {
-                btn.classList.add('correct');
-            }
-        });
-        if (!wrongFromLastRound.find(x => x.w === correctQ.w)) {
-            wrongFromLastRound.push(correctQ);
-        }
-    }
-    
-    // 顯示詳細解釋
-    document.getElementById('fb-title').innerHTML += `<span class="fb-pos">(${correctQ.pos} ${correctQ.chinese})</span>`;
-    document.getElementById('fb-def').innerText = correctQ.d;
-    // 如果有例句則顯示
-    if (correctQ.example) {
-         // 將例句中的目標單字加粗
-        let highlightedEx = correctQ.example.replace(new RegExp(correctQ.w, 'gi'), match => `<strong>${match}</strong>`);
-        document.getElementById('fb-example').innerHTML = `Example: "${highlightedEx}"`;
-        document.getElementById('fb-example').classList.remove('hidden');
-    } else {
-        document.getElementById('fb-example').classList.add('hidden');
-    }
-
-    feedbackBox.classList.add('show');
-    // 自動滾動到反饋區
-    feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+function showFeedback(q, isCorrect) {
+    const fb = document.getElementById('fb-content');
+    fb.innerHTML = `
+        <div style="font-weight:bold; color:${isCorrect ? 'var(--success)' : 'var(--danger)'}">
+            ${isCorrect ? '✅ 正確！Correct' : '❌ 答錯了，再接再厲！'}
+        </div>
+        <div style="margin-top:5px;"><strong>${q.w}</strong> (${q.pos} ${q.chinese})</div>
+        <div class="fb-example">Example: ${q.example}</div>
+    `;
+    document.getElementById('feedback-box').classList.add('show');
 }
 
 function nextQuestion() {
@@ -282,25 +211,8 @@ function checkRoundEnd() {
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
     } else {
-        isRetryRound = true;
-        // 準備下一輪：錯題優先，若不足5題則從未考過的字中補充
-        let nextRound = [...wrongFromLastRound];
-        let handledWords = currentPool.map(w => w.w); // 這一輪考過的字
-        let remaining = currentArticle.vocab.filter(v => !handledWords.includes(v.w));
-        
-        while (nextRound.length < 5 && remaining.length > 0) {
-            nextRound.push(remaining.pop());
-        }
-        
-        // 顯示提示訊息
-        const container = document.getElementById('main-container');
-        const alertMsg = document.createElement('div');
-        alertMsg.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:white; padding:15px 25px; border-radius:30px; z-index:1000; animation: fadeIn 0.5s, fadeOut 0.5s 2.5s forwards;";
-        alertMsg.innerHTML = `本輪結束！有 ${wrongFromLastRound.length} 題需要複習 💪`;
-        document.body.appendChild(alertMsg);
-        setTimeout(() => alertMsg.remove(), 3000);
-
-        startNewRound(nextRound);
+        alert(`這輪結束，現在重新挑戰 ${wrongFromLastRound.length} 個答錯的單字。`);
+        startNewRound(shuffle([...wrongFromLastRound]));
     }
 }
 
