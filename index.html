@@ -9,38 +9,25 @@
         :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; --info-bg: #eff6ff; --info-border: #bfdbfe; }
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; color: #1f2937; }
         .app-container { width: 100%; max-width: 600px; min-height: 100vh; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        
         .nav-bar { padding: 15px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .nav-btn { background: none; border: 1px solid #d1d5db; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #4b5563; }
-
         .content-padding { padding: 20px; flex-grow: 1; }
         .leaderboard-btn { width: 100%; padding: 15px; background: #374151; color: white; border-radius: 12px; border: none; font-weight: bold; margin-bottom: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        
         .topic-card { margin-bottom: 15px; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: white; }
         .topic-header { width: 100%; padding: 18px; background: white; border: none; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .level-container { background: #f9fafb; display: none; padding: 10px; border-top: 1px solid #eee; gap: 8px; flex-direction: column; }
         .level-btn { width: 100%; padding: 12px; border: 1px solid #d1d5db; background: white; border-radius: 8px; cursor: pointer; }
-
         .article-section { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 10px; line-height: 1.8; font-size: 1.05rem; max-height: 250px; overflow-y: auto; }
         .highlight { font-weight: bold; text-decoration: underline; background: #fef08a; }
-
         .vocab-card { border-left: 4px solid var(--primary); background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .vocab-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); }
-
         .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; }
         .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #065f46 !important; }
         .wrong { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b !important; }
-        
         .hidden { display: none !important; }
-
-        /* Leaderboard Modal */
-        #modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); z-index: 1000; 
-            display: flex; justify-content: center; align-items: center; 
-        }
-        .modal-content { background: white; width: 90%; max-width: 500px; height: 80vh; border-radius: 15px; display: flex; flex-direction: column; position: relative; }
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 500px; height: 80vh; border-radius: 15px; display: flex; flex-direction: column; }
         iframe { width: 100%; flex-grow: 1; border: none; border-radius: 0 0 15px 15px; }
     </style>
 </head>
@@ -62,7 +49,7 @@
         </div>
 
         <div id="study-screen" class="hidden">
-            <h3 style="margin-top:0;">第一步：重點詞彙 (10個)</h3>
+            <h3 style="margin-top:0;">第一步：重點詞彙 (5個)</h3>
             <div id="study-article" class="article-section"></div>
             <div id="vocab-preview-list"></div>
             <button class="btn-primary" onclick="startQuiz()" style="margin-top:20px;">✅ 預習完畢，開始 5 題隨機測驗</button>
@@ -108,43 +95,39 @@ let studentID = "";
 
 const newsGroups = [
     {
-        topic: "15/01/2026 Why Many People are Single",
+        topic: "Why Many People are Single",
         levels: [
             {
-                id: "single-l2", level: "DSE Level 2-3 (Intermediate)",
-                content: "Recent data shows a significant increase in single adults. Many individuals now **prioritize** their careers. For some, being single is a **deliberate** choice for independence. However, apps make finding connection **complicated**. The high **cost** of living makes it harder for **couples** to start families. This **social** trend is **reshaping** our values. People often **postpone** marriage for **stability**. It is a **global** phenomenon.",
+                id: "single-lv1", level: "DSE LV1 (Basic)",
+                content: "Many people live alone. The pandemic makes **dating** difficult. Phones and online apps change how people meet. These rules make it harder to find a partner. Some people feel **lonely** when they cannot meet the right person. This changes **society**. People need smaller houses and have fewer **children**. Experts do not know when this **trend** will stop.",
                 vocab: [
-                    { w: "prioritize", pos: "v.", d: "to treat something as more important than others", cn: "優先考慮", ex: "You should prioritize your health." },
-                    { w: "deliberate", pos: "adj.", d: "done on purpose; intentional", cn: "故意的", ex: "It was a deliberate decision." },
-                    { w: "complicated", pos: "adj.", d: "difficult to understand or deal with", cn: "複雜的", ex: "The situation is very complicated." },
-                    { w: "cost", pos: "n.", d: "the amount of money needed", cn: "成本", ex: "The cost of living is rising." },
-                    { w: "social", pos: "adj.", d: "relating to society", cn: "社會的", ex: "A major social change." },
-                    { w: "reshaping", pos: "v.", d: "changing the form or character of something", cn: "重塑", ex: "Technology is reshaping our lives." },
-                    { w: "postpone", pos: "v.", d: "to delay an event until a later time", cn: "延期", ex: "They had to postpone the wedding." },
-                    { w: "stability", pos: "n.", d: "the state of being steady and not changing", cn: "穩定", ex: "Economic stability is important." },
-                    { w: "global", pos: "adj.", d: "relating to the whole world", cn: "全球的", ex: "Climate change is a global issue." },
-                    { w: "couples", pos: "n.", d: "two people who are married or in a relationship", cn: "情侶/夫妻", ex: "Many young couples live in small flats." }
+                    { w: "dating", pos: "n.", d: "spending time with someone you like to be your partner", cn: "約會", ex: "Dating can be fun but also difficult." },
+                    { w: "lonely", pos: "adj.", d: "unhappy because you are not with other people", cn: "孤獨的", ex: "He felt lonely in the big city." },
+                    { w: "society", pos: "n.", d: "a large group of people living together", cn: "社會", ex: "Technology changes our society." },
+                    { w: "children", pos: "n.", d: "young human beings", cn: "孩子", ex: "Fewer children are being born now." },
+                    { w: "trend", pos: "n.", d: "a general direction in which something is changing", cn: "趨勢", ex: "The trend of living alone is growing." }
                 ]
-            }
-        ]
-    },
-    {
-        topic: "13/01/2026 Storm Goretti Hits Europe",
-        levels: [
+            },
             {
-                id: "goretti-l2", level: "DSE Level 2-3",
-                content: "Storm Goretti is causing **severe** disruptions. Moving from the Atlantic, it brought **intense** gusts and **torrential** rain. Many households lost **electricity**. Travel has been **impacted**. As the storm remains **active**, authorities urged citizens to stay **indoors**. The **damage** to **infrastructure** is **significant**. Emergency teams are working to **restore** power.",
+                id: "single-lv2", level: "DSE LV2-3 (Intermediate)",
+                content: "The number of single people grows because some adults stop **dating**. People miss learning how to handle **rejection**. Online apps allow people to choose partners with strict rules about jobs or height. This affects **society**, leading to a demand for smaller houses. These **factors** are **reshaping** our modern values.",
                 vocab: [
-                    { w: "severe", pos: "adj.", d: "very serious or extreme", cn: "嚴重的", ex: "The storm caused severe damage." },
-                    { w: "intense", pos: "adj.", d: "extreme in strength or degree", cn: "強烈的", ex: "The heat was intense." },
-                    { w: "torrential", pos: "adj.", d: "falling in large amounts (rain)", cn: "傾盆的", ex: "Torrential rain caused flooding." },
-                    { w: "electricity", pos: "n.", d: "power used for lights and heat", cn: "電力", ex: "The storm cut off the electricity." },
-                    { w: "impacted", pos: "v.", d: "strongly affected", cn: "影響", ex: "The strike impacted the train service." },
-                    { w: "active", pos: "adj.", d: "continuing to happen or move", cn: "活躍的", ex: "The volcano is still active." },
-                    { w: "indoors", pos: "adv.", d: "inside a building", cn: "戶內", ex: "Let's stay indoors today." },
-                    { w: "infrastructure", pos: "n.", d: "basic systems like roads and power", cn: "基礎建設", ex: "The city's infrastructure is old." },
-                    { w: "significant", pos: "adj.", d: "important or large in amount", cn: "顯著的/重要的", ex: "A significant increase in sales." },
-                    { w: "restore", pos: "v.", d: "to bring something back to its original condition", cn: "恢復", ex: "Power was restored after two hours." }
+                    { w: "dating", pos: "n.", d: "the activity of going out with someone", cn: "約會", ex: "Online dating is very popular now." },
+                    { w: "rejection", pos: "n.", d: "the act of refusing to accept someone", cn: "拒絕", ex: "Learning to handle rejection is important." },
+                    { w: "society", pos: "n.", d: "people in general living together in communities", cn: "社會", ex: "Single life is changing our society." },
+                    { w: "factors", pos: "n.", d: "facts or situations that influence a result", cn: "因素", ex: "Many factors cause people to stay single." },
+                    { w: "reshaping", pos: "v.", d: "changing the way something is organized", cn: "重塑", ex: "Technology is reshaping human relationships." }
+                ]
+            },
+            {
+                id: "single-lv4", level: "DSE LV4-5 (Advanced)",
+                content: "Younger adults often fail to manage feelings of **rejection** due to a lack of face-to-face interaction. Technology has granted more **freedom** in choosing partners, yet it has also reduced the pool of candidates. Even where genders are **equal**, the single population grows. This is a **global** **phenomenon** that affects urban planning and demographics.",
+                vocab: [
+                    { w: "rejection", pos: "n.", d: "the state of being not accepted or loved", cn: "拒絕", ex: "He feared rejection from his peers." },
+                    { w: "freedom", pos: "n.", d: "the power or right to act, speak, or think freely", cn: "自由", ex: "Women now have more freedom and education." },
+                    { w: "equal", pos: "adj.", d: "having the same rights, status, or opportunities", cn: "平等的", ex: "Men and women should be equal." },
+                    { w: "global", pos: "adj.", d: "relating to the whole world", cn: "全球的", ex: "The rise of singlehood is a global issue." },
+                    { w: "phenomenon", pos: "n.", d: "something that exists and can be seen or experienced", cn: "現象", ex: "This social phenomenon is very interesting." }
                 ]
             }
         ]
@@ -202,7 +185,8 @@ function selectLevel(gIdx, lIdx) {
 }
 
 function startQuiz() {
-    quizPool = shuffle([...activeArt.vocab]).slice(0, 5);
+    // 重點：每次開始測驗時，都將 5 個單字進行隨機排序 (Shuffle)
+    quizPool = shuffle([...activeArt.vocab]); 
     quizIdx = 0; score = 0;
     renderQuiz();
 }
@@ -214,6 +198,8 @@ function renderQuiz() {
     document.getElementById('quiz-article').innerHTML = formatText(activeArt.content, [q]);
     document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
+    
+    // 選項隨機排序
     const opts = shuffle([q, ...shuffle(activeArt.vocab.filter(v=>v.w!==q.w)).slice(0,3)]);
     const container = document.getElementById('options-container');
     container.innerHTML = "";
@@ -253,7 +239,7 @@ function nextStep() {
 
 function uploadResult() {
     const status = document.getElementById('upload-status');
-    const data = { name: studentID, topic: `${activeArt.topic} (Score: ${score}/5)` };
+    const data = { name: studentID, topic: `${activeArt.id} (Score: ${score}/5)` };
     fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
     .then(() => { status.innerText = "✅ 進度已同步至雲端。"; })
     .catch(() => { status.innerText = "❌ 同步失敗。"; });
@@ -290,7 +276,6 @@ function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
 function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
 
-// 啟動首頁
 initHome();
 </script>
 </body>
