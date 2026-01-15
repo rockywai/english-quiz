@@ -277,8 +277,18 @@ function nextStep() {
 
 function uploadResult() {
     const status = document.getElementById('upload-status');
-    const data = { name: studentID, topic: `${activeArt.id} (Score: ${score}/5)` };
-    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
+    // 修改這裡：分開傳送 topic 和 score
+    const data = { 
+        name: studentID, 
+        topic: activeArt.id, // 傳送題目 ID，如 "single-lv1"
+        score: score        // 傳送純數字分數，如 5
+    };
+
+    fetch(SCRIPT_URL, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: JSON.stringify(data) 
+    })
     .then(() => { status.innerText = "✅ 進度已同步至雲端。"; })
     .catch(() => { status.innerText = "❌ 同步失敗。"; });
 }
