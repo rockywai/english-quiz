@@ -273,20 +273,21 @@ function renderQuiz() {
     const q = quizPool[quizIdx];
     document.getElementById('quiz-header').innerText = `Progress: ${quizIdx + 1} / 5`;
     
-    // 文章內容 + 提示句
+    // 1. 文章內容 + 提示句 (修正處：確保這裡沒有多餘的 })
     const articleHtml = formatText(activeArt.content, [q]);
     const noticeHtml = `<div style="font-size:0.75rem; color:#9ca3af; margin-top:5px;">(內容經 AI 總結，原文連結請參考主頁)</div>`;
     
     document.getElementById('quiz-article').innerHTML = articleHtml + noticeHtml;
-    // ...其餘代碼不變
-}
+
+    // 2. 設定題目單字
     document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
     
-    // 選項隨機排序
+    // 3. 選項隨機排序
     const opts = shuffle([q, ...shuffle(activeArt.vocab.filter(v=>v.w!==q.w)).slice(0,3)]);
     const container = document.getElementById('options-container');
     container.innerHTML = "";
+    
     opts.forEach(o => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
@@ -297,13 +298,15 @@ function renderQuiz() {
             btn.classList.add(isCorrect ? 'correct' : 'wrong');
             if(isCorrect) score++;
             else {
-                document.querySelectorAll('.option-btn').forEach(b => { if(b.innerText === q.d) b.classList.add('correct'); });
+                document.querySelectorAll('.option-btn').forEach(b => { 
+                    if(b.innerText === q.d) b.classList.add('correct'); 
+                });
             }
             showFB(q, isCorrect);
         };
         container.appendChild(btn);
     });
-}
+} // <--- 函數應該在這裡結束
 
 function showFB(q, isCorrect) {
     const box = document.getElementById('fb-box');
