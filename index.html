@@ -31,7 +31,23 @@
         .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; }
         .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #065f46 !important; }
         .wrong { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b !important; }
-        .hidden { display: none; }
+        .hidden { 
+    display: none !important; 
+}
+
+/* 確保 overlay 初始狀態是隱藏的 */
+#modal-overlay { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.7); 
+    z-index: 1000; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
         
         /* Leaderboard Modal */
         #modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; display:flex; justify-content:center; align-items:center; }
@@ -91,7 +107,7 @@
     <div class="modal-content">
         <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee;">
             <span style="font-weight:bold">全班同步進度表</span>
-            <button onclick="closeLeaderboard()" style="border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
+            <button onclick="closeLeaderboard()" style="border:none; background:none; font-size:24px; cursor:pointer; padding: 10px;">✕</button>
         </div>
         <iframe src="https://docs.google.com/spreadsheets/d/1aF_kOYACbtaPKiFsqejyPDUQMiQskqNhtiElzIfkH6o/edit?usp=sharing"></iframe>
     </div>
