@@ -29,6 +29,24 @@
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; justify-content: center; align-items: center; }
         .modal-content { background: white; width: 90%; max-width: 500px; height: 80vh; border-radius: 15px; display: flex; flex-direction: column; }
         iframe { width: 100%; flex-grow: 1; border: none; border-radius: 0 0 15px 15px; }
+        .ai-notice {
+    background: #f0fdf4;      /* 淺綠色背景 */
+    border: 1px dashed #22c55e; /* 綠色虛線邊框 */
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #166534;
+    line-height: 1.5;
+}
+.ai-notice a {
+    color: var(--primary);
+    font-weight: bold;
+    text-decoration: none;
+}
+.ai-notice a:hover {
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
@@ -100,6 +118,7 @@ const newsGroups = [
         levels: [
             {
                 id: "single-lv1", level: "DSE LV1 (Basic)",
+                originalUrl: "https://www.newsinlevels.com/products/why-many-people-are-single-level-1/",
                 content: "Many people live alone. The pandemic makes **dating** difficult. Phones and online apps change how people meet. These rules make it harder to find a partner. Some people feel **lonely** when they cannot meet the right person. This changes **society**. People need smaller houses and have fewer **children**. Experts do not know when this **trend** will stop.",
                 vocab: [
                     { w: "dating", pos: "n.", d: "spending time with someone you like to be your partner", cn: "約會", ex: "Dating can be fun but also difficult." },
@@ -111,6 +130,7 @@ const newsGroups = [
             },
             {
                 id: "single-lv2", level: "DSE LV2-3 (Intermediate)",
+                originalUrl: "https://www.newsinlevels.com/products/why-many-people-are-single-level-1/",
                 content: "The number of single people grows because some adults stop **dating**. People miss learning how to handle **rejection**. Online apps allow people to choose partners with strict rules about jobs or height. This affects **society**, leading to a demand for smaller houses. These **factors** are **reshaping** our modern values.",
                 vocab: [
                     { w: "dating", pos: "n.", d: "the activity of going out with someone", cn: "約會", ex: "Online dating is very popular now." },
@@ -122,6 +142,7 @@ const newsGroups = [
             },
             {
                 id: "single-lv4", level: "DSE LV4-5 (Advanced)",
+                originalUrl: "https://www.newsinlevels.com/products/why-many-people-are-single-level-1/",
                 content: "Younger adults often fail to manage feelings of **rejection** due to a lack of face-to-face interaction. Technology has granted more **freedom** in choosing partners, yet it has also reduced the pool of candidates. Even where genders are **equal**, the single population grows. This is a **global** **phenomenon** that affects urban planning and demographics.",
                 vocab: [
                     { w: "rejection", pos: "n.", d: "the state of being not accepted or loved", cn: "拒絕", ex: "He feared rejection from his peers." },
@@ -138,6 +159,7 @@ const newsGroups = [
         levels: [
             {
                 id: "storm-lv1", level: "DSE LV1 (Basic)",
+                originalUrl: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-1/",
                 content: "A big storm named Goretti is in Europe. It brings strong **wind** and a lot of rain. Many people have no **electricity**. It is difficult to travel by train or plane. The storm is **dangerous**, so people should stay **indoors**. It is moving **across** many countries.",
                 vocab: [
                     { w: "wind", pos: "n.", d: "moving air", cn: "風", ex: "The strong wind broke the tree." },
@@ -149,6 +171,7 @@ const newsGroups = [
             },
             {
                 id: "storm-lv2", level: "DSE LV2-3 (Intermediate)",
+                originalUrl: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-2/",
                 content: "Storm Goretti is causing **severe** problems in Europe. It brought **intense** winds and heavy rain. Thousands of homes lost power. Travel is **impacted**, and many flights are cancelled. Authorities told people to be careful. They are working to **restore** the power. The **damage** is very large in some cities.",
                 vocab: [
                     { w: "severe", pos: "adj.", d: "very serious or bad", cn: "嚴重的", ex: "The city suffered severe flooding." },
@@ -160,6 +183,7 @@ const newsGroups = [
             },
             {
                 id: "storm-lv4", level: "DSE LV4-5 (Advanced)",
+                originalUrl: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-3/",
                 content: "Storm Goretti, a powerful Atlantic storm, has led to **widespread** disruptions across Europe. Meteorologists reported **torrential** rain and record-breaking gusts. The **infrastructure** of several coastal towns was heavily damaged. Emergency services remain **active** to help citizens. This event shows how **significant** weather patterns are changing due to the climate.",
                 vocab: [
                     { w: "widespread", pos: "adj.", d: "existing or happening in many places", cn: "廣泛的", ex: "There is widespread support for the new law." },
@@ -214,7 +238,21 @@ function selectLevel(gIdx, lIdx) {
     activeArt = newsGroups[gIdx].levels[lIdx];
     toggleScreen('study-screen');
     updateNav(activeArt.level);
-    document.getElementById('study-article').innerHTML = formatText(activeArt.content, activeArt.vocab);
+    
+    // 渲染文章內容
+    const articleHtml = formatText(activeArt.content, activeArt.vocab);
+    
+    // 加入醒目提示句子和連結
+    const noticeHtml = `
+        <div class="ai-notice">
+            💡 以上內容只是 AI 對文章加以簡單總結後的結果，可以
+            <a href="${activeArt.originalUrl}" target="_blank">點擊這裡閱讀原文</a>。
+        </div>
+    `;
+    
+    document.getElementById('study-article').innerHTML = articleHtml + noticeHtml;
+    
+    // 渲染詞彙列表
     document.getElementById('vocab-preview-list').innerHTML = activeArt.vocab.map(v => `
         <div class="vocab-card">
             <div class="vocab-header"><span>${v.w}</span><span>${v.pos} ${v.cn}</span></div>
@@ -234,7 +272,14 @@ function renderQuiz() {
     toggleScreen('quiz-screen');
     const q = quizPool[quizIdx];
     document.getElementById('quiz-header').innerText = `Progress: ${quizIdx + 1} / 5`;
-    document.getElementById('quiz-article').innerHTML = formatText(activeArt.content, [q]);
+    
+    // 文章內容 + 提示句
+    const articleHtml = formatText(activeArt.content, [q]);
+    const noticeHtml = `<div style="font-size:0.75rem; color:#9ca3af; margin-top:5px;">(內容經 AI 總結，原文連結請參考主頁)</div>`;
+    
+    document.getElementById('quiz-article').innerHTML = articleHtml + noticeHtml;
+    // ...其餘代碼不變
+}
     document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
     
