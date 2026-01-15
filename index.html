@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE 英文詞彙自學系統 V3.8</title>
+    <title>DSE 英文詞彙自學系統 V4.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; --info-bg: #eff6ff; --info-border: #bfdbfe; }
@@ -11,71 +11,64 @@
         .app-container { width: 100%; max-width: 600px; min-height: 100vh; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
         
         .nav-bar { padding: 15px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .nav-btn { background: none; border: 1px solid #d1d5db; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #4b5563; transition: 0.2s; }
-        .nav-btn:hover { background: #f9fafb; border-color: var(--primary); color: var(--primary); }
+        .nav-btn { background: none; border: 1px solid #d1d5db; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #4b5563; }
 
         .content-padding { padding: 20px; flex-grow: 1; }
+        .leaderboard-btn { width: 100%; padding: 15px; background: #374151; color: white; border-radius: 12px; border: none; font-weight: bold; margin-bottom: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
         
         .topic-card { margin-bottom: 15px; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: white; }
         .topic-header { width: 100%; padding: 18px; background: white; border: none; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .topic-title { font-size: 1.1rem; font-weight: bold; color: #111827; }
         .level-container { background: #f9fafb; display: none; padding: 10px; border-top: 1px solid #eee; gap: 8px; flex-direction: column; }
-        .level-btn { width: 100%; padding: 12px; border: 1px solid #d1d5db; background: white; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
-        .level-btn:hover { border-color: var(--primary); color: var(--primary); background: #f0f7ff; }
+        .level-btn { width: 100%; padding: 12px; border: 1px solid #d1d5db; background: white; border-radius: 8px; cursor: pointer; }
 
-        .ai-notice { background: var(--info-bg); border: 1px solid var(--info-border); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; color: #1e40af; display: flex; align-items: flex-start; gap: 8px; }
         .article-section { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 10px; line-height: 1.8; font-size: 1.05rem; max-height: 250px; overflow-y: auto; }
-        .highlight { font-weight: bold; text-decoration: underline; color: #1f2937; background: #fef08a; padding: 0 2px; }
+        .highlight { font-weight: bold; text-decoration: underline; background: #fef08a; }
 
         .vocab-card { border-left: 4px solid var(--primary); background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .vocab-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); }
-        .vocab-example { font-size: 0.9rem; color: #6b7280; font-style: italic; margin-top: 5px; background: white; padding: 5px; border-radius: 4px; }
 
         .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; line-height: 1.4; }
-        .cn-hint { font-size: 0.9rem; color: #6b7280; display: block; margin-top: 2px; }
+        .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; }
         .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #065f46 !important; }
         .wrong { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b !important; }
         .hidden { display: none; }
-        .progress-bar-wrap { height: 6px; background: #e5e7eb; border-radius: 3px; margin: 10px 0; }
-        .progress-bar-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+        
+        /* Leaderboard Modal */
+        #modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; display:flex; justify-content:center; align-items:center; }
+        .modal-content { background:white; width:90%; max-width:500px; height:80vh; border-radius:15px; display:flex; flex-direction:column; }
+        iframe { width:100%; flex-grow:1; border:none; border-radius:0 0 15px 15px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div id="nav-bar" class="nav-bar hidden">
-        <button class="nav-btn" onclick="goHome()">🏠 首頁</button>
+        <button class="nav-btn" onclick="goHome()">🏠 主頁</button>
         <div id="nav-title" style="font-weight: bold; font-size: 0.9rem;"></div>
-        <button id="back-step-btn" class="nav-btn" onclick="goBack()">⬅️ 上一步</button>
+        <div style="width:50px"></div>
     </div>
 
     <div class="content-padding">
         <div id="home-screen">
+            <button class="leaderboard-btn" onclick="openLeaderboard()">📊 查看全班學習進度</button>
             <h2 style="margin-top:0;">📚 DSE 詞彙自學庫</h2>
             <div id="user-info-display" style="font-size: 0.9rem; color: var(--primary); margin-bottom: 10px; font-weight: bold;"></div>
-            <p style="color:#6b7280;">選擇主題後，再選擇適合的難度：</p>
             <div id="topic-list"></div>
         </div>
 
         <div id="study-screen" class="hidden">
-            <div class="ai-notice">
-                <span>💡</span>
-                <span>以下文章只是用 AI 總結過的精簡版本，有興趣的話可以按下方連結到網站閱讀原文。</span>
-            </div>
-            <h3 style="margin-top:0;">第一步：文章預習</h3>
+            <h3 style="margin-top:0;">第一步：重點詞彙 (10個)</h3>
             <div id="study-article" class="article-section"></div>
-            <a id="source-link-study" href="#" target="_blank" style="color:var(--primary); font-size:0.9rem;">🔗 閱讀原文 (News in Levels)</a>
-            <div id="vocab-preview-list" style="margin-top:20px;"></div>
-            <button class="btn-primary" onclick="startQuiz()" style="margin-top:20px;">✅ 我讀完了，開始測試！</button>
+            <div id="vocab-preview-list"></div>
+            <button class="btn-primary" onclick="startQuiz()" style="margin-top:20px;">✅ 預習完畢，開始 5 題隨機測驗</button>
         </div>
 
         <div id="quiz-screen" class="hidden">
-            <div class="progress-bar-wrap"><div id="progress-bar" class="progress-bar-fill"></div></div>
-            <div id="quiz-article" class="article-section" style="max-height: 180px; font-size: 0.95rem;"></div>
+            <div id="quiz-header" style="font-size: 0.9rem; color: #6b7280; margin-bottom: 10px;"></div>
+            <div id="quiz-article" class="article-section" style="max-height: 150px; font-size: 0.95rem;"></div>
             <div style="text-align:center; margin: 15px 0;">
-                <span style="color:#6b7280; font-size:0.9rem;">文中「<u>粗體底線</u>」字的意思是：</span>
-                <h2 id="current-word" style="font-size: 2.2rem; margin: 5px 0;"></h2>
+                <span style="color:#6b7280;">Meaning of:</span>
+                <h2 id="current-word" style="font-size: 2.2rem; margin: 5px 0; color: var(--primary);"></h2>
             </div>
             <div id="options-container"></div>
             <div id="fb-box" class="hidden" style="margin-top:15px; padding:15px; border-radius:10px; background:#f8fafc; border:1px solid var(--primary);">
@@ -86,18 +79,25 @@
         </div>
 
         <div id="result-screen" class="hidden" style="text-align:center;">
-            <div style="font-size:60px;">🌟</div>
-            <h2>完成學習！</h2>
-            <p id="upload-status" style="font-size: 0.9rem; color: #6b7280;">正在同步進度...</p>
-            <button class="btn-primary" onclick="goHome()">返回主題列表</button>
+            <div style="font-size:60px;">🎉</div>
+            <h2>測驗完成！</h2>
+            <p id="upload-status">正在同步進度...</p>
+            <button class="btn-primary" onclick="goHome()">返回目錄頁</button>
         </div>
     </div>
 </div>
 
+<div id="modal-overlay" class="hidden">
+    <div class="modal-content">
+        <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee;">
+            <span style="font-weight:bold">全班同步進度表</span>
+            <button onclick="closeLeaderboard()" style="border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
+        </div>
+        <iframe src="https://docs.google.com/spreadsheets/d/1aF_kOYACbtaPKiFsqejyPDUQMiQskqNhtiElzIfkH6o/edit?usp=sharing"></iframe>
+    </div>
+</div>
+
 <script>
-/* ==========================================
-   設定區
-   ========================================== */
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyI3aOqDNWgweOiRSW10esnLxZUr4jUclUAtgR1N6Q7Aja6AkR6O4LH-cQg_yqiAjbZQA/exec'; 
 let studentID = ""; 
 
@@ -106,121 +106,40 @@ const newsGroups = [
         topic: "15/01/2026 Why Many People are Single",
         levels: [
             {
-                id: "single-l1", level: "DSE Level 1 (Foundation)",
-                url: "https://www.newsinlevels.com/products/why-many-people-are-single-level-1/",
-                content: "Today, more and more people are single. Many people do not have a **partner**. Some people like to be alone because they feel **free**. They can do what they want every day. Other people want to find love, but it is **difficult**. They use apps, but they do not find the right person. Also, living alone is very **expensive** now. People need more money for rent and food. Experts say this is a big **change** in our world.",
-                vocab: [
-                    { w: "partner", pos: "n.", d: "a person you are in a relationship with", cn: "伴侶", ex: "She is looking for a traveling partner." },
-                    { w: "free", pos: "adj.", d: "not limited; able to do what you want", cn: "自由的", ex: "Being single makes me feel very free." },
-                    { w: "difficult", pos: "adj.", d: "not easy", cn: "困難的", ex: "It is difficult to find a job these days." },
-                    { w: "expensive", pos: "adj.", d: "costing a lot of money", cn: "昂貴的", ex: "Living in Hong Kong is very expensive." },
-                    { w: "change", pos: "n.", d: "when something becomes different", cn: "改變", ex: "There is a big change in the weather." }
-                ]
-            },
-            {
                 id: "single-l2", level: "DSE Level 2-3 (Intermediate)",
-                url: "https://www.newsinlevels.com/products/why-many-people-are-single-level-2/",
-                content: "Recent data shows a significant increase in the number of single adults worldwide. Many individuals now **prioritize** their careers and personal interests over traditional marriage. For some, being single is a **deliberate** choice that allows them to enjoy their independence. However, the rise of dating apps has made finding a meaningful connection more **complicated** than before. Furthermore, the high **cost** of living makes it harder for young couples to start a family together. This growing **social** trend is reshaping how we think about relationships.",
+                content: "Recent data shows a significant increase in single adults. Many individuals now **prioritize** their careers. For some, being single is a **deliberate** choice for independence. However, apps make finding connection **complicated**. The high **cost** of living makes it harder for **couples** to start families. This **social** trend is **reshaping** our values. People often **postpone** marriage for **stability**. It is a **global** phenomenon.",
                 vocab: [
-                    { w: "prioritize", pos: "v.", d: "to treat something as more important than others", cn: "優先考慮", ex: "You should prioritize your health over work." },
-                    { w: "deliberate", pos: "adj.", d: "done on purpose; intentional", cn: "故意的", ex: "It was a deliberate decision to stay single." },
-                    { w: "complicated", pos: "adj.", d: "involved or difficult to understand", cn: "複雜的", ex: "The situation is more complicated than it looks." },
-                    { w: "cost", pos: "n.", d: "the amount of money needed for something", cn: "成本", ex: "The cost of housing is rising rapidly." },
-                    { w: "social", pos: "adj.", d: "relating to society", cn: "社會的", ex: "Social media has changed how we communicate." }
-                ]
-            },
-            {
-                id: "single-l3", level: "DSE Level 4-5 (Advanced)",
-                url: "https://www.newsinlevels.com/products/why-many-people-are-single-level-3/",
-                content: "The global surge in singlehood is a multifaceted phenomenon that reflects a profound **transformation** in contemporary values. Sociologists suggest that many young professionals now **embrace** solo living as a means of achieving self-actualization and personal autonomy. However, this shift is not purely driven by choice; economic **instability** and the skyrocketing prices of urban real estate have created significant barriers to forming traditional households. While digital platforms promise to facilitate connections, many users find the experience **superficial**, leading to a sense of exhaustion. Ultimately, this trend signals a need for society to **adapt** to a future where diverse living arrangements become the new norm.",
-                vocab: [
-                    { w: "transformation", pos: "n.", d: "a complete change in form", cn: "轉變 / 變革", ex: "The city has undergone a huge transformation." },
-                    { w: "embrace", pos: "v.", d: "to accept something enthusiastically", cn: "擁抱", ex: "Many people embrace the idea of remote work." },
-                    { w: "instability", pos: "n.", d: "the state of being likely to fail", cn: "不穩定", ex: "Political instability can harm the economy." },
-                    { w: "superficial", pos: "adj.", d: "only on the surface; not deep", cn: "膚淺的", ex: "Their friendship was quite superficial." },
-                    { w: "adapt", pos: "v.", d: "to change to suit different conditions", cn: "適應", ex: "We must adapt to the changing climate." }
-                ]
-            }
-        ]
-    }, // <-- 確保這裡有逗號
-    {
-        topic: "13/01/2026 Storm Goretti Hits Europe",
-        levels: [
-            {
-                id: "goretti-l1", level: "DSE Level 1",
-                url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-1/",
-                content: "A big storm is hitting Europe. It is called Storm Goretti. The **storm** is moving across many countries. It brings very strong wind and heavy rain. Many people have no **power** in their homes. This is because the wind broke the lines. The storm is **dangerous** for travelers. Many **flights** are not moving. The storm will **hit** more places tomorrow.",
-                vocab: [
-                    { w: "storm", pos: "n.", d: "bad weather with wind and rain", cn: "風暴", ex: "The storm lasted for three days." },
-                    { w: "power", pos: "n.", d: "electricity", cn: "電力", ex: "The storm cut off the power." },
-                    { w: "dangerous", pos: "adj.", d: "not safe", cn: "危險的", ex: "It's dangerous to go out now." },
-                    { w: "flights", pos: "n.", d: "journeys in a plane", cn: "航班", ex: "All flights were delayed." },
-                    { w: "hit", pos: "v.", d: "to come to a place with force", cn: "侵襲", ex: "The storm hit the coast." }
-                ]
-            },
-            {
-                id: "goretti-l2", level: "DSE Level 2-3",
-                url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-2/",
-                content: "Storm Goretti is currently causing **severe** disruptions. Moving rapidly from the Atlantic, the storm has brought a combination of intense gusts and torrential rain. Thousands of households are struggling without **electricity** after wind-damaged lines failed. Air travel has been significantly **impacted**. As the storm remains **active**, authorities have urged citizens to stay **indoors**.",
-                vocab: [
-                    { w: "severe", pos: "adj.", d: "very serious or intense", cn: "嚴重的", ex: "The storm caused severe damage." },
-                    { w: "electricity", pos: "n.", d: "power used for lighting", cn: "電力", ex: "The city lost electricity." },
-                    { w: "impacted", pos: "v.", d: "strongly affected", cn: "影響", ex: "The delay impacted our schedule." },
-                    { w: "active", pos: "adj.", d: "continuing to happen", cn: "活躍的", ex: "The storm is still active." },
-                    { w: "indoors", pos: "adv.", d: "inside a building", cn: "戶內", ex: "It is safer to stay indoors." }
-                ]
-            },
-            {
-                id: "goretti-l3", level: "DSE Level 4-5",
-                url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-3/",
-                content: "Storm Goretti is currently **wreaking havoc** across Europe. Meteorological services have issued warnings, noting that the storm’s **unprecedented** intensity is a rare occurrence. This weather has severely compromised the region's **infrastructure**, leading to widespread blackouts. While emergency teams work to **mitigate** the damage, the storm’s path remains **unpredictable**.",
-                vocab: [
-                    { w: "wreaking havoc", pos: "phr.", d: "causing widespread destruction", cn: "造成嚴重破壞", ex: "The storm is wreaking havoc." },
-                    { w: "unprecedented", pos: "adj.", d: "never having happened before", cn: "史無前例的", ex: "The disaster was unprecedented." },
-                    { w: "infrastructure", pos: "n.", d: "basic physical structures", cn: "基礎建設", ex: "Investment in infrastructure is vital." },
-                    { w: "mitigate", pos: "v.", d: "to make something less harmful", cn: "減輕", ex: "New laws help mitigate climate change." },
-                    { w: "unpredictable", pos: "adj.", d: "likely to change suddenly", cn: "難以預測的", ex: "The market is unpredictable." }
+                    { w: "prioritize", pos: "v.", d: "to treat something as more important than others", cn: "優先考慮", ex: "You should prioritize your health." },
+                    { w: "deliberate", pos: "adj.", d: "done on purpose; intentional", cn: "故意的", ex: "It was a deliberate decision." },
+                    { w: "complicated", pos: "adj.", d: "difficult to understand or deal with", cn: "複雜的", ex: "The situation is very complicated." },
+                    { w: "cost", pos: "n.", d: "the amount of money needed", cn: "成本", ex: "The cost of living is rising." },
+                    { w: "social", pos: "adj.", d: "relating to society", cn: "社會的", ex: "A major social change." },
+                    { w: "reshaping", pos: "v.", d: "changing the form or character of something", cn: "重塑", ex: "Technology is reshaping our lives." },
+                    { w: "postpone", pos: "v.", d: "to delay an event until a later time", cn: "延期", ex: "They had to postpone the wedding." },
+                    { w: "stability", pos: "n.", d: "the state of being steady and not changing", cn: "穩定", ex: "Economic stability is important." },
+                    { w: "global", pos: "adj.", d: "relating to the whole world", cn: "全球的", ex: "Climate change is a global issue." },
+                    { w: "couples", pos: "n.", d: "two people who are married or in a relationship", cn: "情侶/夫妻", ex: "Many young couples live in small flats." }
                 ]
             }
         ]
     },
     {
-        topic: "12/01/2026 Denmark Schools Use Books Again",
+        topic: "13/01/2026 Storm Goretti Hits Europe",
         levels: [
             {
-                id: "denmark-l1", level: "DSE Level 1",
-                url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-1/",
-                content: "Schools in Denmark are making a big change. For years, students used tablets, but now they are using **paper** books again. Many teachers think screens make it hard for children to **concentrate**. They believe that reading from a real book is **better** for the brain. Parents are happy because children spend less **time** on digital devices. This is a new **trend** in Europe.",
+                id: "goretti-l2", level: "DSE Level 2-3",
+                content: "Storm Goretti is causing **severe** disruptions. Moving from the Atlantic, it brought **intense** gusts and **torrential** rain. Many households lost **electricity**. Travel has been **impacted**. As the storm remains **active**, authorities urged citizens to stay **indoors**. The **damage** to **infrastructure** is **significant**. Emergency teams are working to **restore** power.",
                 vocab: [
-                    { w: "paper", pos: "n.", d: "material for writing", cn: "紙張", ex: "I prefer reading on paper." },
-                    { w: "concentrate", pos: "v.", d: "to give all your attention", cn: "專注", ex: "It's hard to concentrate." },
-                    { w: "better", pos: "adj.", d: "higher in quality", cn: "較好的", ex: "Real books are better." },
-                    { w: "time", pos: "n.", d: "period of something", cn: "時間", ex: "Limit your screen time." },
-                    { w: "trend", pos: "n.", d: "a general direction of change", cn: "趨勢", ex: "A new trend in education." }
-                ]
-            },
-            {
-                id: "denmark-l2", level: "DSE Level 2-3",
-                url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-2/",
-                content: "Danish schools are **reintroducing** physical textbooks. Educational experts argue that tablets might **hinder** the development of deep reading skills. Teachers have observed that it is difficult to **focus** on lengthy texts when distracted by notifications. Consequently, the government is **funding** new initiatives. This shift reflects a growing **awareness** of technology's downsides.",
-                vocab: [
-                    { w: "reintroducing", pos: "v.", d: "to bring something back", cn: "重新引入", ex: "The brand is reintroducing the design." },
-                    { w: "hinder", pos: "v.", d: "to limit the ability of someone", cn: "阻礙", ex: "Fear can hinder your performance." },
-                    { w: "focus", pos: "v.", d: "to give a lot of attention", cn: "集中", ex: "The meeting will focus on the budget." },
-                    { w: "funding", pos: "v.", d: "providing money", cn: "資助", ex: "The project is funding research." },
-                    { w: "awareness", pos: "n.", d: "knowledge of a situation", cn: "意識", ex: "Public awareness is vital." }
-                ]
-            },
-            {
-                id: "denmark-l3", level: "DSE Level 4-5",
-                url: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-3/",
-                content: "In a move that signals a significant **paradigm shift**, Denmark has begun reversing its digital-first policy. This retreat is fueled by evidence suggesting that **excessive** exposure to screens has **impaired** students' cognitive development. Education ministers are now **advocating** for printed materials. While some remain **skeptical**, the consensus is that a balance must be struck.",
-                vocab: [
-                    { w: "paradigm shift", pos: "n.", d: "a fundamental change in approach", cn: "重大變革", ex: "The internet led to a paradigm shift." },
-                    { w: "excessive", pos: "adj.", d: "much more than reasonable", cn: "過度的", ex: "Excessive sugar is bad." },
-                    { w: "impaired", pos: "v./adj.", d: "weakened or damaged", cn: "受損的", ex: "His hearing was impaired." },
-                    { w: "advocating", pos: "v.", d: "publicly supporting a cause", cn: "倡導", ex: "She is advocating for a new schedule." },
-                    { w: "skeptical", pos: "adj.", d: "doubting that something is true", cn: "懷疑的", ex: "Many are skeptical about the law." }
+                    { w: "severe", pos: "adj.", d: "very serious or extreme", cn: "嚴重的", ex: "The storm caused severe damage." },
+                    { w: "intense", pos: "adj.", d: "extreme in strength or degree", cn: "強烈的", ex: "The heat was intense." },
+                    { w: "torrential", pos: "adj.", d: "falling in large amounts (rain)", cn: "傾盆的", ex: "Torrential rain caused flooding." },
+                    { w: "electricity", pos: "n.", d: "power used for lights and heat", cn: "電力", ex: "The storm cut off the electricity." },
+                    { w: "impacted", pos: "v.", d: "strongly affected", cn: "影響", ex: "The strike impacted the train service." },
+                    { w: "active", pos: "adj.", d: "continuing to happen or move", cn: "活躍的", ex: "The volcano is still active." },
+                    { w: "indoors", pos: "adv.", d: "inside a building", cn: "戶內", ex: "Let's stay indoors today." },
+                    { w: "infrastructure", pos: "n.", d: "basic systems like roads and power", cn: "基礎建設", ex: "The city's infrastructure is old." },
+                    { w: "significant", pos: "adj.", d: "important or large in amount", cn: "顯著的/重要的", ex: "A significant increase in sales." },
+                    { w: "restore", pos: "v.", d: "to bring something back to its original condition", cn: "恢復", ex: "Power was restored after two hours." }
                 ]
             }
         ]
@@ -230,20 +149,17 @@ const newsGroups = [
 let activeArt = null;
 let quizPool = [];
 let quizIdx = 0;
-let wrongs = [];
+let score = 0;
 
 function checkUserID() {
     while (true) {
         let input = prompt("請輸入 4 位學生編號 (5501 - 5540):");
         if (input === null) continue; 
-        let num = parseInt(input);
-        if (num >= 5501 && num <= 5540 && input.length === 4) {
+        if (/^55[0-4][0-9]$/.test(input) && input >= 5501 && input <= 5540) {
             studentID = input;
             document.getElementById('user-info-display').innerText = `👤 學生編號: ${studentID}`;
             break;
-        } else {
-            alert("⚠️ 輸入錯誤！請輸入 5501 至 5540 之間的 4 位數字。");
-        }
+        } else { alert("⚠️ 請輸入 5501 至 5540。"); }
     }
 }
 
@@ -267,56 +183,49 @@ function initHome() {
     });
 }
 
-function toggleTopic(idx) {
-    const target = document.getElementById(`levels-${idx}`);
-    const isVisible = target.style.display === 'flex';
-    document.querySelectorAll('.level-container').forEach(c => c.style.display = 'none');
-    target.style.display = isVisible ? 'none' : 'flex';
-}
-
 function selectLevel(gIdx, lIdx) {
     activeArt = newsGroups[gIdx].levels[lIdx];
     toggleScreen('study-screen');
-    updateNav(activeArt.level, true);
+    updateNav(activeArt.level);
     document.getElementById('study-article').innerHTML = formatText(activeArt.content, activeArt.vocab);
-    document.getElementById('source-link-study').href = activeArt.url;
     document.getElementById('vocab-preview-list').innerHTML = activeArt.vocab.map(v => `
         <div class="vocab-card">
             <div class="vocab-header"><span>${v.w}</span><span>${v.pos} ${v.cn}</span></div>
-            <div style="font-size:0.9rem">${v.d}</div>
-            <div class="vocab-example">Ex: ${v.ex}</div>
+            <div style="font-size:0.85rem">${v.d}</div>
         </div>
     `).join('');
 }
 
 function startQuiz() {
-    quizPool = shuffle([...activeArt.vocab]);
-    quizIdx = 0; wrongs = [];
+    // 從 10 個單字中隨機抽取 5 個
+    quizPool = shuffle([...activeArt.vocab]).slice(0, 5);
+    quizIdx = 0; score = 0;
     renderQuiz();
 }
 
 function renderQuiz() {
     toggleScreen('quiz-screen');
     const q = quizPool[quizIdx];
-    updateNav(`測驗中 ${quizIdx+1}/${quizPool.length}`, true);
-    document.getElementById('progress-bar').style.width = `${(quizIdx/quizPool.length)*100}%`;
+    document.getElementById('quiz-header').innerText = `Progress: ${quizIdx + 1} / 5`;
     document.getElementById('quiz-article').innerHTML = formatText(activeArt.content, [q]);
     document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
+    
+    // 生成選項 (不含中文)
     const opts = shuffle([q, ...shuffle(activeArt.vocab.filter(v=>v.w!==q.w)).slice(0,3)]);
     const container = document.getElementById('options-container');
     container.innerHTML = "";
     opts.forEach(o => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.innerHTML = `${o.d} <span class="cn-hint">(${o.cn})</span>`;
+        btn.innerText = o.d; // 僅顯示英文定義
         btn.onclick = () => {
             document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
             const isCorrect = o.w === q.w;
             btn.classList.add(isCorrect ? 'correct' : 'wrong');
-            if(!isCorrect) {
-                wrongs.push(q);
-                document.querySelectorAll('.option-btn').forEach(b => { if(b.innerText.includes(q.d)) b.classList.add('correct'); });
+            if(isCorrect) score++;
+            else {
+                document.querySelectorAll('.option-btn').forEach(b => { if(b.innerText === q.d) b.classList.add('correct'); });
             }
             showFB(q, isCorrect);
         };
@@ -327,17 +236,14 @@ function renderQuiz() {
 function showFB(q, isCorrect) {
     const box = document.getElementById('fb-box');
     box.classList.remove('hidden');
-    document.getElementById('fb-result').innerHTML = isCorrect ? "<span style='color:var(--success)'>✅ Correct!</span>" : "<span style='color:var(--danger)'>❌ Wrong!</span>";
-    document.getElementById('fb-detail').innerHTML = `<b>${q.w}</b> (${q.pos} ${q.cn})<br><i>Ex: ${q.ex}</i>`;
+    document.getElementById('fb-result').innerHTML = isCorrect ? "<span style='color:var(--success)'>✅ Correct!</span>" : "<span style='color:var(--danger)'>❌ Incorrect</span>";
+    document.getElementById('fb-detail').innerHTML = `<b>${q.w}</b>: ${q.cn}<br><i>Ex: ${q.ex}</i>`;
 }
 
 function nextStep() {
     quizIdx++;
     if(quizIdx < quizPool.length) renderQuiz();
-    else if(wrongs.length > 0) {
-        alert(`複習時間：重新挑戰 ${wrongs.length} 個剛才答錯的單字！`);
-        quizPool = shuffle([...wrongs]); quizIdx = 0; wrongs = []; renderQuiz();
-    } else {
+    else {
         uploadResult(); 
         toggleScreen('result-screen');
     }
@@ -345,19 +251,17 @@ function nextStep() {
 
 function uploadResult() {
     const status = document.getElementById('upload-status');
-    status.innerText = "正在同步進度到 Google Sheet...";
-    const data = { name: studentID, topic: `${activeArt.topic} (${activeArt.level})` };
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    }).then(() => {
-        status.innerText = "✅ 進度已成功同步！";
-    }).catch(() => {
-        status.innerText = "❌ 同步失敗，請檢查網路。";
-    });
+    const data = { name: studentID, topic: `${activeArt.topic} (Score: ${score}/5)` };
+    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
+    .then(() => { status.innerText = "✅ 進度已同步至雲端。"; })
+    .catch(() => { status.innerText = "❌ 同步失敗。"; });
+}
+
+function toggleTopic(idx) {
+    const t = document.getElementById(`levels-${idx}`);
+    const v = t.style.display === 'flex';
+    document.querySelectorAll('.level-container').forEach(c => c.style.display = 'none');
+    t.style.display = v ? 'none' : 'flex';
 }
 
 function formatText(text, list) {
@@ -370,21 +274,4 @@ function formatText(text, list) {
 }
 
 function toggleScreen(id) {
-    ['home-screen', 'study-screen', 'quiz-screen', 'result-screen'].forEach(s => document.getElementById(s).classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-}
-
-function updateNav(title, showBack) {
-    document.getElementById('nav-bar').classList.remove('hidden');
-    document.getElementById('nav-title').innerText = title;
-    document.getElementById('back-step-btn').style.visibility = showBack ? 'visible' : 'hidden';
-}
-
-function goHome() { document.getElementById('nav-bar').classList.add('hidden'); toggleScreen('home-screen'); initHome(); }
-function goBack() { goHome(); }
-function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
-
-initHome();
-</script>
-</body>
-</html>
+    ['home-screen', 'study-screen', 'quiz-screen', 'result-screen'].forEach(s => document
