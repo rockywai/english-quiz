@@ -3,39 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE 英文詞彙自學系統 V3.1</title>
+    <title>DSE 英文詞彙自學系統 V3.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; }
+        :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; --info-bg: #eff6ff; --info-border: #bfdbfe; }
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; color: #1f2937; }
         .app-container { width: 100%; max-width: 600px; min-height: 100vh; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
         
-        /* 導航欄 */
         .nav-bar { padding: 15px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .nav-btn { background: none; border: 1px solid #d1d5db; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #4b5563; transition: 0.2s; }
         .nav-btn:hover { background: #f9fafb; border-color: var(--primary); color: var(--primary); }
 
         .content-padding { padding: 20px; flex-grow: 1; }
         
-        /* 文章閱讀區 */
+        /* AI 提示區樣式 */
+        .ai-notice { background: var(--info-bg); border: 1px solid var(--info-border); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; color: #1e40af; display: flex; align-items: flex-start; gap: 8px; }
+
         .article-section { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 10px; line-height: 1.8; font-size: 1.05rem; max-height: 250px; overflow-y: auto; }
-        /* 改動1：重點字改為粗體 + 底線 */
         .highlight { font-weight: bold; text-decoration: underline; color: #1f2937; background: #fef08a; padding: 0 2px; }
 
-        /* 原文連結按鈕 */
         .link-btn { display: inline-flex; align-items: center; color: #4f46e5; font-size: 0.9rem; text-decoration: none; margin-bottom: 20px; font-weight: 500; }
         .link-btn:hover { text-decoration: underline; }
 
-        /* 單字卡片 (預習用) */
         .vocab-card { border-left: 4px solid var(--primary); background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .vocab-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); }
         .vocab-example { font-size: 0.9rem; color: #6b7280; font-style: italic; margin-top: 5px; background: white; padding: 5px; border-radius: 4px; }
 
-        /* 按鈕與選項 */
         .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; line-height: 1.4; }
         .option-btn:hover { border-color: var(--primary); background: #f0f7ff; }
-        /* 改動2：選項中的中文提示樣式 */
         .cn-hint { font-size: 0.9rem; color: #6b7280; display: block; margin-top: 2px; }
         
         .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #065f46 !important; }
@@ -64,6 +60,10 @@
         </div>
 
         <div id="study-screen" class="hidden">
+            <div class="ai-notice">
+                <span>💡</span>
+                <span>以下文章只是用 AI 總結過的精簡版本，有興趣的話可以按下方連結到網站閱讀原文。</span>
+            </div>
             <h3 style="margin-top:0;">第一步：文章預習</h3>
             <div id="study-article" class="article-section"></div>
             <a id="source-link-study" href="#" target="_blank" class="link-btn">🔗 閱讀原文 (News in Levels)</a>
@@ -105,10 +105,10 @@
 
 <script>
 /* ==========================================
-   數據保存區
+   數據保存區 (包含 Storm Goretti Level 2)
    ========================================== */
 const newsData = [
-    {
+   {
         id: "goretti-l1",
         title: "Storm Goretti Hits Europe",
         level: "Level 1 (Easy)",
@@ -120,7 +120,20 @@ const newsData = [
             { w: "dangerous", pos: "adj.", d: "not safe", cn: "危險的", ex: "It's dangerous to go out now." },
             { w: "flights", pos: "n.", d: "journeys in a plane", cn: "航班", ex: "All flights were delayed." },
             { w: "hit", pos: "v.", d: "to come to a place with force", cn: "侵襲", ex: "The storm hit the coast at midnight." }
-            
+        ]
+    },
+    {
+        id: "goretti-l2",
+        title: "Storm Goretti Hits Europe (L2)",
+        level: "Level 2 (Intermediate)",
+        url: "https://www.newsinlevels.com/products/storm-goretti-hits-europe-level-2/",
+        content: "Storm Goretti is causing **severe** problems across Europe. The storm moved from the Atlantic and brought intense winds and rainfall to multiple countries. Many households are currently without **electricity** as strong gusts knocked down power lines. Travel has been **disrupted**, with many airlines canceling flights for safety reasons. Authorities warn that the storm is still **active** and could cause more damage. Local residents are advised to stay indoors until the weather **improves**.",
+        vocab: [
+            { w: "severe", pos: "adj.", d: "very serious or bad", cn: "嚴重的", ex: "The country is facing a severe water shortage." },
+            { w: "electricity", pos: "n.", d: "a form of energy used for heating and lighting", cn: "電力", ex: "The storm left thousands of homes without electricity." },
+            { w: "disrupted", pos: "v.", d: "to prevent something from continuing normally", cn: "中斷 / 擾亂", ex: "Bus services were disrupted by the heavy snow." },
+            { w: "active", pos: "adj.", d: "moving or happening now", cn: "活躍的 / 仍在進行中的", ex: "The volcano is still active." },
+            { w: "improves", pos: "v.", d: "to become better", cn: "改善 / 好轉", ex: "The weather usually improves in the afternoon." }
         ]
     },
     {
@@ -132,11 +145,11 @@ const newsData = [
         vocab: [
             { w: "concentrate", pos: "v.", d: "to give all your attention to something", cn: "專注", ex: "It is hard to concentrate with all this noise." },
             { w: "trend", pos: "n.", d: "a general direction in which something is changing", cn: "趨勢", ex: "The current trend is for schools to limit screen time." },
-            { w: "paper", pos: "n.", d: "material used for writing or printing", cn: "紙張 / 紙質的", ex: "Many students prefer reading on paper rather than screens." },
-            { w: "better", pos: "adj.", d: "higher in quality or more effective", cn: "較好的", ex: "Physical books are often better for deep learning." },
-            { w: "time", pos: "n.", d: "the period during which something happens", cn: "時間", ex: "Reducing screen time can improve students' mental health." }
+            { w: "paper", pos: "n.", d: "material used for writing or printing", cn: "紙張", ex: "Many students prefer reading on paper." },
+            { w: "better", pos: "adj.", d: "higher in quality", cn: "較好的", ex: "Physical books are better for deep learning." },
+            { w: "time", pos: "n.", d: "the period during which something happens", cn: "時間", ex: "Reducing screen time can improve health." }
         ]
-    },
+    }
 ];
 
 let currentArtIdx = 0;
@@ -214,7 +227,6 @@ function renderQuiz() {
     options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = "option-btn";
-        // 改動：選項加入中文翻譯
         btn.innerHTML = `${opt.d} <span class="cn-hint">(${opt.cn})</span>`;
         btn.onclick = () => checkAns(btn, opt, q);
         container.appendChild(btn);
@@ -224,7 +236,6 @@ function renderQuiz() {
 function checkAns(btn, selected, correct) {
     const allBtns = document.querySelectorAll('#options-container button');
     allBtns.forEach(b => b.disabled = true);
-    
     const fb = document.getElementById('fb-box');
     fb.classList.remove('hidden');
     
@@ -258,16 +269,12 @@ function nextStep() {
     }
 }
 
-// 輔助功能：格式化文章內容
 function formatContent(text, vocabList) {
-    // 1. 先將所有字眼中的 ** 標記替換為 Span 格式，同時移除 ** 符號
     let html = text;
     vocabList.forEach(v => {
-        // 使用正則表達式尋找 **word**，並將其替換為帶有底線粗體的 Span
         const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
         html = html.replace(regex, `<span class="highlight">$1</span>`);
     });
-    // 2. 清理掉任何殘留的 ** (防止老師手動輸入時留下的)
     html = html.replace(/\*\*/g, "");
     return html;
 }
