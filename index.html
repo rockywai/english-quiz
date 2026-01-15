@@ -31,28 +31,17 @@
         .option-btn { width: 100%; padding: 12px; margin: 8px 0; background: white; border: 1px solid #d1d5db; border-radius: 10px; text-align: left; cursor: pointer; font-size: 16px; }
         .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #065f46 !important; }
         .wrong { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b !important; }
-        .hidden { 
-    display: none !important; 
-}
-
-/* 確保 overlay 初始狀態是隱藏的 */
-#modal-overlay { 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(0,0,0,0.7); 
-    z-index: 1000; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-}
         
+        .hidden { display: none !important; }
+
         /* Leaderboard Modal */
-        #modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; display:flex; justify-content:center; align-items:center; }
-        .modal-content { background:white; width:90%; max-width:500px; height:80vh; border-radius:15px; display:flex; flex-direction:column; }
-        iframe { width:100%; flex-grow:1; border:none; border-radius:0 0 15px 15px; }
+        #modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); z-index: 1000; 
+            display: flex; justify-content: center; align-items: center; 
+        }
+        .modal-content { background: white; width: 90%; max-width: 500px; height: 80vh; border-radius: 15px; display: flex; flex-direction: column; position: relative; }
+        iframe { width: 100%; flex-grow: 1; border: none; border-radius: 0 0 15px 15px; }
     </style>
 </head>
 <body>
@@ -213,7 +202,6 @@ function selectLevel(gIdx, lIdx) {
 }
 
 function startQuiz() {
-    // 從 10 個單字中隨機抽取 5 個
     quizPool = shuffle([...activeArt.vocab]).slice(0, 5);
     quizIdx = 0; score = 0;
     renderQuiz();
@@ -226,15 +214,13 @@ function renderQuiz() {
     document.getElementById('quiz-article').innerHTML = formatText(activeArt.content, [q]);
     document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
-    
-    // 生成選項 (不含中文)
     const opts = shuffle([q, ...shuffle(activeArt.vocab.filter(v=>v.w!==q.w)).slice(0,3)]);
     const container = document.getElementById('options-container');
     container.innerHTML = "";
     opts.forEach(o => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.innerText = o.d; // 僅顯示英文定義
+        btn.innerText = o.d;
         btn.onclick = () => {
             document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
             const isCorrect = o.w === q.w;
@@ -290,4 +276,22 @@ function formatText(text, list) {
 }
 
 function toggleScreen(id) {
-    ['home-screen', 'study-screen', 'quiz-screen', 'result-screen'].forEach(s => document
+    ['home-screen', 'study-screen', 'quiz-screen', 'result-screen'].forEach(s => document.getElementById(s).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+}
+
+function updateNav(title) {
+    document.getElementById('nav-bar').classList.remove('hidden');
+    document.getElementById('nav-title').innerText = title;
+}
+
+function goHome() { toggleScreen('home-screen'); document.getElementById('nav-bar').classList.add('hidden'); initHome(); }
+function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
+function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
+
+// 啟動首頁
+initHome();
+</script>
+</body>
+</html>
