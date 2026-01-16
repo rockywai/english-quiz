@@ -227,6 +227,12 @@ let quizPool = [];
 let quizIdx = 0;
 let score = 0;
 
+    function speak(word) {
+    const msg = new SpeechSynthesisUtterance(word);
+    msg.lang = 'en-US'; // 設定為美式英語
+    window.speechSynthesis.speak(msg);
+}
+
 function checkUserID() {
     while (true) {
         let input = prompt("請輸入 4 位學生編號 (1100-6599) \n或輸入自訂暱稱 (自由填寫):");
@@ -298,7 +304,10 @@ function selectLevel(gIdx, lIdx) {
     // 渲染詞彙列表
     document.getElementById('vocab-preview-list').innerHTML = activeArt.vocab.map(v => `
         <div class="vocab-card">
-            <div class="vocab-header"><span>${v.w}</span><span>${v.pos} ${v.cn}</span></div>
+            <div class="vocab-header">
+                <span onclick="speak('${v.w}')" style="cursor:pointer; text-decoration: underline;">🔊 ${v.w}</span>
+                <span>${v.pos} ${v.cn}</span>
+            </div>
             <div style="font-size:0.85rem">${v.d}</div>
         </div>
     `).join('');
@@ -314,7 +323,11 @@ function startQuiz() {
 function renderQuiz() {
     toggleScreen('quiz-screen');
     const q = quizPool[quizIdx];
-    document.getElementById('quiz-header').innerText = `Progress: ${quizIdx + 1} / 5`;
+    // 可以改為（讓測驗時點擊大字也能聽發音）：
+const wordEl = document.getElementById('current-word');
+wordEl.innerText = q.w;
+wordEl.style.cursor = "pointer";
+wordEl.onclick = () => speak(q.w);
     
     // 1. 文章內容 + 提示句 (修正處：確保這裡沒有多餘的 })
     const articleHtml = formatText(activeArt.content, [q]);
