@@ -294,20 +294,6 @@ let score = 0;
     window.speechSynthesis.speak(msg);
 }
 
-// 預加載語音清單
-window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-
-    if (selectedVoice) {
-        msg.voice = selectedVoice;
-    }
-
-    msg.lang = 'en-US';
-    msg.rate = 0.9;  // 稍微減慢語速，讓學生聽得更清楚
-    msg.pitch = 1;   // 音調保持正常
-    
-    window.speechSynthesis.speak(msg);
-}
-
 // 必須加上這段，因為語音清單載入需要時間
 window.speechSynthesis.onvoiceschanged = () => {
     window.speechSynthesis.getVoices();
