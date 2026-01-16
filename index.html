@@ -358,18 +358,24 @@ function selectLevel(gIdx, lIdx) {
     toggleScreen('study-screen');
     updateNav(activeArt.level);
     
-    // 渲染文章內容
     const articleHtml = formatText(activeArt.content, activeArt.vocab);
     
-    // 加入醒目提示句子和連結
+    // 圖例解釋：放在文章上方
+    const legendHtml = `
+        <div style="font-size: 0.8rem; color: #666; margin-bottom: 8px; display: flex; gap: 15px; background: #f0f4f8; padding: 5px 10px; border-radius: 5px;">
+            <span>👆 點擊單字：單詞發音</span>
+            <span>🎧 點擊圖示：朗讀全句</span>
+        </div>
+    `;
+
     const noticeHtml = `
         <div class="ai-notice">
-            💡 以上內容只是 AI 對文章加以簡單總結後的結果，可以
-            <a href="${activeArt.originalUrl}" target="_blank">點擊這裡閱讀原文</a>。
+            💡 以上內容為 AI 總結，可以
+            <a href="${activeArt.originalUrl}" target="_blank">閱讀原文</a>。
         </div>
     `;
     
-    document.getElementById('study-article').innerHTML = articleHtml + noticeHtml;
+    document.getElementById('study-article').innerHTML = legendHtml + articleHtml + noticeHtml;
     
     // 渲染詞彙列表
     document.getElementById('vocab-preview-list').innerHTML = activeArt.vocab.map(v => `
@@ -492,22 +498,33 @@ function toggleTopic(idx) {
 }
 
 function formatText(text, vocabList) {
-    // 將文章按句號分割
-    const sentences = text.split('. ');
+    // 1. 先處理重點詞彙：移除 ** 符號，但保留 highlight 背景
+    let cleanText = text;
+    vocabList.forEach(v => {
+        // 使用正則表達式尋找 **word** 並替換為帶有背景的標籤，同時移除 **
+        const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
+        cleanText = cleanText.replace(regex, `<span class="highlight" onclick="speak('$1'); event.stopPropagation();">$1</span>`);
+    });
+
+    // 2. 處理句子和單字點擊
+    const sentences = cleanText.split('. ');
     
     return sentences.map(sentence => {
         if (!sentence.trim()) return "";
         
-        // 處理句子中的單字點擊發音
+        // 將句子中的每個普通單字也變成可點擊
         let wordsHtml = sentence.split(' ').map(word => {
+            if (word.includes('span')) return word; // 如果已經是重點詞彙則跳過
             const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
             return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${word}</span>`;
         }).join(' ');
 
-        // 在每一句結尾加上朗讀按鈕
-        const cleanSentence = sentence.replace(/\*\*/g, ""); // 移除加粗符號以便朗讀
-        return `${wordsHtml}. <button class="nav-btn" style="padding:2px 5px; font-size:12px; margin-left:5px;" onclick="speak('${cleanSentence.replace(/'/g, "\\'")}'); event.stopPropagation();">🎧 讀此句</button>`;
-    }).join('<br><br>'); // 句與句之間空一行，方便閱讀
+        // 移除剩下可能存在的 ** (保險起見)
+        const finalSentenceText = sentence.replace(/<[^>]*>/g, "").replace(/\*\*/g, "");
+
+        // 返回結果：單字 HTML + 句號 + Emoji 按鈕 (不加 <br>)
+        return `${wordsHtml}. <span onclick="speak('${finalSentenceText.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;" title="閱讀此句">🎧</span> `;
+    }).join(' '); // 這裡改用空格連接，不再用 <br>
 }
 
 function toggleScreen(id) {
