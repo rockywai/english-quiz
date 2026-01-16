@@ -377,6 +377,14 @@ function nextStep() {
     else {
         uploadResult(); 
         toggleScreen('result-screen');
+        
+        // 根據分數顯示不同評價
+        let rank = "";
+        if(score === 5) rank = "🌟 完美！你是詞彙大師！";
+        else if(score >= 3) rank = "👍 做得好！繼續加油！";
+        else rank = "📚 再複習一下，你可以做到的！";
+        
+        document.querySelector('#result-screen h2').innerText = `測驗完成：${score}/5 \n ${rank}`;
     }
 }
 
