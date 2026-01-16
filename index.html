@@ -146,6 +146,47 @@ let studentID = "";
 
 const newsGroups = [
     {
+        topic: "14.01.2026 Denmark Schools are Using Books Again",
+        levels: [
+            {
+                id: "denmark-lv1", level: "DSE LV1 (Basic)",
+                originalUrl: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-1/",
+                content: "In Denmark, schools are changing. For many years, students used tablets and computers. Now, the government wants more **physical** books. Experts say screens are **distracting**. Children cannot **concentrate** well. Reading on paper is better for learning. Some teachers are happy about this **change**. They want to **limit** screen time.",
+                vocab: [
+                    { w: "physical", pos: "adj.", d: "real things that you can touch", cn: "實體的", ex: "Reading physical books feels different from screens." },
+                    { w: "distracting", pos: "adj.", d: "taking your attention away from what you are doing", cn: "分心的", ex: "Playing games on tablets can be distracting." },
+                    { w: "concentrate", pos: "v.", d: "to give all your attention to something", cn: "專注", ex: "It is hard to concentrate in a noisy room." },
+                    { w: "change", pos: "n.", d: "when something becomes different", cn: "改變", ex: "The new school rule is a big change." },
+                    { w: "limit", pos: "v.", d: "to stop something from increasing beyond a point", cn: "限制", ex: "Parents should limit the time children spend on phones." }
+                ]
+            },
+            {
+                id: "denmark-lv2", level: "DSE LV2-3 (Intermediate)",
+                originalUrl: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-2/",
+                content: "Denmark is reversing its digital trend in education. After years of heavy screen use, schools are returning to **traditional** books. The education minister apologized for using too many screens. Research shows that digital devices can **interfere** with deep learning. Many students find it difficult to **focus** on long texts on a screen. This move aims to **improve** reading skills. Teachers are now **encouraged** to use more paper materials.",
+                vocab: [
+                    { w: "traditional", pos: "adj.", d: "following ways that have existed for a long time", cn: "傳統的", ex: "Traditional teaching methods are still useful." },
+                    { w: "interfere", pos: "v.", d: "to prevent something from working correctly", cn: "干擾", ex: "Social media can interfere with your studies." },
+                    { w: "focus", pos: "v.", d: "to give a lot of attention to one thing", cn: "集中注意力", ex: "You need to focus to understand this difficult topic." },
+                    { w: "improve", pos: "v.", d: "to make something better", cn: "改善/提高", ex: "Reading more can improve your vocabulary." },
+                    { w: "encouraged", pos: "v.", d: "given hope or support to do something", cn: "鼓勵", ex: "Students are encouraged to ask questions." }
+                ]
+            },
+            {
+                id: "denmark-lv4", level: "DSE LV4-5 (Advanced)",
+                originalUrl: "https://www.newsinlevels.com/products/denmark-schools-are-using-books-again-level-3/",
+                content: "The Danish government is implementing a **significant** shift by reintroducing printed books into classrooms. This follows a period of **extensive** digitalization which critics argue was **detrimental** to students' literacy. Studies suggest that digital reading often leads to 'skimming' rather than deep **comprehension**. The education authorities are now providing **recommendations** to reduce screen time and restore a balance between technology and analog learning tools.",
+                vocab: [
+                    { w: "significant", pos: "adj.", d: "important or noticeable", cn: "顯著的/重大的", ex: "There is a significant change in the school policy." },
+                    { w: "extensive", pos: "adj.", d: "covering a large area or having a great range", cn: "廣泛的", ex: "The school underwent extensive renovations." },
+                    { w: "detrimental", pos: "adj.", d: "causing harm or damage", cn: "有害的/不利的", ex: "Too much screen time is detrimental to eye health." },
+                    { w: "comprehension", pos: "n.", d: "the ability to understand something fully", cn: "理解力", ex: "Reading books helps improve your reading comprehension." },
+                    { w: "recommendations", pos: "n.", d: "suggestions about what should be done", cn: "建議", ex: "The committee made several recommendations for improvement." }
+                ]
+            }
+        ]
+    }
+    {
         topic: "16.01.2026 The Brightest Object in the Universe",
         levels: [
             {
@@ -339,6 +380,13 @@ function initHome() {
     const list = document.getElementById('topic-list');
     list.innerHTML = "";
     
+    // --- 新增：按日期排序邏輯 ---
+    newsGroups.sort((a, b) => {
+        // 假設標題格式為 "DD.MM.YYYY Topic Name"
+        const dateA = a.topic.split(' ')[0].split('.').reverse().join('-'); // 轉成 YYYY-MM-DD
+        const dateB = b.topic.split(' ')[0].split('.').reverse().join('-');
+        return new Date(dateB) - new Date(dateA); // 由新到舊排序
+    });
     newsGroups.forEach((group, gIdx) => {
         const card = document.createElement('div');
         card.className = 'topic-card';
