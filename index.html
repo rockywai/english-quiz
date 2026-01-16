@@ -229,14 +229,32 @@ let score = 0;
 
 function checkUserID() {
     while (true) {
-        let input = prompt("請輸入 4 位學生編號 (5501 - 5540):");
-        if (input === null) continue; 
-        if (/^55[0-4][0-9]$/.test(input) && input >= 5501 && input <= 5540) {
-            studentID = input;
-            document.getElementById('user-info-display').innerText = `👤 學生編號: ${studentID}`;
+        let input = prompt("請輸入 4 位學生編號 (1100-6599) \n或輸入自訂暱稱 (自由填寫):");
+        
+        if (input === null || input.trim() === "") {
+            alert("⚠️ 請輸入資料才能開始。");
+            continue;
+        }
+
+        let trimmedInput = input.trim();
+
+        // 檢查是否為純數字學號
+        if (/^\d{4}$/.test(trimmedInput)) {
+            let num = parseInt(trimmedInput);
+            if (num >= 1100 && num <= 6599) {
+                studentID = trimmedInput;
+                break;
+            } else {
+                alert("⚠️ 學號範圍需在 1100-6599 之間。");
+            }
+        } else {
+            // 如果不是 4 位數字，則視為自訂暱稱
+            studentID = trimmedInput;
+            alert("✅ 已使用暱稱「" + studentID + "」登入");
             break;
-        } else { alert("⚠️ 請輸入 5501 至 5540。"); }
+        }
     }
+    document.getElementById('user-info-display').innerText = `👤 身份: ${studentID}`;
 }
 
 function initHome() {
