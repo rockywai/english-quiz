@@ -276,7 +276,11 @@ function initHome() {
                 <span>▼</span>
             </button>
             <div id="levels-${gIdx}" class="level-container">
-                ${group.levels.map((l, lIdx) => `<button class="level-btn" onclick="selectLevel(${gIdx}, ${lIdx})">${l.level}</button>`).join('')}
+                ${group.levels.map((l, lIdx) => {
+                    // --- 修改這裡：檢查本地紀錄 ---
+                    const isDone = localStorage.getItem('dse_vocab_' + l.id) === "done" ? " <span style='color:var(--success)'>[已完成]</span>" : "";
+                    return `<button class="level-btn" onclick="selectLevel(${gIdx}, ${lIdx})">${l.level}${isDone}</button>`;
+                }).join('')}
             </div>
         `;
         list.appendChild(card);
@@ -390,21 +394,24 @@ function nextStep() {
 
 function uploadResult() {
     const status = document.getElementById('upload-status');
-    // 檢查這裡：studentID 是否有值？activeArt.id 是否存在？
     const data = { 
         name: studentID, 
         topic: activeArt.id, 
         score: score 
     };
 
-    console.log("正在上傳數據:", data); // 你可以按 F12 在 Console 查看是否有跑這一行
-
     fetch(SCRIPT_URL, { 
         method: 'POST', 
-        mode: 'no-cors', // 確保這裡有寫 no-cors
+        mode: 'no-cors', 
         body: JSON.stringify(data) 
     })
-    .then(() => { status.innerText = "✅ 進度已同步至雲端。"; })
+    .then(() => { 
+        status.innerText = "✅ 進度已同步至雲端。";
+        
+        // --- 新增這行：記錄到本地 ---
+        // 儲存格式為：學習記錄_題目ID = "done"
+        localStorage.setItem('dse_vocab_' + activeArt.id, "done");
+    })
     .catch((err) => { 
         console.error("上傳失敗:", err);
         status.innerText = "❌ 同步失敗。"; 
