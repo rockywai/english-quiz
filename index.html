@@ -6,6 +6,11 @@
     <title>DSE 英文詞彙自學系統 V4.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        .topic-title strong {
+        color: var(--primary); /* 使用你定義的藍色 */
+        margin-right: 8px;     /* 與後面的標題保持距離 */
+        font-family: monospace; /* 數字使用等寬字體看起來更整齊 */
+        font-size: 1.1rem;      /* 稍微大一點 */}
         :root { --primary: #4f46e5; --bg: #f3f4f6; --success: #10b981; --danger: #ef4444; --info-bg: #eff6ff; --info-border: #bfdbfe; }
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; color: #1f2937; }
         .app-container { width: 100%; max-width: 600px; min-height: 100vh; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
@@ -333,17 +338,22 @@ function initHome() {
     if (!studentID) checkUserID();
     const list = document.getElementById('topic-list');
     list.innerHTML = "";
+    
     newsGroups.forEach((group, gIdx) => {
         const card = document.createElement('div');
         card.className = 'topic-card';
+        
+        // --- 新增：自動將日期部分加粗 ---
+        // 正則表達式匹配：dd.mm.yyyy 格式
+        const formattedTitle = group.topic.replace(/^(\d{2}\.\d{2}\.\d{4})/, '<strong>$1</strong>');
+
         card.innerHTML = `
             <button class="topic-header" onclick="toggleTopic(${gIdx})">
-                <span class="topic-title">${group.topic}</span>
+                <span class="topic-title">${formattedTitle}</span>
                 <span>▼</span>
             </button>
             <div id="levels-${gIdx}" class="level-container">
                 ${group.levels.map((l, lIdx) => {
-                    // --- 修改這裡：檢查本地紀錄 ---
                     const isDone = localStorage.getItem('dse_vocab_' + l.id) === "done" ? " <span style='color:var(--success)'>[已完成]</span>" : "";
                     return `<button class="level-btn" onclick="selectLevel(${gIdx}, ${lIdx})">${l.level}${isDone}</button>`;
                 }).join('')}
