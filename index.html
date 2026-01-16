@@ -134,7 +134,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxibEoUZIsMv3u5wHD76vSgeIfGdVg5yd_LRxJ8a-dzEA3H13QExdPS6nSNAUzXbbM7hQ/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd6bleG5w-Zi6nGOSSzGceBpzmXY9NgenwwBp1jO2KVyuG9DLB1X88bSLPDO9q9Mg/exec'; 
 let studentID = ""; 
 
 const newsGroups = [
@@ -369,20 +369,25 @@ function nextStep() {
 
 function uploadResult() {
     const status = document.getElementById('upload-status');
-    // 修改這裡：分開傳送 topic 和 score
+    // 檢查這裡：studentID 是否有值？activeArt.id 是否存在？
     const data = { 
         name: studentID, 
-        topic: activeArt.id, // 傳送題目 ID，如 "single-lv1"
-        score: score        // 傳送純數字分數，如 5
+        topic: activeArt.id, 
+        score: score 
     };
+
+    console.log("正在上傳數據:", data); // 你可以按 F12 在 Console 查看是否有跑這一行
 
     fetch(SCRIPT_URL, { 
         method: 'POST', 
-        mode: 'no-cors', 
+        mode: 'no-cors', // 確保這裡有寫 no-cors
         body: JSON.stringify(data) 
     })
     .then(() => { status.innerText = "✅ 進度已同步至雲端。"; })
-    .catch(() => { status.innerText = "❌ 同步失敗。"; });
+    .catch((err) => { 
+        console.error("上傳失敗:", err);
+        status.innerText = "❌ 同步失敗。"; 
+    });
 }
 
 function toggleTopic(idx) {
