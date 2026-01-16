@@ -73,10 +73,12 @@
 
 <div class="app-container">
     <div id="nav-bar" class="nav-bar hidden">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <button class="nav-btn" onclick="handleBack()">⬅️ 返回</button>
         <button class="nav-btn" onclick="goHome()">🏠 主頁</button>
-        <div id="nav-title" style="font-weight: bold; font-size: 0.9rem;"></div>
-        <div style="width:50px"></div>
     </div>
+    <div id="nav-title" style="font-weight: bold; font-size: 0.9rem;"></div>
+</div>
 
     <div class="content-padding">
         <div id="home-screen">
@@ -268,20 +270,32 @@ let quizPool = [];
 let quizIdx = 0;
 let score = 0;
 
-    function speak(word) {
-    // 停止正在進行的發音，避免重疊
-    window.speechSynthesis.cancel();
-
-    const msg = new SpeechSynthesisUtterance(word);
+    function handleBack() {
+    const screens = ['study-screen', 'quiz-screen', 'result-screen'];
+    const current = screens.find(s => !document.getElementById(s).classList.contains('hidden'));
     
-    // 獲取系統所有可用語音
+    if (current === 'study-screen') goHome();
+    else if (current === 'quiz-screen') toggleScreen('study-screen');
+    else if (current === 'result-screen') toggleScreen('study-screen');
+}
+    
+   function speak(text) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
     
-    // 優先尋找 Google 或 Microsoft 的高質量英語發音
-    const selectedVoice = voices.find(v => 
-        (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft')) && 
-        v.lang.startsWith('en')
-    );
+    // 優先順序：Google US English > Microsoft English > 任何英文
+    const bestVoice = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) || 
+                      voices.find(v => v.name.includes('Natural') && v.lang.startsWith('en')) ||
+                      voices.find(v => v.lang.startsWith('en'));
+
+    if (bestVoice) msg.voice = bestVoice;
+    msg.rate = 0.85; // 稍慢一點
+    window.speechSynthesis.speak(msg);
+}
+
+// 預加載語音清單
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
     if (selectedVoice) {
         msg.voice = selectedVoice;
@@ -491,13 +505,23 @@ function toggleTopic(idx) {
     t.style.display = v ? 'none' : 'flex';
 }
 
-function formatText(text, list) {
-    let html = text;
-    list.forEach(v => {
-        const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
-        html = html.replace(regex, `<span class="highlight">$1</span>`);
-    });
-    return html.replace(/\*\*/g, "");
+function formatText(text, vocabList) {
+    // 將文章按句號分割
+    const sentences = text.split('. ');
+    
+    return sentences.map(sentence => {
+        if (!sentence.trim()) return "";
+        
+        // 處理句子中的單字點擊發音
+        let wordsHtml = sentence.split(' ').map(word => {
+            const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${word}</span>`;
+        }).join(' ');
+
+        // 在每一句結尾加上朗讀按鈕
+        const cleanSentence = sentence.replace(/\*\*/g, ""); // 移除加粗符號以便朗讀
+        return `${wordsHtml}. <button class="nav-btn" style="padding:2px 5px; font-size:12px; margin-left:5px;" onclick="speak('${cleanSentence.replace(/'/g, "\\'")}'); event.stopPropagation();">🎧 讀此句</button>`;
+    }).join('<br><br>'); // 句與句之間空一行，方便閱讀
 }
 
 function toggleScreen(id) {
