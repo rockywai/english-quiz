@@ -35,43 +35,34 @@
         .modal-content { background: white; width: 90%; max-width: 500px; height: 80vh; border-radius: 15px; display: flex; flex-direction: column; }
         iframe { width: 100%; flex-grow: 1; border: none; border-radius: 0 0 15px 15px; }
         .ai-notice {
-    background: #f0fdf4;      /* 淺綠色背景 */
-    border: 1px dashed #22c55e; /* 綠色虛線邊框 */
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: 15px;
-    font-size: 0.9rem;
-    color: #166534;
-    line-height: 1.5;
-            .source-link-btn {
-    width: 100%;
-    padding: 12px;
-    background: #f0fdf4;       /* 淺綠色背景 */
-    color: #166534;            /* 深綠色文字 */
-    border: 1px solid #bbf7d0; /* 綠色邊框 */
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-    transition: background 0.2s;
-}
-
-.source-link-btn:hover {
-    background: #dcfce7;      /* 滑鼠經過時變深一點點 */
-}
-}
-.ai-notice a {
-    color: var(--primary);
-    font-weight: bold;
-    text-decoration: none;
-}
-.ai-notice a:hover {
-    text-decoration: underline;
-}
+        background: #f0fdf4;
+        border: 1px dashed #22c55e;
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: #166534;
+        line-height: 1.5;
+    }
+    .source-link-btn {
+        width: 100%;
+        padding: 12px;
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        transition: background 0.2s;
+    }
+    .source-link-btn:hover { background: #dcfce7; }
+    .ai-notice a { color: var(--primary); font-weight: bold; text-decoration: none; }
+    .ai-notice a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -567,13 +558,13 @@ function formatText(text, vocabList) {
         });
     });
 
-   // 2. 按句號拆分
+    // 2. 按句號拆分
     const sentences = tempText.split('. ');
 
     return sentences.map(sentence => {
         if (!sentence.trim()) return "";
 
-      // 3. 處理每個單字
+        // 3. 處理每個單字
         let wordsHtml = sentence.split(' ').map(token => {
             // 如果是佔位符，換成高亮標籤
             const marker = markers.find(m => token.includes(m.id));
@@ -585,15 +576,14 @@ function formatText(text, vocabList) {
             return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${token}</span>`;
         }).join(' ');
 
-        // 4. 生成純文字句子用於 🎧 朗讀
+        // 4. 生成純文字句子用於 🎧 朗讀 (移除所有佔位符)
         let pureSentence = sentence;
-        markers.forEach(m => pureSentence = pureSentence.replace(m.id, m.word));
+        markers.forEach(m => {
+            pureSentence = pureSentence.split(m.id).join(m.word);
+        });
 
+        // 5. 回傳：文字 + 🎧
         return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;">🎧</span>`;
-    }).join(' ');
-
-        // 5. 回傳：句子文字 + 🎧 按鈕（不隔行）
-        return `${processedSentence}. <span onclick="speak('${pureText.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;" title="朗讀此句">🎧</span>`;
     }).join(' '); 
 }
 
