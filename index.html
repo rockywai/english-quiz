@@ -269,10 +269,35 @@ let quizIdx = 0;
 let score = 0;
 
     function speak(word) {
+    // 停止正在進行的發音，避免重疊
+    window.speechSynthesis.cancel();
+
     const msg = new SpeechSynthesisUtterance(word);
-    msg.lang = 'en-US'; // 設定為美式英語
+    
+    // 獲取系統所有可用語音
+    const voices = window.speechSynthesis.getVoices();
+    
+    // 優先尋找 Google 或 Microsoft 的高質量英語發音
+    const selectedVoice = voices.find(v => 
+        (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft')) && 
+        v.lang.startsWith('en')
+    );
+
+    if (selectedVoice) {
+        msg.voice = selectedVoice;
+    }
+
+    msg.lang = 'en-US';
+    msg.rate = 0.9;  // 稍微減慢語速，讓學生聽得更清楚
+    msg.pitch = 1;   // 音調保持正常
+    
     window.speechSynthesis.speak(msg);
 }
+
+// 必須加上這段，因為語音清單載入需要時間
+window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+};
 
 function checkUserID() {
     while (true) {
