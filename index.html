@@ -185,7 +185,7 @@ const newsGroups = [
                 ]
             }
         ]
-    }
+    },
     {
         topic: "16.01.2026 The Brightest Object in the Universe",
         levels: [
@@ -319,7 +319,6 @@ let score = 0;
     function handleBack() {
     const screens = ['study-screen', 'quiz-screen', 'result-screen'];
     const current = screens.find(s => !document.getElementById(s).classList.contains('hidden'));
-    
     if (current === 'study-screen') goHome();
     else if (current === 'quiz-screen') toggleScreen('study-screen');
     else if (current === 'result-screen') toggleScreen('study-screen');
@@ -556,39 +555,42 @@ function toggleTopic(idx) {
 }
 
 function formatText(text, vocabList) {
-    // 1. 處理重點詞彙：移除 ** 並加上高亮標籤
-    let formatted = text;
-    vocabList.forEach(v => {
-        // 尋找 **word** 格式，替換為 span
+    // 1. 先處理標記詞彙：用一個特殊佔位符替換，防止被單字拆分破壞
+    let tempText = text;
+    let markers = [];
+    vocabList.forEach((v, idx) => {
         const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
-        formatted = formatted.replace(regex, `<span class="highlight" onclick="speak('$1'); event.stopPropagation();">$1</span>`);
+        tempText = tempText.replace(regex, (match, p1) => {
+            const placeholder = `__MARKER_${idx}__`;
+            markers.push({ id: placeholder, word: p1 });
+            return placeholder;
+        });
     });
 
-    // 2. 將文章按句號拆分
-    const sentences = formatted.split('. ');
-    
+   // 2. 按句號拆分
+    const sentences = tempText.split('. ');
+
     return sentences.map(sentence => {
         if (!sentence.trim()) return "";
 
-        // 3. 處理單字點擊：關鍵在於不要碰到已經存在的 <span ...> 標籤
-        // 我們將句子切開，但保留 HTML 標籤不變
-        let parts = sentence.split(/(<span[^>]*>.*?<\/span>)/g);
-        
-        let processedSentence = parts.map(part => {
-            if (part.startsWith('<span')) {
-                return part; // 已經是重點詞彙，直接回傳
-            } else {
-                // 普通文字部分，將每個單字包起來
-                return part.split(' ').map(word => {
-                    if (!word.trim()) return "";
-                    const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-                    return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${word}</span>`;
-                }).join(' ');
+      // 3. 處理每個單字
+        let wordsHtml = sentence.split(' ').map(token => {
+            // 如果是佔位符，換成高亮標籤
+            const marker = markers.find(m => token.includes(m.id));
+            if (marker) {
+                return token.replace(marker.id, `<span class="highlight" onclick="speak('${marker.word}'); event.stopPropagation();">${marker.word}</span>`);
             }
+            // 普通單字
+            const cleanWord = token.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${token}</span>`;
         }).join(' ');
 
-        // 4. 準備「朗讀全句」的純文字（移除所有 HTML 標籤）
-        const pureText = sentence.replace(/<[^>]*>/g, "").replace(/\*\*/g, "");
+        // 4. 生成純文字句子用於 🎧 朗讀
+        let pureSentence = sentence;
+        markers.forEach(m => pureSentence = pureSentence.replace(m.id, m.word));
+
+        return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;">🎧</span>`;
+    }).join(' ');
 
         // 5. 回傳：句子文字 + 🎧 按鈕（不隔行）
         return `${processedSentence}. <span onclick="speak('${pureText.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;" title="朗讀此句">🎧</span>`;
