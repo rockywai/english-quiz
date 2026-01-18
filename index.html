@@ -137,6 +137,47 @@ let studentID = "";
 
 const newsGroups = [
     {
+        topic: "19.01.2026 The Rise of Posting Zero",
+        levels: [
+            {
+                id: "postzero-lv1", level: "DSE LV1 (Basic)",
+                originalUrl: "https://www.newsinlevels.com/products/posting-zero-level-1/",
+                content: "Many young people are changing how they use Instagram. They delete all their photos. This is called **posting zero**. They do not want to keep a public **history**. They feel less **pressure** when their page is empty. Some people think it is a way to stay **private**. Others say it is just a new **trend**. They still use the app, but they do not share much.",
+                vocab: [
+                    { w: "posting zero", pos: "n. phr.", d: "the act of having no posts on a social media profile", cn: "零帖子", ex: "He decided to try posting zero to start fresh." },
+                    { w: "history", pos: "n.", d: "a record of past events", cn: "歷史/紀錄", ex: "She deleted her browser history." },
+                    { w: "pressure", pos: "n.", d: "a feeling of stress or worry", cn: "壓力", ex: "Students feel a lot of pressure before exams." },
+                    { w: "private", pos: "adj.", d: "only for one person or a small group", cn: "私隱的/不公開的", ex: "This is a private conversation." },
+                    { w: "trend", pos: "n.", d: "a general direction in which something is changing", cn: "趨勢/潮流", ex: "The trend of working from home is growing." }
+                ]
+            },
+            {
+                id: "postzero-lv2", level: "DSE LV2-3 (Intermediate)",
+                originalUrl: "https://www.newsinlevels.com/products/posting-zero-level-2/",
+                content: "A new behavior is **emerging** on social media platforms. Instead of sharing every moment, many users are **clearing** their profiles. This 'post zero' movement allows people to control their digital **identity**. It reduces the **anxiety** of getting 'likes'. Experts say that young people want more **boundaries** between their real life and their online life. They prefer to share things that disappear, like stories.",
+                vocab: [
+                    { w: "emerging", pos: "v.", d: "starting to exist or become known", cn: "出現/新興的", ex: "New technologies are emerging every day." },
+                    { w: "clearing", pos: "v.", d: "removing things from a place", cn: "清空", ex: "He is clearing his desk for the new project." },
+                    { w: "identity", pos: "n.", d: "who a person is and how they are perceived", cn: "身份/形象", ex: "Your online identity can be different from your real one." },
+                    { w: "anxiety", pos: "n.", d: "a feeling of worry or nervousness", cn: "焦慮", ex: "Social media can cause anxiety in teenagers." },
+                    { w: "boundaries", pos: "n.", d: "limits that separate things", cn: "界線/邊界", ex: "It is important to set boundaries at work." }
+                ]
+            },
+            {
+                id: "postzero-lv4", level: "DSE LV4-5 (Advanced)",
+                originalUrl: "https://www.newsinlevels.com/products/posting-zero-level-3/",
+                content: "The **phenomenon** of 'posting zero' highlights a shift in how Gen Z views digital **permanence**. By keeping their profiles empty, users **evade** the constant scrutiny of the public eye. This practice is often a **reaction** to the highly curated and perfect images seen in the past. It represents a desire for **authenticity** without the need for validation. Users now utilize platforms as tools for communication rather than as galleries of their lives.",
+                vocab: [
+                    { w: "phenomenon", pos: "n.", d: "something that exists and can be seen, especially something unusual", cn: "現象", ex: "The Northern Lights are a natural phenomenon." },
+                    { w: "permanence", pos: "n.", d: "the state of lasting forever", cn: "永久性", ex: "The permanence of the internet means posts never truly disappear." },
+                    { w: "evade", pos: "v.", d: "to avoid or escape from something", cn: "逃避/規避", ex: "Some people try to evade taxes." },
+                    { w: "reaction", pos: "n.", d: "behavior or feelings caused by something else", cn: "反應", ex: "His reaction to the news was very surprising." },
+                    { w: "authenticity", pos: "n.", d: "the quality of being real or true", cn: "真實性", ex: "The authenticity of the painting was confirmed by experts." }
+                ]
+            }
+        ]
+    },
+    {
         topic: "16.01.2026 Bulletproof Backpacks in Schools",
         levels: [
             {
@@ -587,9 +628,11 @@ function toggleTopic(idx) {
 }
 
 function formatText(text, vocabList) {
-    // 1. 先處理標記詞彙：用一個特殊佔位符替換，防止被單字拆分破壞
     let tempText = text;
     let markers = [];
+    
+    // 1. 識別重點詞彙並移除 ** 符號
+    // 我們用 marker 先佔位，這樣後面拆分單字時就不會弄壞 HTML
     vocabList.forEach((v, idx) => {
         const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
         tempText = tempText.replace(regex, (match, p1) => {
@@ -605,26 +648,28 @@ function formatText(text, vocabList) {
     return sentences.map(sentence => {
         if (!sentence.trim()) return "";
 
-        // 3. 處理每個單字
+        // 3. 處理單字點擊：將句子中的單字包起來
         let wordsHtml = sentence.split(' ').map(token => {
-            // 如果是佔位符，換成高亮標籤
+            // 檢查是否為重點詞彙佔位符
             const marker = markers.find(m => token.includes(m.id));
             if (marker) {
+                // 替換為高亮標籤，不含星號
                 return token.replace(marker.id, `<span class="highlight" onclick="speak('${marker.word}'); event.stopPropagation();">${marker.word}</span>`);
             }
-            // 普通單字
+            // 普通單字：點擊發音
             const cleanWord = token.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
             return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${token}</span>`;
         }).join(' ');
 
-        // 4. 生成純文字句子用於 🎧 朗讀 (移除所有佔位符)
+        // 4. 生成用於 🎧 的純文字 (完全移除所有 HTML 標籤和星號)
         let pureSentence = sentence;
         markers.forEach(m => {
             pureSentence = pureSentence.split(m.id).join(m.word);
         });
+        pureSentence = pureSentence.replace(/\*\*/g, ""); // 二次檢查移除剩餘星號
 
-        // 5. 回傳：文字 + 🎧
-        return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;">🎧</span>`;
+        // 5. 回傳句子，🎧 緊接在後不換行
+        return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;" title="朗讀此句">🎧</span>`;
     }).join(' '); 
 }
 
