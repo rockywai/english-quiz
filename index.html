@@ -530,23 +530,21 @@ function renderQuiz() {
     toggleScreen('quiz-screen');
     const q = quizPool[quizIdx];
     
-    // 設定題目單字點擊發音
+    // 設定題目單字與發音
     const wordEl = document.getElementById('current-word');
     wordEl.innerText = q.w;
     wordEl.style.cursor = "pointer";
     wordEl.onclick = () => speak(q.w);
     
-    // --- 修正處：確保 MC 上方的文章經過 formatText 處理並移除星號 ---
-    // 我們傳入當前題目單字 q，讓它在文中高亮
+    // --- 關鍵修正：呼叫 formatText 並傳入當前題目單字 q，以移除星號並高亮 ---
     const articleHtml = formatText(activeArt.content, [q]); 
-    const noticeHtml = `<div style="font-size:0.75rem; color:#9ca3af; margin-top:5px;">(內容經 AI 總結，原文連結請參考主頁)</div>`;
+    const noticeHtml = `<div style="font-size:0.75rem; color:#9ca3af; margin-top:5px;">(參考上方文章找出答案)</div>`;
     
     document.getElementById('quiz-article').innerHTML = articleHtml + noticeHtml;
-    // -------------------------------------------------------
 
     document.getElementById('fb-box').classList.add('hidden');
     
-    // 3. 選項隨機排序
+    // 選項隨機排序
     const opts = shuffle([q, ...shuffle(activeArt.vocab.filter(v=>v.w!==q.w)).slice(0,3)]);
     const container = document.getElementById('options-container');
     container.innerHTML = "";
@@ -569,7 +567,7 @@ function renderQuiz() {
         };
         container.appendChild(btn);
     });
-} // <--- 函數應該在這裡結束
+}
 
 function showFB(q, isCorrect) {
     const box = document.getElementById('fb-box');
@@ -632,9 +630,9 @@ function formatText(text, vocabList) {
     let tempText = text;
     let markers = [];
     
-    // 1. 識別重點詞彙並移除 ** 符號
-    // 我們用 marker 先佔位，這樣後面拆分單字時就不會弄壞 HTML
+    // 1. 處理重點詞彙：將 **word** 轉換為標記並移除星號
     vocabList.forEach((v, idx) => {
+        // 這個正則會抓取 ** 內部的字 (p1)，而不包含星號本身
         const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
         tempText = tempText.replace(regex, (match, p1) => {
             const placeholder = `__MARKER_${idx}__`;
@@ -643,40 +641,33 @@ function formatText(text, vocabList) {
         });
     });
 
-    // 2. 按句號拆分
+    // 2. 萬一有漏網之魚（沒在 vocabList 但有星號的字），直接強制清除星號
+    tempText = tempText.replace(/\*\*/g, "");
+
+    // 3. 按句號拆分
     const sentences = tempText.split('. ');
 
     return sentences.map(sentence => {
         if (!sentence.trim()) return "";
 
-        // 3. 處理單字點擊：將句子中的單字包起來
+        // 4. 處理單字點擊
         let wordsHtml = sentence.split(' ').map(token => {
-            // 檢查是否為重點詞彙佔位符
             const marker = markers.find(m => token.includes(m.id));
             if (marker) {
-                // 替換為高亮標籤，不含星號
+                // 回傳不含星號的高亮標籤
                 return token.replace(marker.id, `<span class="highlight" onclick="speak('${marker.word}'); event.stopPropagation();">${marker.word}</span>`);
             }
-            // 普通單字：點擊發音
             const cleanWord = token.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
             return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${token}</span>`;
         }).join(' ');
 
-        // 4. 生成用於 🎧 的純文字 (完全移除所有 HTML 標籤和星號)
-       // 在 formatText 函數內部的第 4 步
-let pureSentence = sentence;
-markers.forEach(m => {
-    pureSentence = pureSentence.split(m.id).join(m.word);
-});
+        // 5. 生成用於 🎧 的純文字句子 (確保無標籤、無星號)
+        let pureSentence = sentence;
+        markers.forEach(m => pureSentence = pureSentence.split(m.id).join(m.word));
 
-// 重點：這一行能確保即使沒有被列入 vocab 的 ** 詞彙也會被移除星號
-pureSentence = pureSentence.replace(/\*\*/g, "");
-
-        // 5. 回傳句子，🎧 緊接在後不換行
-        return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;" title="朗讀此句">🎧</span>`;
+        return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;">🎧</span>`;
     }).join(' '); 
 }
-
 function toggleScreen(id) {
     ['home-screen', 'study-screen', 'quiz-screen', 'result-screen'].forEach(s => document.getElementById(s).classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
