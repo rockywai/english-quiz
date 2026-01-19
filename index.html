@@ -529,20 +529,21 @@ function startQuiz() {
 function renderQuiz() {
     toggleScreen('quiz-screen');
     const q = quizPool[quizIdx];
-    // 可以改為（讓測驗時點擊大字也能聽發音）：
-const wordEl = document.getElementById('current-word');
-wordEl.innerText = q.w;
-wordEl.style.cursor = "pointer";
-wordEl.onclick = () => speak(q.w);
     
-    // 1. 文章內容 + 提示句 (修正處：確保這裡沒有多餘的 })
-    const articleHtml = formatText(activeArt.content, [q]);
+    // 設定題目單字點擊發音
+    const wordEl = document.getElementById('current-word');
+    wordEl.innerText = q.w;
+    wordEl.style.cursor = "pointer";
+    wordEl.onclick = () => speak(q.w);
+    
+    // --- 修正處：確保 MC 上方的文章經過 formatText 處理並移除星號 ---
+    // 我們傳入當前題目單字 q，讓它在文中高亮
+    const articleHtml = formatText(activeArt.content, [q]); 
     const noticeHtml = `<div style="font-size:0.75rem; color:#9ca3af; margin-top:5px;">(內容經 AI 總結，原文連結請參考主頁)</div>`;
     
     document.getElementById('quiz-article').innerHTML = articleHtml + noticeHtml;
+    // -------------------------------------------------------
 
-    // 2. 設定題目單字
-    document.getElementById('current-word').innerText = q.w;
     document.getElementById('fb-box').classList.add('hidden');
     
     // 3. 選項隨機排序
@@ -662,11 +663,14 @@ function formatText(text, vocabList) {
         }).join(' ');
 
         // 4. 生成用於 🎧 的純文字 (完全移除所有 HTML 標籤和星號)
-        let pureSentence = sentence;
-        markers.forEach(m => {
-            pureSentence = pureSentence.split(m.id).join(m.word);
-        });
-        pureSentence = pureSentence.replace(/\*\*/g, ""); // 二次檢查移除剩餘星號
+       // 在 formatText 函數內部的第 4 步
+let pureSentence = sentence;
+markers.forEach(m => {
+    pureSentence = pureSentence.split(m.id).join(m.word);
+});
+
+// 重點：這一行能確保即使沒有被列入 vocab 的 ** 詞彙也會被移除星號
+pureSentence = pureSentence.replace(/\*\*/g, "");
 
         // 5. 回傳句子，🎧 緊接在後不換行
         return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;" title="朗讀此句">🎧</span>`;
