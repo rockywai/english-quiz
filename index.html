@@ -682,34 +682,46 @@ const newsGroups = [
 }
     
    function speak(t) {
-    window.speechSynthesis.cancel(); // 先停止之前的發音
-    
+    // 1. 先清除正在排隊的語音，防止重疊
+    window.speechSynthesis.cancel();
+
+    // 2. 建立新的語音請求
     const s = new SpeechSynthesisUtterance(t);
+    
+    // 3. 獲取所有可用語音引擎
     const voices = window.speechSynthesis.getVoices();
     
-    // 尋找 Google 的美式英語引擎
-    const googleVoice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Google US English'));
-    
-    // 如果找到了 Google 語音，就指定使用它
-    if (googleVoice) {
-        s.voice = googleVoice;
-    } else {
-        // 如果找不到 Google，退而求其次找任何英文語音
-        const anyEnglish = voices.find(v => v.lang.startsWith('en'));
-        if (anyEnglish) s.voice = anyEnglish;
+    // 4. 優先級排序：
+    // 第一優先：Google 的美式英語 (最自然)
+    // 第二優先：Microsoft 的美式英語 (Windows 內建的高品質語音)
+    // 第三優先：任何美式英語 (en-US)
+    // 第四優先：任何英語 (en)
+    let selectedVoice = voices.find(v => v.name === 'Google US English') ||
+                        voices.find(v => v.name.includes('Google') && v.lang.includes('en-US')) ||
+                        voices.find(v => v.name.includes('Microsoft') && v.lang.includes('en-US')) ||
+                        voices.find(v => v.lang === 'en-US') ||
+                        voices.find(v => v.lang.startsWith('en'));
+
+    if (selectedVoice) {
+        s.voice = selectedVoice;
+        console.log("正在使用語音:", selectedVoice.name); // 可以在 F12 檢查用了哪種聲音
     }
 
+    // 5. 設定語調與語速
     s.lang = 'en-US';
-    s.rate = 0.9; // 稍微調慢一點，讓同學聽得更清楚
-    s.pitch = 1.0;
-    
+    s.rate = 0.85;  // 稍微放慢一點點，更像教學發音
+    s.pitch = 1.0;  // 正常音調
+    s.volume = 1.0; // 音量最大
+
+    // 6. 執行發音
     window.speechSynthesis.speak(s);
 }
 
-// 關鍵一步：部分瀏覽器載入 voices 需要時間，加入這個事件監聽確保語音清單已就緒
-window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-};
+// 關鍵：確保瀏覽器載入語音庫
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+    
 // 修改後的使用者檢查邏輯
 function checkUserID() {
     let storedID = localStorage.getItem('dse_student_id');
@@ -922,7 +934,7 @@ function showFB(q, isCorrect) {
     function speak(t) {
     window.speechSynthesis.cancel();
     const s = new SpeechSynthesisUtterance(t);
-    s.lang = 'en-US'; s.rate = 0.9;
+    s.lang = 'en-US'; s.rate = 0.8;
     window.speechSynthesis.speak(s);
 }
     function toggleScreen(id) {
