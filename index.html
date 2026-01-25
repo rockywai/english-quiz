@@ -164,9 +164,20 @@
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd6bleG5w-Zi6nGOSSzGceBpzmXY9NgenwwBp1jO2KVyuG9DLB1X88bSLPDO9q9Mg/exec'; 
-let studentID = ""; 
+// 1. 全域變量與初始化
+let studentID = "";
+let activeArt = null;
+let quizPool = [];
+let quizIdx = 0;
+let score = 0;
 let currentPage = 1;
 const pageSize = 10;
+
+// 啟動檢查
+window.onload = () => {
+    checkUserID();
+    initHome();
+};
 const newsGroups = [
     {
         topic: "24.01.2026 Langoplay: Learning English through Games",
@@ -661,12 +672,7 @@ const newsGroups = [
         ]
     }
 ];
-
-let activeArt = null;
-let quizPool = [];
-let quizIdx = 0;
-let score = 0;
-
+    
     function handleBack() {
     const screens = ['study-screen', 'quiz-screen', 'result-screen'];
     const current = screens.find(s => !document.getElementById(s).classList.contains('hidden'));
@@ -697,83 +703,71 @@ window.speechSynthesis.onvoiceschanged = () => {
 
 // 修改後的使用者檢查邏輯
 function checkUserID() {
-    // 1. 先嘗試從瀏覽器暫存讀取
     let storedID = localStorage.getItem('dse_student_id');
-    
     if (storedID) {
         studentID = storedID;
     } else {
-        // 2. 如果沒有紀錄，不強制彈窗，直接設為 unknown
-        // 但我們可以在主頁顯示一個「登入/修改暱稱」的按鈕（選做）
         studentID = "unknown";
         localStorage.setItem('dse_student_id', "unknown");
     }
 }
-
 // 建議同時新增一個「更改暱稱」的函數，讓 unknown 同學想紀錄時可以改名
 function changeNickname() {
-    let newID = prompt("請輸入學生編號或暱稱（留空則維持 unknown）：", studentID);
-    if (newID && newID.trim() !== "") {
-        studentID = newID.trim();
+    let newID = prompt("請輸入學生編號或暱稱：", studentID === "unknown" ? "" : studentID);
+    if (newID !== null) {
+        studentID = newID.trim() === "" ? "unknown" : newID.trim();
         localStorage.setItem('dse_student_id', studentID);
-        alert("暱稱已更新為: " + studentID);
-        initHome(); // 重新整理頁面顯示
+        initHome();
+        alert("身份已更新為: " + studentID);
     }
 }
-    document.getElementById('user-info-display').innerText = `👤 身份: ${studentID}`;
-}
-
+// 2. 主頁渲染與分頁
 function initHome() {
-    const displayIdEl = document.getElementById('display-id');
-    if (displayIdEl) displayIdEl.innerText = studentID;
-    if (!studentID) checkUserID();
     const list = document.getElementById('topic-list');
     const pagination = document.getElementById('pagination');
+    const displayIdEl = document.getElementById('display-id');
+    
+    if (displayIdEl) displayIdEl.innerText = studentID;
     list.innerHTML = "";
-    pagination.innerHTML = "";
+    if (pagination) pagination.innerHTML = "";
 
-    // 1. 排序（由新到舊）
+    // 排序：由新到舊
     newsGroups.sort((a, b) => {
         const dateA = a.topic.split(' ')[0].split('.').reverse().join('-');
         const dateB = b.topic.split(' ')[0].split('.').reverse().join('-');
         return new Date(dateB) - new Date(dateA);
     });
 
-    // 2. 計算分頁
     const totalItems = newsGroups.length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const currentItems = newsGroups.slice(startIndex, endIndex);
+    const currentItems = newsGroups.slice(startIndex, startIndex + pageSize);
 
-    // 3. 渲染當前頁面的文章
-    currentItems.forEach((group, relativeIdx) => {
-        // 因為切片了，我們需要計算原始的 index 以便 toggleTopic 運作
-        const absoluteIdx = startIndex + relativeIdx;
+    currentItems.forEach((group, idx) => {
+        const realIdx = startIndex + idx;
         const formattedTitle = group.topic.replace(/^(\d{2}\.\d{2}\.\d{4})/, '<strong>$1</strong>');
         
         const card = document.createElement('div');
         card.className = 'topic-card';
         card.innerHTML = `
-            <button class="topic-header" onclick="toggleTopic(${absoluteIdx})">
+            <button class="topic-header" onclick="toggleTopic(${realIdx})">
                 <span class="topic-title">${formattedTitle}</span>
                 <span>▼</span>
             </button>
-            <div id="levels-${absoluteIdx}" class="level-container" style="display:none">
+            <div id="levels-${realIdx}" class="level-container" style="display:none">
                 ${group.levels.map((l, lIdx) => {
                     const isDone = localStorage.getItem('dse_vocab_' + l.id) === "done" ? " <span style='color:var(--success)'>[已完成]</span>" : "";
-                    return `<button class="level-btn" onclick="selectLevelForGroup(${absoluteIdx}, ${lIdx})">${l.level}${isDone}</button>`;
+                    return `<button class="level-btn" onclick="selectLevelFromHome(${realIdx}, ${lIdx})">${l.level}${isDone}</button>`;
                 }).join('')}
             </div>
         `;
         list.appendChild(card);
     });
 
-    // 4. 渲染分頁控制按鈕
-    if (totalPages > 1) {
+    if (totalPages > 1 && pagination) {
         pagination.innerHTML = `
             <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>
-            <span class="page-info">第 ${currentPage} / ${totalPages} 頁</span>
+            <span class="page-info">${currentPage} / ${totalPages}</span>
             <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>
         `;
     }
@@ -783,11 +777,17 @@ function initHome() {
 function changePage(step) {
     currentPage += step;
     initHome();
-    window.scrollTo(0, 0); // 翻頁後回到最頂端
+    window.scrollTo(0, 0);
+}
+
+function toggleTopic(idx) {
+    const el = document.getElementById(`levels-${idx}`);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 // 修正後的選擇函數，確保索引正確
-function selectLevelForGroup(gIdx, lIdx) {
+// 3. 學習與文章渲染
+function selectLevelFromHome(gIdx, lIdx) {
     activeArt = newsGroups[gIdx].levels[lIdx];
     toggleScreen('study-screen');
     updateNav(activeArt.level);
@@ -810,33 +810,57 @@ function selectLevelForGroup(gIdx, lIdx) {
         </div>
     `).join('');
 }
+    function formatText(text, vocabList) {
+    let tempText = text;
+    let markers = [];
+    
+    vocabList.forEach((v, idx) => {
+        const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
+        tempText = tempText.replace(regex, (match, p1) => {
+            const placeholder = `__MARKER_${idx}__`;
+            markers.push({ id: placeholder, word: p1 });
+            return placeholder;
+        });
+    });
 
+    tempText = tempText.replace(/\*\*/g, ""); // 清除漏掉的星號
+    const sentences = tempText.split('. ');
+
+    return sentences.map(sentence => {
+        if (!sentence.trim()) return "";
+        let wordsHtml = sentence.split(' ').map(token => {
+            const marker = markers.find(m => token.includes(m.id));
+            if (marker) {
+                return token.replace(marker.id, `<span class="highlight" onclick="speak('${marker.word}'); event.stopPropagation();">${marker.word}</span>`);
+            }
+            const cleanWord = token.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${token}</span>`;
+        }).join(' ');
+
+        let pureSentence = sentence;
+        markers.forEach(m => pureSentence = pureSentence.split(m.id).join(m.word));
+        pureSentence = pureSentence.replace(/\*\*/g, "");
+
+        return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;">🎧</span>`;
+    }).join(' '); 
+}
+    // 4. 測驗與結果 (其餘基礎函數)
 function startQuiz() {
-    // 重點：每次開始測驗時，都將 5 個單字進行隨機排序 (Shuffle)
-    quizPool = shuffle([...activeArt.vocab]); 
+    quizPool = shuffle([...activeArt.vocab]);
     quizIdx = 0; score = 0;
     renderQuiz();
 }
-
-function renderQuiz() {
+    function renderQuiz() {
     toggleScreen('quiz-screen');
     const q = quizPool[quizIdx];
-    
-    // 設定題目單字與發音
     const wordEl = document.getElementById('current-word');
     wordEl.innerText = q.w;
-    wordEl.style.cursor = "pointer";
     wordEl.onclick = () => speak(q.w);
     
-    // --- 關鍵修正：呼叫 formatText 並傳入當前題目單字 q，以移除星號並高亮 ---
     const articleHtml = formatText(activeArt.content, [q]); 
-    const noticeHtml = `<div style="font-size:0.75rem; color:#9ca3af; margin-top:5px;">(參考上方文章找出答案)</div>`;
-    
-    document.getElementById('quiz-article').innerHTML = articleHtml + noticeHtml;
-
+    document.getElementById('quiz-article').innerHTML = articleHtml;
     document.getElementById('fb-box').classList.add('hidden');
     
-    // 選項隨機排序
     const opts = shuffle([q, ...shuffle(activeArt.vocab.filter(v=>v.w!==q.w)).slice(0,3)]);
     const container = document.getElementById('options-container');
     container.innerHTML = "";
@@ -862,11 +886,55 @@ function renderQuiz() {
 }
 
 function showFB(q, isCorrect) {
-    const box = document.getElementById('fb-box');
-    box.classList.remove('hidden');
-    document.getElementById('fb-result').innerHTML = isCorrect ? "<span style='color:var(--success)'>✅ Correct!</span>" : "<span style='color:var(--danger)'>❌ Incorrect</span>";
-    document.getElementById('fb-detail').innerHTML = `<b>${q.w}</b>: ${q.cn}<br><i>Ex: ${q.ex}</i>`;
+    const fb = document.getElementById('fb-box');
+    fb.classList.remove('hidden');
+    fb.innerHTML = `<div style="color:${isCorrect?'var(--success)':'var(--danger)'}; font-weight:bold; margin-bottom:10px;">
+        ${isCorrect?'✓ Correct!':'✗ Incorrect'}</div>
+        <div style="font-size:0.9rem;"><strong>${q.w}</strong> (${q.pos}): ${q.cn}<br><em>Ex: ${q.ex}</em></div>
+        <button class="next-btn" onclick="nextQ()" style="margin-top:15px; width:100%;">Next</button>`;
 }
+    function nextQ() {
+    quizIdx++;
+    if(quizIdx < quizPool.length) renderQuiz();
+    else showResult();
+}
+    function showResult() {
+    toggleScreen('result-screen');
+    const p = Math.round(score/quizPool.length*100);
+    document.getElementById('result-score').innerText = `${score} / ${quizPool.length} (${p}%)`;
+    if(p >= 60) localStorage.setItem('dse_vocab_' + activeArt.id, "done");
+    submitScore(p);
+}
+    function submitScore(p) {
+    const url = "你的GAS地址"; // 請填入你的 Google Apps Script 地址
+    const data = { id: studentID, topic: activeArt.id, score: p };
+    fetch(url, { method: 'POST', mode: 'no-cors', cache: 'no-cache', body: JSON.stringify(data) });
+}
+    function speak(t) {
+    window.speechSynthesis.cancel();
+    const s = new SpeechSynthesisUtterance(t);
+    s.lang = 'en-US'; s.rate = 0.9;
+    window.speechSynthesis.speak(s);
+}
+    function toggleScreen(id) {
+    ['home-screen', 'study-screen', 'quiz-screen', 'result-screen'].forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+    });
+    document.getElementById(id).classList.remove('hidden');
+}
+    function updateNav(title) {
+    document.getElementById('nav-bar').classList.remove('hidden');
+    document.getElementById('nav-title').innerText = title;
+}
+    function goHome() { 
+    toggleScreen('home-screen'); 
+    document.getElementById('nav-bar').classList.add('hidden'); 
+    initHome(); 
+}
+
+function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
+function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
 
 function nextStep() {
     quizIdx++;
@@ -910,70 +978,6 @@ function uploadResult() {
         status.innerText = "❌ 同步失敗。"; 
     });
 }
-
-function toggleTopic(idx) {
-    const t = document.getElementById(`levels-${idx}`);
-    const v = t.style.display === 'flex';
-    document.querySelectorAll('.level-container').forEach(c => c.style.display = 'none');
-    t.style.display = v ? 'none' : 'flex';
-}
-
-function formatText(text, vocabList) {
-    let tempText = text;
-    let markers = [];
-    
-    // 1. 處理重點詞彙：將 **word** 轉換為標記並移除星號
-    vocabList.forEach((v, idx) => {
-        // 這個正則會抓取 ** 內部的字 (p1)，而不包含星號本身
-        const regex = new RegExp(`\\*\\*(${v.w})\\*\\*`, 'gi');
-        tempText = tempText.replace(regex, (match, p1) => {
-            const placeholder = `__MARKER_${idx}__`;
-            markers.push({ id: placeholder, word: p1 });
-            return placeholder;
-        });
-    });
-
-    // 2. 萬一有漏網之魚（沒在 vocabList 但有星號的字），直接強制清除星號
-    tempText = tempText.replace(/\*\*/g, "");
-
-    // 3. 按句號拆分
-    const sentences = tempText.split('. ');
-
-    return sentences.map(sentence => {
-        if (!sentence.trim()) return "";
-
-        // 4. 處理單字點擊
-        let wordsHtml = sentence.split(' ').map(token => {
-            const marker = markers.find(m => token.includes(m.id));
-            if (marker) {
-                // 回傳不含星號的高亮標籤
-                return token.replace(marker.id, `<span class="highlight" onclick="speak('${marker.word}'); event.stopPropagation();">${marker.word}</span>`);
-            }
-            const cleanWord = token.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-            return `<span onclick="speak('${cleanWord}'); event.stopPropagation();" style="cursor:pointer;">${token}</span>`;
-        }).join(' ');
-
-        // 5. 生成用於 🎧 的純文字句子 (確保無標籤、無星號)
-        let pureSentence = sentence;
-        markers.forEach(m => pureSentence = pureSentence.split(m.id).join(m.word));
-
-        return `${wordsHtml}. <span onclick="speak('${pureSentence.replace(/'/g, "\\'")}'); event.stopPropagation();" style="cursor:pointer; font-size:1.2rem;">🎧</span>`;
-    }).join(' '); 
-}
-function toggleScreen(id) {
-    ['home-screen', 'study-screen', 'quiz-screen', 'result-screen'].forEach(s => document.getElementById(s).classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-}
-
-function updateNav(title) {
-    document.getElementById('nav-bar').classList.remove('hidden');
-    document.getElementById('nav-title').innerText = title;
-}
-
-function goHome() { toggleScreen('home-screen'); document.getElementById('nav-bar').classList.add('hidden'); initHome(); }
-function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
-function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
-function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
 
 initHome();
 </script>
