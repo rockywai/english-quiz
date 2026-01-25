@@ -6,6 +6,34 @@
     <title>DSE 英文詞彙自學系統 V4.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
+    /* 讓修改按鈕更有吸引力 */
+.edit-name-btn {
+    margin-left: 10px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.edit-name-btn:hover {
+    background: #2b6cb0;
+    transform: scale(1.05);
+}
+
+/* 呼吸燈動畫（選用） */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+.urgent-notice {
+    animation: pulse 2s infinite;
+}
     .pagination-container {
     display: flex;
     justify-content: center;
@@ -104,11 +132,12 @@
 
     <div class="content-padding">
         <div id="home-screen">
-            <div style="text-align: center; margin-bottom: 20px;">
-    <p style="font-size: 0.9rem; color: #666;">
-        當前身份：<span id="display-id" style="font-weight: bold; color: var(--primary);">unknown</span>
-        <button onclick="changeNickname()" style="margin-left: 10px; padding: 2px 8px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff;">修改</button>
-    </p>
+            <div style="text-align: center; margin-bottom: 25px;">
+    <div class="urgent-notice" style="display: inline-block; padding: 10px; border-radius: 12px;">
+        <span style="font-size: 0.95rem; color: #4a5568;">當前使用者：</span>
+        <span id="display-id"></span>
+        <button class="edit-name-btn" onclick="changeNickname()">按此更改身份</button>
+    </div>
 </div>
     <button class="leaderboard-btn" onclick="openLeaderboard()">📊 查看全班學習進度</button>
     <button class="source-link-btn" onclick="window.open('https://www.newsinlevels.com/', '_blank')">
@@ -746,11 +775,26 @@ function changeNickname() {
 function initHome() {
     const list = document.getElementById('topic-list');
     const pagination = document.getElementById('pagination');
-    const displayIdEl = document.getElementById('display-id');
+   const displayIdEl = document.getElementById('display-id');
     
-    if (displayIdEl) displayIdEl.innerText = studentID;
-    list.innerHTML = "";
-    if (pagination) pagination.innerHTML = "";
+    // 如果是 unknown，使用紅底黃字並加強提醒感
+    if (studentID === "unknown") {
+        displayIdEl.style.backgroundColor = "#ff4d4d"; // 明亮的紅色
+        displayIdEl.style.color = "#fffb00";           // 鮮豔的黃色
+        displayIdEl.style.padding = "4px 12px";
+        displayIdEl.style.borderRadius = "20px";
+        displayIdEl.style.fontWeight = "bold";
+        displayIdEl.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+        displayIdEl.innerText = "尚未登錄 (unknown)";
+    } else {
+        // 如果已經有名字，顯示得低調一點，使用綠色或藍色
+        displayIdEl.style.backgroundColor = "#e6fffa"; 
+        displayIdEl.style.color = "#2d3748";
+        displayIdEl.style.padding = "4px 12px";
+        displayIdEl.style.borderRadius = "20px";
+        displayIdEl.style.fontWeight = "bold";
+        displayIdEl.innerText = studentID;
+    }
 
     // 排序：由新到舊
     newsGroups.sort((a, b) => {
