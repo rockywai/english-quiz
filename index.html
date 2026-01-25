@@ -104,6 +104,12 @@
 
     <div class="content-padding">
         <div id="home-screen">
+            <div style="text-align: center; margin-bottom: 20px;">
+    <p style="font-size: 0.9rem; color: #666;">
+        當前身份：<span id="display-id" style="font-weight: bold; color: var(--primary);">unknown</span>
+        <button onclick="changeNickname()" style="margin-left: 10px; padding: 2px 8px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff;">修改</button>
+    </p>
+</div>
     <button class="leaderboard-btn" onclick="openLeaderboard()">📊 查看全班學習進度</button>
     <button class="source-link-btn" onclick="window.open('https://www.newsinlevels.com/', '_blank')">
         🌐 閱讀更多：News in Levels 原文網站
@@ -689,37 +695,37 @@ window.speechSynthesis.onvoiceschanged = () => {
     window.speechSynthesis.getVoices();
 };
 
+// 修改後的使用者檢查邏輯
 function checkUserID() {
-    while (true) {
-        let input = prompt("請輸入 4 位學生編號 (1100-6599) \n或輸入自訂暱稱 (自由填寫):");
-        
-        if (input === null || input.trim() === "") {
-            alert("⚠️ 請輸入資料才能開始。");
-            continue;
-        }
-
-        let trimmedInput = input.trim();
-
-        // 檢查是否為純數字學號
-        if (/^\d{4}$/.test(trimmedInput)) {
-            let num = parseInt(trimmedInput);
-            if (num >= 1100 && num <= 6599) {
-                studentID = trimmedInput;
-                break;
-            } else {
-                alert("⚠️ 學號範圍需在 1100-6599 之間。");
-            }
-        } else {
-            // 如果不是 4 位數字，則視為自訂暱稱
-            studentID = trimmedInput;
-            alert("✅ 已使用暱稱「" + studentID + "」登入");
-            break;
-        }
+    // 1. 先嘗試從瀏覽器暫存讀取
+    let storedID = localStorage.getItem('dse_student_id');
+    
+    if (storedID) {
+        studentID = storedID;
+    } else {
+        // 2. 如果沒有紀錄，不強制彈窗，直接設為 unknown
+        // 但我們可以在主頁顯示一個「登入/修改暱稱」的按鈕（選做）
+        studentID = "unknown";
+        localStorage.setItem('dse_student_id', "unknown");
     }
+}
+
+// 建議同時新增一個「更改暱稱」的函數，讓 unknown 同學想紀錄時可以改名
+function changeNickname() {
+    let newID = prompt("請輸入學生編號或暱稱（留空則維持 unknown）：", studentID);
+    if (newID && newID.trim() !== "") {
+        studentID = newID.trim();
+        localStorage.setItem('dse_student_id', studentID);
+        alert("暱稱已更新為: " + studentID);
+        initHome(); // 重新整理頁面顯示
+    }
+}
     document.getElementById('user-info-display').innerText = `👤 身份: ${studentID}`;
 }
 
 function initHome() {
+    const displayIdEl = document.getElementById('display-id');
+    if (displayIdEl) displayIdEl.innerText = studentID;
     if (!studentID) checkUserID();
     const list = document.getElementById('topic-list');
     const pagination = document.getElementById('pagination');
