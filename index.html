@@ -209,25 +209,43 @@ window.onload = () => {
 };
 const newsGroups = [
    {
-        topic: "24.01.2026 Langoplay: Gamified Language Learning",
+        topic: "24.01.2026 Langoplay: Gamified Learning",
         levels: [
             {
-                id: "langoplay-new-lv1", level: "DSE LV1 (Basic)",
+                id: "langoplay-v2-lv1", level: "DSE LV1 (Basic)",
                 originalUrl: "https://www.newsinlevels.com/products/langoplay-turns-learning-english-into-a-game-level-1/",
                 content: "A new app called Langoplay helps people learn English. It makes learning feel like a **game**. You can practice speaking and listening every day. The app uses **technology** to track your progress. It is **fun** and easy to use. Many students find it **helpful** because they don't get bored. The goal is to make learning a new **language** accessible to everyone.",
-                vocab: [ /* 保持不變 */ ]
+                vocab: [
+                    { w: "game", pos: "n.", d: "an activity that you do for fun", cn: "遊戲", ex: "Learning English with this game is very interesting." },
+                    { w: "technology", pos: "n.", d: "the use of science in industry, engineering, etc.", cn: "科技", ex: "New technology makes our lives easier." },
+                    { w: "fun", pos: "adj.", d: "enjoyable", cn: "有趣的", ex: "Playing football is fun." },
+                    { w: "helpful", pos: "adj.", d: "giving or ready to give help", cn: "有幫助的", ex: "The teacher's advice was very helpful." },
+                    { w: "language", pos: "n.", d: "a system of communication", cn: "語言", ex: "English is a global language." }
+                ]
             },
             {
-                id: "langoplay-new-lv2", level: "DSE LV2-3 (Intermediate)",
+                id: "langoplay-v2-lv2", level: "DSE LV2-3 (Intermediate)",
                 originalUrl: "https://www.newsinlevels.com/products/langoplay-turns-learning-english-into-a-game-level-2/",
-                content: "Langoplay is a fresh approach to language education that **combines** traditional lessons with interactive gaming elements. This innovative **method** keeps learners highly engaged and motivated throughout their study sessions. Users can **interact** with AI characters to improve their conversation skills in a safe environment. Many educational experts **recommend** using such apps to supplement regular school work. It is an **effective** way to build confidence when speaking a foreign language. By turning difficult grammar and vocabulary exercises into rewarding challenges, Langoplay ensures that students remain interested in their long-term language goals. The app also provides detailed feedback on pronunciation, which is crucial for mastering English fluently. As more people seek digital solutions for education, this app stands out as a powerful tool for self-improvement.",
-                vocab: [ /* 已擴充內容至 150 字以上 */ ]
+                content: "Langoplay is a fresh approach to language education that **combines** traditional lessons with interactive gaming elements. This innovative **method** keeps learners highly engaged and motivated throughout their study sessions. Users can **interact** with AI characters to improve their conversation skills in a safe environment. Many educational experts **recommend** using such apps to supplement regular school work. It is an **effective** way to build confidence when speaking a foreign language. By turning difficult grammar exercises into rewarding challenges, Langoplay ensures that students remain interested in their long-term learning goals.",
+                vocab: [
+                    { w: "combines", pos: "v.", d: "to join two or more things together", cn: "結合", ex: "The movie combines comedy and action." },
+                    { w: "method", pos: "n.", d: "a particular way of doing something", cn: "方法", ex: "This is a new method of teaching math." },
+                    { w: "interact", pos: "v.", d: "to communicate with or react to", cn: "互動", ex: "It is important to interact with your classmates." },
+                    { w: "recommend", pos: "v.", d: "to suggest that someone or something is good", cn: "推薦", ex: "I highly recommend this book." },
+                    { w: "effective", pos: "adj.", d: "successful in producing a desired result", cn: "有效的", ex: "This medicine is very effective for headaches." }
+                ]
             },
             {
-                id: "langoplay-new-lv4", level: "DSE LV4-5 (Advanced)",
+                id: "langoplay-v2-lv4", level: "DSE LV4-5 (Advanced)",
                 originalUrl: "https://www.newsinlevels.com/products/langoplay-turns-learning-english-into-a-game-level-3/",
-                content: "The **innovation** of Langoplay lies in its sophisticated gamified learning structure, which addresses the common problem of learner fatigue. By **integrating** advanced speech recognition technology, it provides instant and precise feedback to users, allowing them to refine their oral skills. This **constant** interaction helps learners polish their pronunciation and intonation, making them sound more natural. Furthermore, the app's complex **algorithm** meticulously adapts to each individual's learning pace, ensuring that the curriculum remains challenging yet achievable. While some educators remain **cautious** about excessive screen time, the educational benefits of such immersive tools are increasingly undeniable in the modern classroom. In addition to vocabulary building, Langoplay encourages learners to apply English in various simulated real-life scenarios, which bridges the gap between theoretical knowledge and practical application. This pedagogical shift towards 'edutainment' reflects a broader trend in global education, where technology serves as a primary driver for engagement. Consequently, students are no longer passive recipients of information but active participants in their own linguistic development. This self-directed approach is particularly beneficial for DSE candidates who need to enhance their language proficiency across all four skills under time pressure.",
-                vocab: [ /* 已擴充內容至 300 字以上，並加入 DSE 常用論述詞 */ ]
+                content: "The **innovation** of Langoplay lies in its sophisticated gamified structure, which addresses the common problem of learner fatigue. By **integrating** advanced speech recognition technology, it provides instant and precise feedback, allowing users to refine their oral skills. This **constant** interaction helps learners polish their pronunciation and intonation, making them sound more natural. Furthermore, the app's complex **algorithm** meticulously adapts to each individual's learning pace, ensuring that the curriculum remains challenging yet achievable. While some educators remain **cautious** about excessive screen time, the educational benefits of such immersive tools are increasingly undeniable in the modern classroom. This pedagogical shift towards 'edutainment' reflects a broader trend in global education, where technology serves as a primary driver for student engagement. Consequently, learners are no longer passive recipients of information but active participants in their own linguistic development, a crucial factor for success in high-stakes exams like the DSE.",
+                vocab: [
+                    { w: "innovation", pos: "n.", d: "a new idea, design, or method", cn: "創新", ex: "Technical innovation is key to success." },
+                    { w: "integrating", pos: "v.", d: "to combine two or more things so that they work together", cn: "整合", ex: "Integrating games into lessons is a good idea." },
+                    { w: "constant", pos: "adj.", d: "happening all the time or repeatedly", cn: "持續的", ex: "He is in constant contact with his family." },
+                    { w: "algorithm", pos: "n.", d: "a set of rules for solving a problem by a computer", cn: "演算法", ex: "The social media algorithm shows you things you like." },
+                    { w: "cautious", pos: "adj.", d: "careful to avoid potential problems or dangers", cn: "謹慎的", ex: "He is very cautious about his health." }
+                ]
             }
         ]
     },
