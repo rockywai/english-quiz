@@ -193,7 +193,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXXszgCdfAYz3SxcsZe9v44V_02VStGa7vzNXLGxlAfLvrWI7GIV5LZZCdQ6xTSVGLfg/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUzwtLy3vHGn5kdEf7z2fZ2QXTrhXOUbbuOw0TUevKPdWHBW_JGTpKt-lohoLyFq1iVQ/exec'; 
 // 1. 全域變量與初始化
 let studentID = "";
 let activeArt = null;
@@ -1150,23 +1150,7 @@ function showFB(q, isCorrect) {
     // 呼叫同步函數
     submitScore(p);
 }
-
-// 3. 修正 nextStep (這是點擊測驗最後一題後的動作)
-function nextStep() {
-    quizIdx++;
-    if (quizIdx < quizPool.length) {
-        renderQuiz();
-    } else {
-        // 直接進入結果畫面，不要在那裡等同步
-        showResult();
-    }
-}
     function submitScore(p) {
-    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzXXszgCdfAYz3SxcsZe9v44V_02VStGa7vzNXLGxlAfLvrWI7GIV5LZZCdQ6xTSVGLfg/exec")) {
-        console.warn("未設定 GAS URL，跳過雲端同步");
-        return;
-    }
-
     const data = { 
         id: studentID, // 這裡統一使用 id
         topic: activeArt.id, 
@@ -1226,24 +1210,65 @@ function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
 function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
 function uploadResult() {
-    // 確保 SCRIPT_URL 已經填入正確的 /exec 網址
-    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzXXszgCdfAYz3SxcsZe9v44V_02VStGa7vzNXLGxlAfLvrWI7GIV5LZZCdQ6xTSVGLfg/exec")) return;
+    // 修正檢查邏輯：只有當網址為空或者是預設提示文字時才停止
+    if (!SCRIPT_URL || SCRIPT_URL === "" || SCRIPT_URL.includes("你的GAS")) {
+        console.warn("未偵測到正確的 GAS URL");
+        return;
+    }
 
     const p = Math.round(score / quizPool.length * 100); // 計算百分比
 
+    // 修正資料標籤：將 name 改為 id，與 GAS 對應
     const data = { 
-        id: studentID,     // 改為使用 id
+        id: studentID,     
         topic: activeArt.id, 
-        score: p           // 傳送百分比，方便排行榜統計
+        score: p           
     };
 
     fetch(SCRIPT_URL, { 
         method: 'POST', 
-        mode: 'no-cors', // 必須使用 no-cors
+        mode: 'no-cors', 
         body: JSON.stringify(data) 
     })
-    .then(() => console.log("Data sent to GAS"))
-    .catch(e => console.error("Sync error:", e));
+    .then(() => {
+        console.log("資料已發送");
+        const status = document.getElementById('upload-status');
+        if(status) status.innerText = "✅ 進度已同步至雲端。";
+    })
+    .catch(e => console.error("同步出錯:", e));
+}
+
+function nextStep() {
+    quizIdx++;
+    if (quizIdx < quizPool.length) {
+        renderQuiz();
+    } else {
+        // 先執行同步
+        uploadResult(); 
+        
+        // 顯示結果畫面
+        toggleScreen('result-screen');
+        
+        const p = Math.round(score / quizPool.length * 100);
+        
+        // 根據分數顯示評價
+        let rank = "";
+        if(p === 100) rank = "🌟 完美！你是詞彙大師！";
+        else if(p >= 60) rank = "👍 做得好！繼續加油！";
+        else rank = "📚 再複習一下，你可以做到的！";
+        
+        // 更新結果顯示內容
+        const resultH2 = document.querySelector('#result-screen h2');
+        const resultScore = document.getElementById('result-score');
+        
+        if (resultH2) resultH2.innerText = `測驗完成！\n${rank}`;
+        if (resultScore) resultScore.innerText = `${score} / ${quizPool.length} (${p}%)`;
+
+        // 儲存本地紀錄
+        if (p >= 60) {
+            localStorage.setItem('dse_vocab_' + activeArt.id, "done");
+        }
+    }
 }
 
 initHome();
