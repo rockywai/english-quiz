@@ -178,12 +178,17 @@
         }
         
         /* 反饋訊息區域的高度改為自動，因為現在內容變多了 */
+        /* 讓反饋區域的按鈕寬度自動，不要太死板 */
+        #feedback-msg .primary-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* 如果想讓結果區域能撐開，請確保這個設定 */
         #feedback-msg {
-            text-align: center; 
-            margin-top: 15px; 
-            font-weight: bold;
-            min-height: 20px;       /* 最小高度 */
-            height: auto;           /* 讓高度隨內容撐開 */
+            height: auto;
+            min-height: 50px;
         }
         .option-btn:hover { border-color: var(--primary); background: #f0f7ff; }
         .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
@@ -1267,13 +1272,8 @@
         `;
     
         feedbackEl.innerHTML = msgHTML;
-        // ---------------------------------------------
-        
+        // ---------------------------------------------  
         document.getElementById('quiz-score').innerText = `Score: ${score}`;
-        
-        // 為了讓學生有時間看清楚中文解釋，我們將下一題的等待時間稍微延長 (從 1.5秒 改為 3秒)
-        // 如果學生覺得太慢，可以手動點擊下一題 (這裡我們保持自動跳轉，但時間加長)
-        setTimeout(nextStep, 3500); 
     }
 
     function nextStep() {
