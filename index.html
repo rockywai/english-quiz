@@ -16,6 +16,22 @@
             --danger: #e74c3c;
             --success: #2ecc71;
         }
+        .source-notice {
+            background: #eef6ff;         /* 淺藍色背景 */
+            border: 1px solid #d0e4f7;    /* 邊框 */
+            border-radius: 10px;
+            padding: 10px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .source-notice:hover {
+            background: #e1efff;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
 
         body {
             font-family: 'Noto Sans TC', sans-serif;
@@ -238,12 +254,20 @@
     </div>
 
     <div class="scroll-content">
-
         <div id="home-screen" class="screen">
             <div style="text-align: center; margin-bottom: 20px;">
                 <h2 style="color: var(--primary);">🇬🇧 DSE 英文詞彙自學</h2>
                 <div id="student-display" style="background:#eee; padding:8px 15px; border-radius:20px; display:inline-block; cursor:pointer;" onclick="editName()">
                     👤 未知學生 (點擊修改)
+                </div>
+            </div>
+                        
+              <div class="source-notice" onclick="window.open('https://www.newsinlevels.com/', '_blank')">
+                <div style="font-size: 0.85rem; color: #555;">
+                    📚 資料來源：<strong>News in Levels</strong>
+                </div>
+                    <div style="font-size: 0.75rem; color: var(--primary); text-decoration: underline;">
+                    想閱讀更多文章？點擊此處探索 ➔
                 </div>
             </div>
 
