@@ -193,7 +193,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQBI-7S9EQOvI6ZMIUQXyk_l7HM8Bv1VmoqcxckKrSIIyDWd-brsvF5Ov2X_tkRz4dHQ/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxupZlPe4hR-nJo2tHnJMaX6wdNl5bRcmmRyPPWMqufNHNzZPFo6uJd02kxRGkSJfyqJA/exec'; 
 // 1. 全域變量與初始化
 let studentID = "";
 let activeArt = null;
@@ -1162,7 +1162,7 @@ function nextStep() {
     }
 }
     function submitScore(p) {
-    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzQBI-7S9EQOvI6ZMIUQXyk_l7HM8Bv1VmoqcxckKrSIIyDWd-brsvF5Ov2X_tkRz4dHQ/exec")) {
+    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxupZlPe4hR-nJo2tHnJMaX6wdNl5bRcmmRyPPWMqufNHNzZPFo6uJd02kxRGkSJfyqJA/exec")) {
         console.warn("未設定 GAS URL，跳過雲端同步");
         return;
     }
@@ -1201,34 +1201,49 @@ function nextStep() {
     document.getElementById('nav-bar').classList.add('hidden'); 
     initHome(); 
 }
-
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("RawData");
+    
+    // 解析傳進來的 JSON 數據
+    var data = JSON.parse(e.postData.contents);
+    
+    // 按照 B 欄 (ID), C 欄 (Topic), D 欄 (Score) 的順序寫入
+    // 第一欄 A 留給時間戳記
+    sheet.appendRow([
+      new Date(), 
+      data.id, 
+      data.topic, 
+      data.score + "%"
+    ]);
+    
+    return ContentService.createTextOutput("Success");
+  } catch (err) {
+    return ContentService.createTextOutput("Error: " + err.message);
+  }
+}
 function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
 function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
 function uploadResult() {
-    const status = document.getElementById('upload-status');
+    // 確保 SCRIPT_URL 已經填入正確的 /exec 網址
+    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxupZlPe4hR-nJo2tHnJMaX6wdNl5bRcmmRyPPWMqufNHNzZPFo6uJd02kxRGkSJfyqJA/exec")) return;
+
+    const p = Math.round(score / quizPool.length * 100); // 計算百分比
+
     const data = { 
-        name: studentID, 
+        id: studentID,     // 改為使用 id
         topic: activeArt.id, 
-        score: score 
+        score: p           // 傳送百分比，方便排行榜統計
     };
 
     fetch(SCRIPT_URL, { 
         method: 'POST', 
-        mode: 'no-cors', 
+        mode: 'no-cors', // 必須使用 no-cors
         body: JSON.stringify(data) 
     })
-    .then(() => { 
-        status.innerText = "✅ 進度已同步至雲端。";
-        
-        // --- 新增這行：記錄到本地 ---
-        // 儲存格式為：學習記錄_題目ID = "done"
-        localStorage.setItem('dse_vocab_' + activeArt.id, "done");
-    })
-    .catch((err) => { 
-        console.error("上傳失敗:", err);
-        status.innerText = "❌ 同步失敗。"; 
-    });
+    .then(() => console.log("Data sent to GAS"))
+    .catch(e => console.error("Sync error:", e));
 }
 
 initHome();
