@@ -1109,40 +1109,40 @@
     }
 
     // --- 進入學習模式 (文章置頂 + Highlight) ---
-    function loadLevel(levelData) {
+   function loadLevel(levelData) {
     activeArt = levelData;
     toggleScreen('study-screen');
     document.getElementById('nav-title').innerText = levelData.level;
 
     const articleBox = document.getElementById('article-display');
     
+    // --- 修正位置：先清除內容中所有的 ** 符號 ---
+    let cleanMarkdownContent = activeArt.content.replace(/\*\*/g, "");
+    
     // --- 新功能邏輯 ---
-    // 1. 先按句號拆分，處理「句尾發音 Emoji」
-    let sentences = activeArt.content.split('. ');
+    // 1. 按句號拆分，處理「句尾發音 Emoji」
+    let sentences = cleanMarkdownContent.split('. ');
     let processedHTML = sentences.map(sentence => {
         if (!sentence.trim()) return "";
         
-        // 清理一下結尾可能殘留的句號
         let cleanSentence = sentence.replace(/\.$/, "");
         
-        // 2. 將句子內的每個單字拆分，實現「全單字點擊發音」
+      // 2. 將句子內的每個單字拆分
         let wordsHTML = cleanSentence.split(' ').map(word => {
-            // 移除標點符號以便發音準確，但保留顯示
-            let cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            // 移除標點符號以便比對與發音
+            let pureWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
             
             // 檢查是否為重點詞彙 (Highlight)
-            let isHighlight = activeArt.vocab.some(v => v.w.toLowerCase() === cleanWord.toLowerCase());
+            let isHighlight = activeArt.vocab.some(v => v.w.toLowerCase() === pureWord.toLowerCase());
             let className = isHighlight ? "highlight-word" : "normal-word";
             
-            return `<span class="${className}" onclick="speak('${cleanWord}')">${word}</span>`;
+            return `<span class="${className}" onclick="speak('${pureWord}')">${word}</span>`;
         }).join(' ');
 
-        // 組裝：單字群 + 句號 + 📢 Emoji (整句發音)
-        // 使用 encodeURIComponent 確保整句內容能安全傳入函數
+       // 轉義單引號以防報錯
         let safeSentence = cleanSentence.replace(/'/g, "\\'"); 
         return `${wordsHTML}. <span style="cursor:pointer; margin-right:8px;" onclick="speak('${safeSentence}')">📢</span>`;
     }).join(' ');
-
     articleBox.innerHTML = processedHTML;
 
     // 3. 渲染下方重點詞彙卡
