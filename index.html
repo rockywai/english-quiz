@@ -119,7 +119,15 @@
             border-bottom: 2px solid #eee;
             margin-bottom: 20px;
         }
-
+        /* 普通單字樣式：滑過時有底線，提示可以點擊 */
+            .normal-word {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+            .normal-word:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
         .highlight-word {
             background-color: var(--highlight);
             border-bottom: 2px solid var(--secondary);
@@ -387,36 +395,56 @@
 
     // --- 進入學習模式 (文章置頂 + Highlight) ---
     function loadLevel(levelData) {
-        activeArt = levelData;
-        toggleScreen('study-screen');
-        document.getElementById('nav-title').innerText = levelData.level;
+    activeArt = levelData;
+    toggleScreen('study-screen');
+    document.getElementById('nav-title').innerText = levelData.level;
 
-        // 1. 處理文章 Highlight
-        const articleBox = document.getElementById('article-display');
-        let htmlContent = activeArt.content;
+    const articleBox = document.getElementById('article-display');
+    
+    // --- 新功能邏輯 ---
+    // 1. 先按句號拆分，處理「句尾發音 Emoji」
+    let sentences = activeArt.content.split('. ');
+    let processedHTML = sentences.map(sentence => {
+        if (!sentence.trim()) return "";
+        
+        // 清理一下結尾可能殘留的句號
+        let cleanSentence = sentence.replace(/\.$/, "");
+        
+        // 2. 將句子內的每個單字拆分，實現「全單字點擊發音」
+        let wordsHTML = cleanSentence.split(' ').map(word => {
+            // 移除標點符號以便發音準確，但保留顯示
+            let cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            
+            // 檢查是否為重點詞彙 (Highlight)
+            let isHighlight = activeArt.vocab.some(v => v.w.toLowerCase() === cleanWord.toLowerCase());
+            let className = isHighlight ? "highlight-word" : "normal-word";
+            
+            return `<span class="${className}" onclick="speak('${cleanWord}')">${word}</span>`;
+        }).join(' ');
 
-        // 將每個單字替換為帶有 onclick 的 span
-        activeArt.vocab.forEach(v => {
-            // 使用正則表達式進行全字匹配 (Case insensitive)
-            const regex = new RegExp(`\\b(${v.w})\\b`, 'gi');
-            htmlContent = htmlContent.replace(regex, `<span class="highlight-word" onclick="speak('$1')">$1</span>`);
-        });
-        articleBox.innerHTML = htmlContent;
+        // 組裝：單字群 + 句號 + 📢 Emoji (整句發音)
+        // 使用 encodeURIComponent 確保整句內容能安全傳入函數
+        let safeSentence = cleanSentence.replace(/'/g, "\\'"); 
+        return `${wordsHTML}. <span style="cursor:pointer; margin-right:8px;" onclick="speak('${safeSentence}')">📢</span>`;
+    }).join(' ');
 
-        // 2. 渲染下方單字表
-        const listDiv = document.getElementById('vocab-list');
-        listDiv.innerHTML = activeArt.vocab.map(v => `
-            <div class="word-card">
-                <div style="font-weight:bold; font-size:1.2rem; color:var(--primary);">${v.w} <span style="font-size:0.9rem; color:#666;">(${v.pos})</span></div>
-                <div>${v.cn}</div>
-                <button onclick="speak('${v.w}')" style="margin-top:5px; border:1px solid #ccc; background:#fff; cursor:pointer; padding:2px 8px; border-radius:4px;">🔊 發音</button>
+    articleBox.innerHTML = processedHTML;
+
+    // 3. 渲染下方重點詞彙卡
+    const listDiv = document.getElementById('vocab-list');
+    listDiv.innerHTML = activeArt.vocab.map(v => `
+        <div class="word-card">
+            <div style="font-weight:bold; font-size:1.2rem; color:var(--primary);">
+                ${v.w} <span style="font-size:0.9rem; color:#666;">(${v.pos})</span>
             </div>
-        `).join('');
+            <div>${v.cn}</div>
+            <button onclick="speak('${v.w}')" style="margin-top:5px; border:1px solid #ccc; background:#fff; cursor:pointer; padding:2px 8px; border-radius:4px;">🔊 發音</button>
+        </div>
+    `).join('');
 
-        // 確保顯示學習區，隱藏測驗區
-        document.getElementById('study-mode-content').classList.remove('hidden');
-        document.getElementById('quiz-mode-content').classList.add('hidden');
-    }
+    document.getElementById('study-mode-content').classList.remove('hidden');
+    document.getElementById('quiz-mode-content').classList.add('hidden');
+}
 
     // --- 測驗邏輯 ---
     function startQuiz() {
