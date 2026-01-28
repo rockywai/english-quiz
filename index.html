@@ -1261,16 +1261,17 @@
                 }
             });
         }
-
-    // --- 新增功能：無論對錯，都顯示中文翻譯與例句 ---
-    // 這一步是「溫習」的關鍵
+        // 顯示中文翻譯與例句，並新增「下一題」按鈕
         msgHTML += `
-            <div style="margin-top:10px; padding:10px; background:#f0f8ff; border-radius:8px; text-align:left;">
-                <div style="color:#333; font-weight:bold;">${correct.w} = ${correct.cn}</div>
-                <div style="color:#666; font-size:0.9rem; font-style:italic; margin-top:4px;">Example: ${correct.ex}</div>
+            <div style="margin-top:10px; padding:15px; background:#f0f8ff; border-radius:8px; text-align:left; border: 1px solid #d0e4f7;">
+                <div style="color:#333; font-weight:bold; font-size:1.1rem;">${correct.w} = ${correct.cn}</div>
+                <div style="color:#666; font-size:0.9rem; font-style:italic; margin-top:5px; line-height:1.4;">📝 ${correct.ex}</div>
+                
+                <button class="primary-btn" onclick="nextStep()" style="margin-top:15px; background:var(--secondary); color:white;">
+                    ${quizIdx + 1 < quizPool.length ? "下一題 Next Question ➔" : "查看結果 View Result ➔"}
+                </button>
             </div>
         `;
-    
         feedbackEl.innerHTML = msgHTML;
         // ---------------------------------------------  
         document.getElementById('quiz-score').innerText = `Score: ${score}`;
