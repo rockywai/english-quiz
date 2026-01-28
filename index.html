@@ -194,12 +194,14 @@
 
         /* 詞彙卡與測驗 */
         .word-card {
-            background: #f8f9fa;
-            border: 1px solid #eee;
-            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #e0e6ed;
+            border-left: 5px solid var(--primary); /* 增加左側色條讓重點更突出 */
+            border-radius: 12px;
             padding: 15px;
-            margin-bottom: 10px;
-        }
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
 
         .primary-btn {
             background: var(--primary);
@@ -1179,17 +1181,28 @@
     }).join(' ');
     articleBox.innerHTML = processedHTML;
 
-    // 3. 渲染下方重點詞彙卡
-    const listDiv = document.getElementById('vocab-list');
-    listDiv.innerHTML = activeArt.vocab.map(v => `
-        <div class="word-card">
-            <div style="font-weight:bold; font-size:1.2rem; color:var(--primary);">
-                ${v.w} <span style="font-size:0.9rem; color:#666;">(${v.pos})</span>
-            </div>
-            <div>${v.cn}</div>
-            <button onclick="speak('${v.w}')" style="margin-top:5px; border:1px solid #ccc; background:#fff; cursor:pointer; padding:2px 8px; border-radius:4px;">🔊 發音</button>
+    // 3. 渲染下方重點詞彙卡 (Vocab Study List)
+const listDiv = document.getElementById('vocab-list');
+listDiv.innerHTML = activeArt.vocab.map(v => `
+    <div class="word-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="font-weight:bold; font-size:1.3rem; color:var(--primary);">${v.w}</div>
+            <div style="font-size:0.85rem; color:#888; background:#eee; padding:2px 8px; border-radius:4px;">${v.pos}</div>
         </div>
-    `).join('');
+        
+        <div style="margin-top: 8px; color: #444; font-weight: 500; font-size: 0.95rem;">
+            📖 <span style="font-style: italic;">${v.d || 'Definition loading...'}</span>
+        </div>
+
+        <div style="margin-top: 4px; color: #666; font-size: 0.9rem;">
+            🏮 ${v.cn}
+        </div>
+
+        <button onclick="speak('${v.w}')" style="margin-top:10px; border:1px solid var(--primary); background:#fff; color:var(--primary); cursor:pointer; padding:4px 12px; border-radius:6px; font-size:0.85rem; font-weight:bold;">
+            🔊 Listen
+        </button>
+    </div>
+`).join('');
 
     document.getElementById('study-mode-content').classList.remove('hidden');
     document.getElementById('quiz-mode-content').classList.add('hidden');
