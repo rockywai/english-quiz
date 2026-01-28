@@ -162,14 +162,28 @@
             margin-top: 10px;
         }
 
-        .option-btn {
+       .option-btn {
             background: white;
             border: 2px solid #eee;
-            padding: 15px;
+            padding: 12px 15px;      /* 增加內邊距 */
             border-radius: 8px;
             margin-bottom: 10px;
             cursor: pointer;
             transition: 0.2s;
+            font-size: 0.95rem;      /* 字體稍微調小一點點，容納長句 */
+            line-height: 1.4;        /* 增加行距，閱讀更舒適 */
+            display: flex;           /* 彈性佈局 */
+            align-items: center;     /* 垂直置中 */
+            min-height: 50px;        /* 確保按鈕有一定高度 */
+        }
+        
+        /* 反饋訊息區域的高度改為自動，因為現在內容變多了 */
+        #feedback-msg {
+            text-align: center; 
+            margin-top: 15px; 
+            font-weight: bold;
+            min-height: 20px;       /* 最小高度 */
+            height: auto;           /* 讓高度隨內容撐開 */
         }
         .option-btn:hover { border-color: var(--primary); background: #f0f7ff; }
         .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
@@ -1180,14 +1194,18 @@
         renderQuiz();
     }
 
-    function renderQuiz() {
+   function renderQuiz() {
         isAnswering = true;
         const q = quizPool[quizIdx];
-        
+    
         document.getElementById('quiz-progress').innerText = `Q ${quizIdx + 1}/${quizPool.length}`;
         document.getElementById('quiz-score').innerText = `Score: ${score}`;
+    
+        // 題目顯示單字 (保持不變)
         document.getElementById('quiz-question').innerText = q.w;
-        document.getElementById('feedback-msg').innerText = "";
+    
+        // 清空舊的狀態訊息
+        document.getElementById('feedback-msg').innerHTML = ""; 
 
         // 生成選項
         let options = [q];
@@ -1197,34 +1215,65 @@
 
         const optContainer = document.getElementById('quiz-options');
         optContainer.innerHTML = '';
-        
+    
         options.forEach(opt => {
-            const btn = document.createElement('div');
-            btn.className = 'option-btn';
-            btn.innerText = opt.cn;
-            btn.onclick = () => checkAnswer(opt, q, btn);
-            optContainer.appendChild(btn);
-        });
-    }
+        const btn = document.createElement('div');
+        btn.className = 'option-btn';
+        
+        // --- 核心修改 ---
+        // 顯示英文解釋 (d)，如果資料裡沒有 d，才顯示中文 (cn) 作為後備
+        // 加上詞性 (pos) 提示，幫助學生判斷
+        btn.innerText = `${opt.d || opt.cn} (${opt.pos})`; 
+        // ----------------
+        
+        btn.onclick = () => checkAnswer(opt, q, btn);
+        optContainer.appendChild(btn);
+    });
+}
 
     function checkAnswer(selected, correct, btn) {
         if (!isAnswering) return;
-        isAnswering = false;
+        isAnswering = false; // 鎖定防止重複點擊
+
+        const feedbackEl = document.getElementById('feedback-msg');
+        let msgHTML = "";
 
         if (selected.w === correct.w) {
             score++;
             btn.classList.add('correct');
-            document.getElementById('feedback-msg').innerText = "✅ Correct!";
-            document.getElementById('feedback-msg').style.color = "green";
+            // 答對顯示綠色，並顯示中文意思
+            msgHTML = `<span style="color:green; font-size:1.2rem;">✅ Correct!</span>`;
             speak(correct.w); // 答對自動發音
-        } else {
+            } else {
             btn.classList.add('wrong');
-            document.getElementById('feedback-msg').innerText = "❌ Wrong!";
-            document.getElementById('feedback-msg').style.color = "red";
+            // 答錯顯示紅色，並標示正確答案
+            msgHTML = `<span style="color:red; font-size:1.2rem;">❌ Wrong!</span>`;
+        
+            // 找出正確的按鈕並標示出來，讓學生知道哪個才是對的
+            document.querySelectorAll('.option-btn').forEach(b => {
+                if (b.innerText.includes(correct.d)) {
+                    b.classList.add('correct');
+                }
+            });
         }
+
+    // --- 新增功能：無論對錯，都顯示中文翻譯與例句 ---
+    // 這一步是「溫習」的關鍵
+        msgHTML += `
+            <div style="margin-top:10px; padding:10px; background:#f0f8ff; border-radius:8px; text-align:left;">
+                <div style="color:#333; font-weight:bold;">${correct.w} = ${correct.cn}</div>
+                <div style="color:#666; font-size:0.9rem; font-style:italic; margin-top:4px;">Example: ${correct.ex}</div>
+            </div>
+        `;
+    
+        feedbackEl.innerHTML = msgHTML;
+        // ---------------------------------------------
         
         document.getElementById('quiz-score').innerText = `Score: ${score}`;
-        setTimeout(nextStep, 1500);
+        
+        // 為了讓學生有時間看清楚中文解釋，我們將下一題的等待時間稍微延長 (從 1.5秒 改為 3秒)
+        // 如果學生覺得太慢，可以手動點擊下一題 (這裡我們保持自動跳轉，但時間加長)
+        setTimeout(nextStep, 3500); 
     }
 
     function nextStep() {
