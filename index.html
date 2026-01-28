@@ -1127,17 +1127,42 @@ function showFB(q, isCorrect) {
     if(quizIdx < quizPool.length) renderQuiz();
     else showResult();
 }
-    function showResult() {
-    toggleScreen('result-screen');
-    const p = Math.round(score/quizPool.length*100);
-    document.getElementById('result-score').innerText = `${score} / ${quizPool.length} (${p}%)`;
-    if(p >= 60) localStorage.setItem('dse_vocab_' + activeArt.id, "done");
+   function showResult() {
+    toggleScreen('result-screen'); // 先切換到結果畫面
+    const p = Math.round(score / quizPool.length * 100);
+    const resultScoreEl = document.getElementById('result-score');
+    // 顯示分數
+    if (resultScoreEl) {
+        resultScoreEl.innerText = `${score} / ${quizPool.length} (${p}%)`;
+    }
+    // 如果及格，存入本地紀錄
+    if (p >= 60) {
+        localStorage.setItem('dse_vocab_' + activeArt.id, "done");
+    }
+    // 觸發同步到 Google Sheet
     submitScore(p);
 }
     function submitScore(p) {
-    const url = "你的GAS地址"; // 請填入你的 Google Apps Script 地址
-    const data = { id: studentID, topic: activeArt.id, score: p };
-    fetch(url, { method: 'POST', mode: 'no-cors', cache: 'no-cache', body: JSON.stringify(data) });
+    // *** 重要：請確保這裡填入的是你部署 GAS 後得到的 Web App URL ***
+    const url = "https://script.google.com/macros/s/AKfycbzQBI-7S9EQOvI6ZMIUQXyk_l7HM8Bv1VmoqcxckKrSIIyDWd-brsvF5Ov2X_tkRz4dHQ/exec"; 
+    const data = { 
+        id: studentID, 
+        topic: activeArt.id, 
+        score: p 
+    };
+    // 使用 fetch 發送數據
+    fetch(url, {
+        method: 'POST',
+        mode: 'no-cors', // 必須使用 no-cors 來繞過跨網域限制
+        cache: 'no-cache',
+        body: JSON.stringify(data)
+    })
+    .then(() => {
+        console.log("數據已成功發送至 Google Sheets");
+    })
+    .catch((error) => {
+        console.error("同步失敗:", error);
+    });
 }
     function speak(t) {
     window.speechSynthesis.cancel();
