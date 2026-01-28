@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSE 英文詞彙自學系統 V5.0 (Final)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #f5a623;
+            --bg: #f4f7f6;
+            --text: #333;
+            --card-bg: #ffffff;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 導航欄 */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .nav-title { font-weight: bold; font-size: 1.1rem; color: var(--primary); }
+        .home-btn { cursor: pointer; font-size: 1.2rem; }
+
+        /* 歡迎與身份顯示 */
+        .header-info {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .student-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #eee;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        /* Unknown 身份警告樣式 */
+        .student-badge.unknown-warning {
+            background: var(--danger);
+            color: yellow;
+            animation: pulse 1.5s infinite;
+            border: 2px solid yellow;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* 文章列表 */
+        .news-group { margin-bottom: 25px; }
+        .group-date { 
+            font-size: 0.9rem; 
+            color: #888; 
+            margin-bottom: 10px; 
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        .level-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .level-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+        .level-tag { font-weight: bold; color: var(--primary); }
+        .status-icon { font-size: 1.2rem; }
+
+        /* 學習區與測驗區 */
+        .hidden { display: none !important; }
+        
+        .word-card {
+            background: #fff;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .vocab-word { font-size: 1.4rem; color: var(--primary); font-weight: bold; }
+        .vocab-pos { color: #888; font-size: 0.9rem; margin-left: 5px; font-style: italic; }
+        .vocab-cn { display: block; margin-top: 5px; font-weight: bold; color: #444; }
+        .vocab-def { margin-top: 8px; color: #555; line-height: 1.4; }
+        .vocab-ex { margin-top: 8px; color: #666; font-size: 0.9rem; background: #f0f4f8; padding: 8px; border-radius: 6px; }
+
+        /* 按鈕樣式 */
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .primary-btn:hover { background: #357abd; }
+
+        /* 測驗選項 */
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .option-btn {
+            background: white;
+            border: 2px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { border-color: var(--primary); background: #f0f7ff; }
+        .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
+        .option-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* 結果頁面 */
+        .result-box { text-align: center; padding: 30px 0; }
+        .score-big { font-size: 3rem; font-weight: bold; color: var(--primary); margin: 10px 0; }
+        .sync-status { margin-top: 15px; font-size: 0.9rem; color: #666; min-height: 20px; }
+
+        /* 頁尾 */
+        .footer { text-align: center; margin-top: 30px; color: #aaa; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="nav-bar" class="nav-bar hidden">
+        <div class="home-btn" onclick="goHome()">🏠</div>
+        <div id="nav-title" class="nav-title">Topic</div>
+        <div style="width: 24px;"></div> </div>
+
+    <div id="home-screen" class="screen">
+        <div class="header-info">
+            <h2>🇬🇧 DSE 英文詞彙自學</h2>
+            <div id="student-display" class="student-badge" onclick="editName()">
+                👤 未知學生 (點擊修改)
+            </div>
+            <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">請點擊上方名字修改，否則不計分</p>
+        </div>
+
+        <div id="news-container">
+            </div>
+
+        <button onclick="window.open('https://docs.google.com/spreadsheets/d/1s2k0HqCqGoxh_wJ6q4N-ID54uOqJ-l272fF42y9wJ8U/edit?usp=sharing', '_blank')" 
+                style="margin-top: 20px; background: var(--secondary); border:none; padding:10px; width:100%; color:white; border-radius:8px; cursor:pointer;">
+            🏆 查看排行榜 (Leaderboard)
+        </button>
+    </div>
+
+    <div id="study-screen" class="screen hidden">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <p>請仔細閱讀以下重點詞彙：</p>
+        </div>
+        <div id="vocab-list"></div>
+        <button class="primary-btn" onclick="startQuiz()">準備好了，開始測驗！</button>
+    </div>
+
+    <div id="quiz-screen" class="screen hidden">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 15px; color: #888;">
+            <span id="quiz-progress">Question 1/5</span>
+            <span id="quiz-score">Score: 0</span>
+        </div>
+        <div class="word-card" style="text-align: center; border-color: var(--primary);">
+            <h2 id="quiz-question" style="font-size: 2rem; margin: 10px 0;">Word</h2>
+        </div>
+        <div id="quiz-options" class="quiz-options"></div>
+        <div id="feedback-msg" style="text-align: center; margin-top: 15px; height: 20px; font-weight: bold;"></div>
+    </div>
+
+    <div id="result-screen" class="screen hidden">
+        <div class="result-box">
+            <h2>測驗完成！</h2>
+            <div class="score-big" id="final-score-display">5 / 5</div>
+            <p id="result-comment">做得好！</p>
+            
+            <div id="upload-status" class="sync-status">⏳ 正在同步成績至雲端...</div>
+            
+            <button class="primary-btn" onclick="goHome()">返回主頁</button>
+        </div>
+    </div>
+
+    <div class="footer">DSE English Vocabulary System V5.0</div>
+
+</div>
+
+<script>
+    // ============================================
+    // ⚙️ 設定區：請在此填入你的 GAS 網址
+    // ============================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsyiIpzJOZ1kivi-o2DHh9CTk3Yttfh2EjTTKsUvIWZcDiefCk6sPfNy6MpnJZf41atg/exec"; 
+    // 例如: https://script.google.com/macros/s/..../exec
+    // ============================================
+
+
+    // --- 資料庫 (在此處貼上你的文章數據) ---
+    // 你可以繼續增加新的 topic
+    const newsGroups = [
+        {
+            topic: "26.01.2026 A Farm Helps People Eat Well",
+            levels: [
+                {
+                    id: "farm-eat-well-lv1", level: "DSE LV1 (Basic)",
+                    originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-1/",
+                    content: "A farm in the UK is helping people to eat better. Many people do not know how to **cook** fresh food. They usually buy ready meals from shops. The farm shows them how to grow vegetables and prepare **healthy** meals. It is important to eat fresh food for our **bodies**. One woman said she feel much better now. This project makes a big **difference** in the community. Everyone learns to **enjoy** cooking together.",
+                    vocab: [
+                        { w: "cook", pos: "v.", d: "to prepare food by heating it", cn: "烹飪", ex: "My mother likes to cook healthy meals for us." },
+                        { w: "healthy", pos: "adj.", d: "good for your body", cn: "健康的", ex: "Eating fruit is a healthy habit." },
+                        { w: "bodies", pos: "n.", d: "the whole physical structure of a person", cn: "身體", ex: "Exercise helps to keep our bodies strong." },
+                        { w: "difference", pos: "n.", d: "a way in which something changes or improves", cn: "改變/影響", ex: "The new park made a big difference to the area." },
+                        { w: "enjoy", pos: "v.", d: "to get pleasure from something", cn: "享受", ex: "I enjoy spending time with my friends." }
+                    ]
+                },
+                {
+                    id: "farm-eat-well-lv2", level: "DSE LV2-3 (Intermediate)",
+                    originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-2/",
+                    content: "A unique farm project in the UK is tackling the issue of poor nutrition in the community. Many residents **rely** on processed foods because they lack the skills to cook from scratch. The farm provides a **solution** by teaching people how to cultivate their own vegetables and turn them into nutritious dishes. This **experience** encourages participants to move away from unhealthy eating habits. Organisers believe that understanding where food comes from is essential for **improving** public health. As people learn to prepare fresh ingredients, they become more **independent** and conscious of their daily diet choices.",
+                    vocab: [
+                        { w: "rely", pos: "v.", d: "to depend on something", cn: "依賴", ex: "Many students rely on the internet for information." },
+                        { w: "solution", pos: "n.", d: "a way to solve a problem", cn: "解決方法", ex: "The government is looking for a solution to the traffic problem." },
+                        { w: "experience", pos: "n.", d: "knowledge or skill from doing something", cn: "經驗/體驗", ex: "Working at the farm was a great experience." },
+                        { w: "improving", pos: "v.", d: "making something better", cn: "改善", ex: "She is practicing hard for improving her English." },
+                        { w: "independent", pos: "adj.", d: "not needing help from others", cn: "獨立的", ex: "Going to university helps young people become independent." }
+                    ]
+                },
+                {
+                    id: "farm-eat-well-lv4", level: "DSE LV4-5 (Advanced)",
+                    originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-3/",
+                    content: "The **sustainability** of urban diets has become a major concern, prompting a British farm to launch an educational initiative. This project targets individuals who have become overly dependent on convenience foods, often due to a lack of culinary knowledge. By providing **hands-on** workshops, the farm empowers citizens to reclaim control over their nutrition. Participants are taught the entire process from soil to table, which fosters a deeper **appreciation** for fresh produce. Experts argue that such grassroots movements are vital for combating the rising rates of diet-related illnesses. Furthermore, the social aspect of the project helps to **strengthen** community bonds as people gather to share skills and meals. This holistic approach not only addresses physical health but also promotes mental well-being through nature-based activities. Ultimately, the **success** of this initiative demonstrates that education is the most powerful tool for driving long-term lifestyle changes and ensuring a healthier future for all generations.",
+                    vocab: [
+                        { w: "sustainability", pos: "n.", d: "the quality of being able to continue over a long period", cn: "可持續性", ex: "The sustainability of the environment is very important." },
+                        { w: "hands-on", pos: "adj.", d: "involving direct participation and experience", cn: "實踐的/親自動手的", ex: "The course provides hands-on training for students." },
+                        { w: "appreciation", pos: "n.", d: "understanding the value of something", cn: "賞識/感激", ex: "The school showed its appreciation for the volunteers." },
+                        { w: "strengthen", pos: "v.", d: "to make something stronger", cn: "加強", ex: "The new policy aims to strengthen the economy." },
+                        { w: "success", pos: "n.", d: "the achieving of the results wanted or hoped for", cn: "成功", ex: "Hard work is the key to success in exams." }
+                    ]
+                }
+            ]
+        }
+    ];
+
+    // --- 全局變數 ---
+    let studentID = localStorage.getItem('dse_student_id') || 'unknown';
+    let activeArt = null;
+    let quizPool = [];
+    let quizIdx = 0;
+    let score = 0;
+    let isAnswering = false;
+
+    // --- 初始化 ---
+    document.addEventListener('DOMContentLoaded', () => {
+        initHome();
+    });
+
+    function initHome() {
+        // 1. 處理身份顯示
+        const badge = document.getElementById('student-display');
+        if (studentID === 'unknown' || !studentID) {
+            badge.innerText = "⚠️ 身份未設定 (點擊修改)";
+            badge.classList.add('unknown-warning');
+        } else {
+            badge.innerText = `👤 ${studentID}`;
+            badge.classList.remove('unknown-warning');
+        }
+
+        // 2. 渲染文章列表
+        const container = document.getElementById('news-container');
+        container.innerHTML = '';
+
+        newsGroups.forEach(group => {
+            const dateDiv = document.createElement('div');
+            dateDiv.className = 'news-group';
+            dateDiv.innerHTML = `<div class="group-date">📅 ${group.topic}</div>`;
+            
+            group.levels.forEach(lv => {
+                const isDone = localStorage.getItem('dse_vocab_' + lv.id) === 'done';
+                const status = isDone ? '✅' : '⭕';
+                const card = document.createElement('div');
+                card.className = 'level-card';
+                card.onclick = () => loadLevel(lv);
+                card.innerHTML = `
+                    <div>
+                        <div class="level-tag">${lv.level}</div>
+                        <div style="font-size:0.8rem; color:#666;">學習重點: ${lv.vocab.map(v=>v.w).join(', ')}</div>
+                    </div>
+                    <div class="status-icon">${status}</div>
+                `;
+                dateDiv.appendChild(card);
+            });
+            container.appendChild(dateDiv);
+        });
+    }
+
+    // --- 身份修改 ---
+    function editName() {
+        const newName = prompt("請輸入你的英文名或學號 (例如: Peter_Chan_6A):", studentID === 'unknown' ? '' : studentID);
+        if (newName && newName.trim() !== "") {
+            studentID = newName.trim();
+            localStorage.setItem('dse_student_id', studentID);
+            initHome();
+        }
+    }
+
+    // --- 進入學習模式 ---
+    function loadLevel(levelData) {
+        activeArt = levelData;
+        toggleScreen('study-screen');
+        updateNav(`${levelData.level}`);
+
+        const listDiv = document.getElementById('vocab-list');
+        listDiv.innerHTML = activeArt.vocab.map(v => `
+            <div class="word-card">
+                <div>
+                    <span class="vocab-word">${v.w}</span>
+                    <span class="vocab-pos">${v.pos}</span>
+                </div>
+                <span class="vocab-cn">${v.cn}</span>
+                <div class="vocab-def">🇬🇧 ${v.d}</div>
+                <div class="vocab-ex">📝 ${v.ex}</div>
+                <button onclick="speak('${v.w}')" style="margin-top:5px; background:none; border:1px solid #ccc; border-radius:4px; cursor:pointer;">🔊 發音</button>
+            </div>
+        `).join('');
+    }
+
+    // --- 測驗邏輯 ---
+    function startQuiz() {
+        if (studentID === 'unknown') {
+            alert("⚠️ 請先在首頁設定你的名字，否則無法記錄成績！");
+            goHome();
+            return;
+        }
+
+        quizPool = shuffle([...activeArt.vocab]).slice(0, 5); // 取 5 題
+        if (quizPool.length < 5) quizPool = shuffle([...activeArt.vocab]); // 防止字不夠
+        
+        quizIdx = 0;
+        score = 0;
+        toggleScreen('quiz-screen');
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        isAnswering = true;
+        const q = quizPool[quizIdx];
+        document.getElementById('quiz-progress').innerText = `Question ${quizIdx + 1} / ${quizPool.length}`;
+        document.getElementById('quiz-score').innerText = `Score: ${score}`;
+        document.getElementById('quiz-question').innerText = q.w;
+        document.getElementById('feedback-msg').innerText = "";
+
+        // 生成選項 (1個正確 + 3個錯誤)
+        let options = [q];
+        let others = activeArt.vocab.filter(v => v.w !== q.w);
+        options = options.concat(shuffle(others).slice(0, 3));
+        options = shuffle(options);
+
+        const optContainer = document.getElementById('quiz-options');
+        optContainer.innerHTML = '';
+
+        options.forEach(opt => {
+            const btn = document.createElement('div');
+            btn.className = 'option-btn';
+            btn.innerText = `${opt.cn} (${opt.pos})`;
+            btn.onclick = () => checkAnswer(opt, q, btn);
+            optContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, correct, btnElement) {
+        if (!isAnswering) return;
+        isAnswering = false;
+
+        const allBtns = document.querySelectorAll('.option-btn');
+        
+        if (selected.w === correct.w) {
+            score++;
+            btnElement.classList.add('correct');
+            document.getElementById('feedback-msg').innerText = "✅ Correct!";
+            document.getElementById('feedback-msg').style.color = "green";
+        } else {
+            btnElement.classList.add('wrong');
+            // 找出正確答案並標示
+            allBtns.forEach(b => {
+                if (b.innerText.includes(correct.cn)) b.classList.add('correct');
+            });
+            document.getElementById('feedback-msg').innerText = "❌ Wrong!";
+            document.getElementById('feedback-msg').style.color = "red";
+        }
+
+        document.getElementById('quiz-score').innerText = `Score: ${score}`;
+
+        // 1.5秒後下一題
+        setTimeout(nextStep, 1500);
+    }
+
+    function nextStep() {
+        quizIdx++;
+        if (quizIdx < quizPool.length) {
+            renderQuiz();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    // --- 測驗結束與同步 ---
+    function finishQuiz() {
+        toggleScreen('result-screen');
+        
+        const finalScoreEl = document.getElementById('final-score-display');
+        const commentEl = document.getElementById('result-comment');
+        
+        finalScoreEl.innerText = `${score} / ${quizPool.length}`;
+        
+        // 評價邏輯
+        if (score === quizPool.length) commentEl.innerText = "🌟 完美！你是詞彙大師！";
+        else if (score >= 3) commentEl.innerText = "👍 做得好！繼續加油！";
+        else commentEl.innerText = "📚 再複習一下，你可以做到的！";
+
+        // 執行同步
+        uploadResult();
+    }
+
+    // ============================================
+    // 🚀 核心同步函數 (對接新 GAS 邏輯)
+    // ============================================
+    function uploadResult() {
+        const status = document.getElementById('upload-status');
+        status.innerText = "⏳ 正在同步成績至雲端...";
+        status.style.color = "#666";
+
+        if (!SCRIPT_URL || SCRIPT_URL.length < 10) {
+            console.warn("GAS URL 未設定");
+            status.innerText = "⚠️ 未設定雲端網址，僅保存於本地。";
+            return;
+        }
+
+        // 構建數據包：完全符合新 GAS 的要求 (name, topic, score)
+        const data = { 
+            name: studentID, 
+            topic: activeArt.id, 
+            score: score  // 直接傳送整數 (例如 5)
+        };
+
+        fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify(data) 
+        })
+        .then(() => { 
+            console.log("Sent:", data);
+            status.innerText = "✅ 成績已成功同步！";
+            status.style.color = "green";
+        })
+        .catch(e => {
+            console.error("Upload Error:", e);
+            status.innerText = "❌ 同步失敗 (網絡錯誤)";
+            status.style.color = "red";
+        });
+
+        // 儲存本地完成紀錄 (只要合格就打勾)
+        if (score >= 3) { // 假設 3/5 合格
+            localStorage.setItem('dse_vocab_' + activeArt.id, "done");
+        }
+    }
+
+    // --- 工具函數 ---
+    function toggleScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+        
+        const nav = document.getElementById('nav-bar');
+        if (id === 'home-screen') nav.classList.add('hidden');
+        else nav.classList.remove('hidden');
+    }
+
+    function updateNav(title) {
+        document.getElementById('nav-title').innerText = title;
+    }
+
+    function goHome() {
+        toggleScreen('home-screen');
+        initHome(); // 重新整理狀態 (例如打勾)
+    }
+
+    function shuffle(arr) {
+        return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-GB';
+        window.speechSynthesis.speak(utterance);
+    }
+
+</script>
+</body>
+</html>
