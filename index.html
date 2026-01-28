@@ -171,13 +171,12 @@
             </div>
         </div>
 
-        <div id="result-screen" class="screen hidden">
-    <h2>測驗完成！</h2>
-    <div style="font-size: 2rem; margin: 20px 0; color: var(--primary); font-weight: bold;">
-        得分：<span id="result-score">0%</span>
-    </div>
-    <button class="primary-btn" onclick="goHome()">返回主頁</button>
-</div>
+        <div id="result-screen" class="hidden" style="text-align:center;">
+            <div style="font-size:60px;">🎉</div>
+            <h2>測驗完成！</h2>
+            <p id="upload-status">正在同步進度...</p>
+            <button class="btn-primary" onclick="goHome()">返回目錄頁</button>
+        </div>
     </div>
 </div>
 
@@ -193,7 +192,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUzwtLy3vHGn5kdEf7z2fZ2QXTrhXOUbbuOw0TUevKPdWHBW_JGTpKt-lohoLyFq1iVQ/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd6bleG5w-Zi6nGOSSzGceBpzmXY9NgenwwBp1jO2KVyuG9DLB1X88bSLPDO9q9Mg/exec'; 
 // 1. 全域變量與初始化
 let studentID = "";
 let activeArt = null;
@@ -209,170 +208,6 @@ window.onload = () => {
     initHome();
 };
 const newsGroups = [
-    {
-        topic: "28.01.2026 The Sarco Pod Controversy",
-        levels: [
-            {
-                id: "sarco-pod-lv1", level: "DSE LV1 (Basic)",
-                originalUrl: "https://www.newsinlevels.com/products/a-new-machine-helps-people-die-level-1/",
-                content: "A new machine in Switzerland helps people to die. It is called the Sarco pod. A person sits inside the machine and answers some **questions**. Then, they press a button. The machine fills with nitrogen gas, and the person falls **asleep**. They die quickly and without pain. Some people think this is a good **choice** for very sick people. However, others are **worried**. They think it is too easy to die this way. This machine is very **controversial** around the world.",
-                vocab: [
-                    { w: "questions", pos: "n.", d: "sentences that ask for information", cn: "問題", ex: "You must answer some questions before using the machine." },
-                    { w: "asleep", pos: "adj.", d: "in a state of sleep", cn: "睡著的", ex: "The patient fell asleep peacefully." },
-                    { w: "choice", pos: "n.", d: "the act of picking between two or more things", cn: "選擇", ex: "Everyone should have the choice to live a happy life." },
-                    { w: "worried", pos: "adj.", d: "feeling unhappy because you think something bad might happen", cn: "擔心的", ex: "Many doctors are worried about this new technology." },
-                    { w: "controversial", pos: "adj.", d: "causing a lot of disagreement", cn: "有爭議的", ex: "The new law is very controversial in our society." }
-                ]
-            },
-            {
-                id: "sarco-pod-lv2", level: "DSE LV2-3 (Intermediate)",
-                originalUrl: "https://www.newsinlevels.com/products/a-new-machine-helps-people-die-level-2/",
-                content: "A controversial 3D-printed capsule called 'Sarco' has recently been used for the first time in Switzerland. This device allows individuals to end their lives without medical **assistance**. Inside the pod, the person must confirm their identity and intention before pressing a button that releases nitrogen gas. This leads to a rapid **decrease** in oxygen levels, resulting in a painless death. Supporters argue that it provides **dignity** to those suffering from terminal illnesses. However, the machine has faced significant legal **challenges** and ethical concerns. Opponents fear that such a device might glamorize suicide or be used without proper **supervision**.",
-                vocab: [
-                    { w: "assistance", pos: "n.", d: "help or support", cn: "協助/幫助", ex: "The elderly man needs assistance to walk upstairs." },
-                    { w: "decrease", pos: "n.", d: "a reduction in the amount of something", cn: "減少/下降", ex: "There was a sudden decrease in the room temperature." },
-                    { w: "dignity", pos: "n.", d: "calm and serious manner that deserves respect", cn: "尊嚴", ex: "The hospital aims to treat every patient with dignity." },
-                    { w: "challenges", pos: "n.", d: "difficulties or problems that need effort", cn: "挑戰/質疑", ex: "The new policy faces many legal challenges." },
-                    { w: "supervision", pos: "n.", d: "the act of watching over someone to ensure safety", cn: "監督/管理", ex: "Children should not go swimming without adult supervision." }
-                ]
-            },
-            {
-                id: "sarco-pod-lv4", level: "DSE LV4-5 (Advanced)",
-                originalUrl: "https://www.newsinlevels.com/products/a-new-machine-helps-people-die-level-3/",
-                content: "The debut of the 'Sarco' suicide pod in Switzerland has ignited a global debate regarding the **ethics** of assisted dying. Designed to provide a 'peaceful' exit, the capsule operates by replacing oxygen with nitrogen, inducing unconsciousness within seconds. Proponents of the device **advocate** for bodily autonomy, suggesting that individuals should have the right to choose a dignified death. Conversely, critics and legal authorities remain deeply **skeptical** about the lack of psychiatric evaluation involved in the process. They argue that the **accessibility** of such a machine could potentially bypass traditional medical safeguards, leading to irreversible consequences. In response to its first use, Swiss police have detained several individuals, citing concerns over 'incitement and assisting of suicide.' This complex issue highlights the tension between personal **freedom** and state regulations. As technology continues to push the boundaries of medical ethics, society must carefully consider the moral implications of automating the end-of-life process and the potential risks it poses to vulnerable populations.",
-                vocab: [
-                    { w: "ethics", pos: "n.", d: "moral principles that govern a person's behavior", cn: "倫理/道德規範", ex: "The ethics of genetic engineering are still being debated." },
-                    { w: "advocate", pos: "v.", d: "to publicly support a particular policy or cause", cn: "提倡/主張", ex: "Many organizations advocate for better mental health services." },
-                    { w: "skeptical", pos: "adj.", d: "doubting that something is true or useful", cn: "懷疑的", ex: "I am skeptical about the results of the latest survey." },
-                    { w: "accessibility", pos: "n.", d: "the quality of being able to be reached or used", cn: "易得性/普及性", ex: "The accessibility of public transport has improved significantly." },
-                    { w: "freedom", pos: "n.", d: "the power or right to act, speak, or think as one wants", cn: "自由", ex: "Freedom of speech is a fundamental human right." }
-                ]
-            }
-        ]
-    },
-    {
-        topic: "28.01.2026 Taiwan's Recycling Success",
-        levels: [
-            {
-                id: "taiwan-recycling-lv1", level: "DSE LV1 (Basic)",
-                originalUrl: "https://www.newsinlevels.com/products/taiwan-is-good-at-recycling-level-1/",
-                content: "Taiwan is very good at **recycling**. Many years ago, it had a lot of trash. People called it the 'Garbage Island'. Now, the situation is different. Taiwan recycles more than half of its **waste**. Every night, music plays when the yellow trash trucks come. People bring their bags and put them in the **trucks**. They separate plastic, paper, and metal carefully. This helps to keep the island **clean**. It is a great **example** for other countries.",
-                vocab: [
-                    { w: "recycling", pos: "n.", d: "the process of collecting and changing waste into new products", cn: "回收", ex: "Recycling paper helps save many trees." },
-                    { w: "waste", pos: "n.", d: "unwanted materials or trash", cn: "廢物/垃圾", ex: "We should try to reduce the amount of food waste." },
-                    { w: "trucks", pos: "n.", d: "large vehicles used for carrying heavy things", cn: "貨車/垃圾車", ex: "The garbage trucks come to our street every evening." },
-                    { w: "clean", pos: "adj.", d: "not dirty", cn: "乾淨的", ex: "The volunteers worked hard to keep the beach clean." },
-                    { w: "example", pos: "n.", d: "something that represents a group or a way of behaving", cn: "榜樣/例子", ex: "Taiwan is a good example of successful waste management." }
-                ]
-            },
-            {
-                id: "taiwan-recycling-lv2", level: "DSE LV2-3 (Intermediate)",
-                originalUrl: "https://www.newsinlevels.com/products/taiwan-is-good-at-recycling-level-2/",
-                content: "Taiwan has transformed from a 'Garbage Island' into a global leader in **sustainability**. Currently, the island boasts one of the highest recycling rates in the world, exceeding 50%. This success is due to a strict waste **management** policy. Residents must use special bags for general trash, while recycling is free. Every evening, citizens gather when they hear classical music from the garbage trucks to **dispose** of their waste properly. This community **effort** has significantly reduced the pressure on landfills. By encouraging everyone to participate, Taiwan has created a **culture** of environmental responsibility that inspires many other nations.",
-                vocab: [
-                    { w: "sustainability", pos: "n.", d: "the quality of being able to continue over a long period", cn: "可持續性", ex: "The company is committed to environmental sustainability." },
-                    { w: "management", pos: "n.", d: "the process of dealing with or controlling things", cn: "管理", ex: "Effective time management is important for students." },
-                    { w: "dispose", pos: "v.", d: "to get rid of something", cn: "處理/棄置", ex: "Please dispose of your litter in the bins provided." },
-                    { w: "effort", pos: "n.", d: "the physical or mental energy needed to do something", cn: "努力", ex: "It takes a lot of effort to learn a new language." },
-                    { w: "culture", pos: "n.", d: "the habits or traditions of a particular group", cn: "文化", ex: "The school wants to build a culture of reading." }
-                ]
-            },
-            {
-                id: "taiwan-recycling-lv4", level: "DSE LV4-5 (Advanced)",
-                originalUrl: "https://www.newsinlevels.com/products/taiwan-is-good-at-recycling-level-3/",
-                content: "Taiwan's remarkable evolution in waste management serves as a **compelling** case study for urban environmentalism. Historically plagued by overflowing landfills, the region implemented the 'Keep Trash Off the Ground' policy, which **prohibits** traditional dumpsters to prevent illegal dumping. Instead, a unique mobile collection system was established. The iconic yellow trucks, accompanied by classical melodies, have become a daily **ritual** that fosters social cohesion. This system relies on a 'pay-as-you-throw' scheme, where citizens must purchase certified bags, effectively providing a financial **incentive** to minimize non-recyclable waste. Furthermore, the integration of advanced sorting technology ensures that resources are recovered efficiently. Despite its high population density, Taiwan has managed to **achieve** a recycling rate that rivals many developed European countries. This holistic strategy not only mitigates environmental degradation but also cultivates a sense of civic duty among the younger generation, proving that systemic change is possible through persistent government leadership and public cooperation.",
-                vocab: [
-                    { w: "compelling", pos: "adj.", d: "very exciting and interesting; convincing", cn: "引人入勝的/有說服力的", ex: "The lawyer presented a compelling argument in court." },
-                    { w: "prohibits", pos: "v.", d: "to officially refuse to allow something", cn: "禁止", ex: "The law prohibits smoking in public areas." },
-                    { w: "ritual", pos: "n.", d: "a set of fixed actions performed regularly", cn: "儀式/習慣", ex: "Checking emails has become a daily ritual for many." },
-                    { w: "incentive", pos: "n.", d: "something that encourages a person to do something", cn: "誘因/鼓勵", ex: "The government offers a tax incentive for small businesses." },
-                    { w: "achieve", pos: "v.", d: "to succeed in finishing something or reaching a goal", cn: "達成/實現", ex: "You can achieve anything if you work hard enough." }
-                ]
-            }
-        ]
-    },
-    {
-        topic: "27.01.2026 Cocoa Farmers in Crisis",
-        levels: [
-            {
-                id: "cocoa-crisis-lv1", level: "DSE LV1 (Basic)",
-                originalUrl: "https://www.newsinlevels.com/products/farmers-cannot-sell-their-cocoa-level-1/",
-                content: "Cocoa is used to make chocolate. Most cocoa comes from West Africa. Now, there is a big problem. The weather is too **bad** for the plants. Many cocoa trees are dying because of **disease**. This means there is not much cocoa to sell. Even though chocolate is more **expensive** now, farmers are becoming **poorer**. They do not have enough money to buy food. The world might have less **chocolate** in the future.",
-                vocab: [
-                    { w: "bad", pos: "adj.", d: "not good; causing problems", cn: "惡劣的/壞的", ex: "The bad weather ruined the farmers' crops." },
-                    { w: "disease", pos: "n.", d: "an illness caused by infection", cn: "疾病", ex: "The trees are dying from a mysterious disease." },
-                    { w: "expensive", pos: "adj.", d: "costing a lot of money", cn: "昂貴的", ex: "Gold is very expensive these days." },
-                    { w: "poorer", pos: "adj.", d: "having very little money", cn: "更貧窮的", ex: "The farmers are getting poorer due to the harvest failure." },
-                    { w: "chocolate", pos: "n.", d: "a sweet food made from cocoa beans", cn: "巧克力", ex: "Most children love eating dark chocolate." }
-                ]
-            },
-            {
-                id: "cocoa-crisis-lv2", level: "DSE LV2-3 (Intermediate)",
-                originalUrl: "https://www.newsinlevels.com/products/farmers-cannot-sell-their-cocoa-level-2/",
-                content: "West Africa produces most of the world's cocoa, but farmers there are facing a severe **crisis**. Heavy rains and diseases have destroyed many cocoa plantations, leading to a significant **shortage** in supply. Although the market price of cocoa has reached record highs, farmers are not **benefiting** because they have very little to sell. Many are struggling to survive as their income has disappeared. Experts warn that if the situation does not **improve**, many farmers might stop growing cocoa altogether. This would cause a permanent **increase** in the price of chocolate globally.",
-                vocab: [
-                    { w: "crisis", pos: "n.", d: "a time of great danger or difficulty", cn: "危機", ex: "The country is facing an economic crisis." },
-                    { w: "shortage", pos: "n.", d: "a situation where there is not enough of something", cn: "短缺", ex: "There is a serious water shortage in the desert." },
-                    { w: "benefiting", pos: "v.", d: "to get an advantage from something", cn: "獲益", ex: "Local businesses are benefiting from the new tourism policy." },
-                    { w: "improve", pos: "v.", d: "to get better or to make something better", cn: "改善/進步", ex: "We hope the weather will improve tomorrow." },
-                    { w: "increase", pos: "n.", d: "a rise in the amount or size of something", cn: "增加", ex: "There has been an increase in the number of students." }
-                ]
-            },
-            {
-                id: "cocoa-crisis-lv4", level: "DSE LV4-5 (Advanced)",
-                originalUrl: "https://www.newsinlevels.com/products/farmers-cannot-sell-their-cocoa-level-3/",
-                content: "The global chocolate industry is currently **threatened** by a supply chain collapse in West Africa. Unfavorable weather patterns and a devastating virus have severely impacted cocoa yields in Ghana and Ivory Coast. This **reduction** in harvest has sent global prices soaring, yet the local farmers remain in extreme poverty. Since most farmers sell their crops at fixed prices, they cannot **exploit** the rising market rates. Furthermore, many small-scale farmers lack the **resources** to treat the sick trees or invest in more resilient farming methods. Environmentalists argue that climate change is the primary driver of this agricultural instability. If global manufacturers do not offer more **support** to these communities, the traditional cocoa farming industry may become unsustainable. This situation highlights the urgent need for fair trade practices to ensure that those at the beginning of the supply chain are adequately protected from environmental and economic shocks.",
-                vocab: [
-                    { w: "threatened", pos: "v./adj.", d: "to be likely to cause harm or damage to something", cn: "受到威脅", ex: "Many species are threatened by habitat loss." },
-                    { w: "reduction", pos: "n.", d: "the act of making something smaller in size or amount", cn: "減少/縮減", ex: "The company announced a reduction in staff." },
-                    { w: "exploit", pos: "v.", d: "to use something to your advantage", cn: "利用/開發", ex: "We must learn how to exploit renewable energy sources." },
-                    { w: "resources", pos: "n.", d: "useful things such as money or materials", cn: "資源", ex: "The library is a great resource for students." },
-                    { w: "support", pos: "n.", d: "help or encouragement given to someone", cn: "支持/幫助", ex: "The charity provides financial support to poor families." }
-                ]
-            }
-        ]
-    },
-    {
-        topic: "26.01.2026 A Farm Helps People Eat Well",
-        levels: [
-            {
-                id: "farm-eat-well-lv1", level: "DSE LV1 (Basic)",
-                originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-1/",
-                content: "A farm in the UK is helping people to eat better. Many people do not know how to **cook** fresh food. They usually buy ready meals from shops. The farm shows them how to grow vegetables and prepare **healthy** meals. It is important to eat fresh food for our **bodies**. One woman said she feel much better now. This project makes a big **difference** in the community. Everyone learns to **enjoy** cooking together.",
-                vocab: [
-                    { w: "cook", pos: "v.", d: "to prepare food by heating it", cn: "烹飪", ex: "My mother likes to cook healthy meals for us." },
-                    { w: "healthy", pos: "adj.", d: "good for your body", cn: "健康的", ex: "Eating fruit is a healthy habit." },
-                    { w: "bodies", pos: "n.", d: "the whole physical structure of a person", cn: "身體", ex: "Exercise helps to keep our bodies strong." },
-                    { w: "difference", pos: "n.", d: "a way in which something changes or improves", cn: "改變/影響", ex: "The new park made a big difference to the area." },
-                    { w: "enjoy", pos: "v.", d: "to get pleasure from something", cn: "享受", ex: "I enjoy spending time with my friends." }
-                ]
-            },
-            {
-                id: "farm-eat-well-lv2", level: "DSE LV2-3 (Intermediate)",
-                originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-2/",
-                content: "A unique farm project in the UK is tackling the issue of poor nutrition in the community. Many residents **rely** on processed foods because they lack the skills to cook from scratch. The farm provides a **solution** by teaching people how to cultivate their own vegetables and turn them into nutritious dishes. This **experience** encourages participants to move away from unhealthy eating habits. Organisers believe that understanding where food comes from is essential for **improving** public health. As people learn to prepare fresh ingredients, they become more **independent** and conscious of their daily diet choices.",
-                vocab: [
-                    { w: "rely", pos: "v.", d: "to depend on something", cn: "依賴", ex: "Many students rely on the internet for information." },
-                    { w: "solution", pos: "n.", d: "a way to solve a problem", cn: "解決方法", ex: "The government is looking for a solution to the traffic problem." },
-                    { w: "experience", pos: "n.", d: "knowledge or skill from doing something", cn: "經驗/體驗", ex: "Working at the farm was a great experience." },
-                    { w: "improving", pos: "v.", d: "making something better", cn: "改善", ex: "She is practicing hard for improving her English." },
-                    { w: "independent", pos: "adj.", d: "not needing help from others", cn: "獨立的", ex: "Going to university helps young people become independent." }
-                ]
-            },
-            {
-                id: "farm-eat-well-lv4", level: "DSE LV4-5 (Advanced)",
-                originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-3/",
-                content: "The **sustainability** of urban diets has become a major concern, prompting a British farm to launch an educational initiative. This project targets individuals who have become overly dependent on convenience foods, often due to a lack of culinary knowledge. By providing **hands-on** workshops, the farm empowers citizens to reclaim control over their nutrition. Participants are taught the entire process from soil to table, which fosters a deeper **appreciation** for fresh produce. Experts argue that such grassroots movements are vital for combating the rising rates of diet-related illnesses. Furthermore, the social aspect of the project helps to **strengthen** community bonds as people gather to share skills and meals. This holistic approach not only addresses physical health but also promotes mental well-being through nature-based activities. Ultimately, the **success** of this initiative demonstrates that education is the most powerful tool for driving long-term lifestyle changes and ensuring a healthier future for all generations.",
-                vocab: [
-                    { w: "sustainability", pos: "n.", d: "the quality of being able to continue over a long period", cn: "可持續性", ex: "The sustainability of the environment is very important." },
-                    { w: "hands-on", pos: "adj.", d: "involving direct participation and experience", cn: "實踐的/親自動手的", ex: "The course provides hands-on training for students." },
-                    { w: "appreciation", pos: "n.", d: "understanding the value of something", cn: "賞識/感激", ex: "The school showed its appreciation for the volunteers." },
-                    { w: "strengthen", pos: "v.", d: "to make something stronger", cn: "加強", ex: "The new policy aims to strengthen the economy." },
-                    { w: "success", pos: "n.", d: "the achieving of the results wanted or hoped for", cn: "成功", ex: "Hard work is the key to success in exams." }
-                ]
-            }
-        ]
-    },
    {
         topic: "24.01.2026 Langoplay: Gamified Learning",
         levels: [
@@ -1128,41 +963,17 @@ function showFB(q, isCorrect) {
     if(quizIdx < quizPool.length) renderQuiz();
     else showResult();
 }
-  function showResult() {
+    function showResult() {
     toggleScreen('result-screen');
-    
-    const p = Math.round(score / quizPool.length * 100);
-    const resultScoreEl = document.getElementById('result-score');
-    const resultHeading = document.querySelector('#result-screen h2');
-    
-    // 顯示分數
-    if (resultScoreEl) resultScoreEl.innerText = `${score} / ${quizPool.length} (${p}%)`;
-    
-    // 根據分數給予評語
-    let rank = p === 100 ? "🌟 完美！你是詞彙大師！" : (p >= 60 ? "👍 做得好！繼續加油！" : "📚 再複習一下，你可以做到的！");
-    if (resultHeading) resultHeading.innerText = `測驗完成！\n${rank}`;
-
-    // 更新本地紀錄
-    if (p >= 60) {
-        localStorage.setItem('dse_vocab_' + activeArt.id, "done");
-    }
-
-    // 呼叫同步函數
+    const p = Math.round(score/quizPool.length*100);
+    document.getElementById('result-score').innerText = `${score} / ${quizPool.length} (${p}%)`;
+    if(p >= 60) localStorage.setItem('dse_vocab_' + activeArt.id, "done");
     submitScore(p);
 }
     function submitScore(p) {
-    const data = { 
-        id: studentID, // 這裡統一使用 id
-        topic: activeArt.id, 
-        score: p 
-    };
-
-    // 使用 fetch 同步，不阻塞 UI
-    fetch(SCRIPT_URL, { 
-        method: 'POST', 
-        mode: 'no-cors', 
-        body: JSON.stringify(data) 
-    }).catch(e => console.error("同步失敗:", e));
+    const url = "你的GAS地址"; // 請填入你的 Google Apps Script 地址
+    const data = { id: studentID, topic: activeArt.id, score: p };
+    fetch(url, { method: 'POST', mode: 'no-cors', cache: 'no-cache', body: JSON.stringify(data) });
 }
     function speak(t) {
     window.speechSynthesis.cancel();
@@ -1185,44 +996,34 @@ function showFB(q, isCorrect) {
     document.getElementById('nav-bar').classList.add('hidden'); 
     initHome(); 
 }
-function doPost(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("RawData");
-    
-    // 解析傳進來的 JSON 數據
-    var data = JSON.parse(e.postData.contents);
-    
-    // 按照 B 欄 (ID), C 欄 (Topic), D 欄 (Score) 的順序寫入
-    // 第一欄 A 留給時間戳記
-    sheet.appendRow([
-      new Date(), 
-      data.id, 
-      data.topic, 
-      data.score + "%"
-    ]);
-    
-    return ContentService.createTextOutput("Success");
-  } catch (err) {
-    return ContentService.createTextOutput("Error: " + err.message);
-  }
-}
+
 function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
 function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
-function uploadResult() {
-    // 修正檢查邏輯：只有當網址為空或者是預設提示文字時才停止
-    if (!SCRIPT_URL || SCRIPT_URL === "" || SCRIPT_URL.includes("你的GAS")) {
-        console.warn("未偵測到正確的 GAS URL");
-        return;
+
+function nextStep() {
+    quizIdx++;
+    if(quizIdx < quizPool.length) renderQuiz();
+    else {
+        uploadResult(); 
+        toggleScreen('result-screen');
+        
+        // 根據分數顯示不同評價
+        let rank = "";
+        if(score === 5) rank = "🌟 完美！你是詞彙大師！";
+        else if(score >= 3) rank = "👍 做得好！繼續加油！";
+        else rank = "📚 再複習一下，你可以做到的！";
+        
+        document.querySelector('#result-screen h2').innerText = `測驗完成：${score}/5 \n ${rank}`;
     }
+}
 
-    const p = Math.round(score / quizPool.length * 100); // 計算百分比
-
-    // 修正資料標籤：將 name 改為 id，與 GAS 對應
+function uploadResult() {
+    const status = document.getElementById('upload-status');
     const data = { 
-        id: studentID,     
+        name: studentID, 
         topic: activeArt.id, 
-        score: p           
+        score: score 
     };
 
     fetch(SCRIPT_URL, { 
@@ -1230,45 +1031,17 @@ function uploadResult() {
         mode: 'no-cors', 
         body: JSON.stringify(data) 
     })
-    .then(() => {
-        console.log("資料已發送");
-        const status = document.getElementById('upload-status');
-        if(status) status.innerText = "✅ 進度已同步至雲端。";
+    .then(() => { 
+        status.innerText = "✅ 進度已同步至雲端。";
+        
+        // --- 新增這行：記錄到本地 ---
+        // 儲存格式為：學習記錄_題目ID = "done"
+        localStorage.setItem('dse_vocab_' + activeArt.id, "done");
     })
-    .catch(e => console.error("同步出錯:", e));
-}
-
-function nextStep() {
-    quizIdx++;
-    if (quizIdx < quizPool.length) {
-        renderQuiz();
-    } else {
-        // 先執行同步
-        uploadResult(); 
-        
-        // 顯示結果畫面
-        toggleScreen('result-screen');
-        
-        const p = Math.round(score / quizPool.length * 100);
-        
-        // 根據分數顯示評價
-        let rank = "";
-        if(p === 100) rank = "🌟 完美！你是詞彙大師！";
-        else if(p >= 60) rank = "👍 做得好！繼續加油！";
-        else rank = "📚 再複習一下，你可以做到的！";
-        
-        // 更新結果顯示內容
-        const resultH2 = document.querySelector('#result-screen h2');
-        const resultScore = document.getElementById('result-score');
-        
-        if (resultH2) resultH2.innerText = `測驗完成！\n${rank}`;
-        if (resultScore) resultScore.innerText = `${score} / ${quizPool.length} (${p}%)`;
-
-        // 儲存本地紀錄
-        if (p >= 60) {
-            localStorage.setItem('dse_vocab_' + activeArt.id, "done");
-        }
-    }
+    .catch((err) => { 
+        console.error("上傳失敗:", err);
+        status.innerText = "❌ 同步失敗。"; 
+    });
 }
 
 initHome();
