@@ -193,7 +193,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxupZlPe4hR-nJo2tHnJMaX6wdNl5bRcmmRyPPWMqufNHNzZPFo6uJd02kxRGkSJfyqJA/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXXszgCdfAYz3SxcsZe9v44V_02VStGa7vzNXLGxlAfLvrWI7GIV5LZZCdQ6xTSVGLfg/exec'; 
 // 1. 全域變量與初始化
 let studentID = "";
 let activeArt = null;
@@ -1162,7 +1162,7 @@ function nextStep() {
     }
 }
     function submitScore(p) {
-    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxupZlPe4hR-nJo2tHnJMaX6wdNl5bRcmmRyPPWMqufNHNzZPFo6uJd02kxRGkSJfyqJA/exec")) {
+    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzXXszgCdfAYz3SxcsZe9v44V_02VStGa7vzNXLGxlAfLvrWI7GIV5LZZCdQ6xTSVGLfg/exec")) {
         console.warn("未設定 GAS URL，跳過雲端同步");
         return;
     }
@@ -1227,7 +1227,7 @@ function openLeaderboard() { document.getElementById('modal-overlay').classList.
 function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
 function uploadResult() {
     // 確保 SCRIPT_URL 已經填入正確的 /exec 網址
-    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxupZlPe4hR-nJo2tHnJMaX6wdNl5bRcmmRyPPWMqufNHNzZPFo6uJd02kxRGkSJfyqJA/exec")) return;
+    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzXXszgCdfAYz3SxcsZe9v44V_02VStGa7vzNXLGxlAfLvrWI7GIV5LZZCdQ6xTSVGLfg/exec")) return;
 
     const p = Math.round(score / quizPool.length * 100); // 計算百分比
 
