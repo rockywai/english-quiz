@@ -7,7 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-        --primary: #4a90e2; --secondary: #f5a623;--bg: #f4f7f6;--text: #333;--card-bg: #ffffff;--highlight: #ffeeba; /* 高亮顏色 */--danger: #e74c3c;        --success: #2ecc71;
+        --primary: #4a90e2; 
+        --secondary: #f5a623;
+        --bg: #f4f7f6;
+        --text: #333;
+        --card-bg: #ffffff;
+        --highlight: #ffeeba; /* 高亮顏色 */
+        --danger: #e74c3c;      
+        --success: #2ecc71;
         }
         .source-notice {
             background: #eef6ff;         /* 淺藍色背景 */
@@ -361,7 +368,7 @@
     // --- 資料庫 ---
     const newsGroups = [
         {
-        topic: "28.01.2026 The Sarco Pod Controversy",
+        topic: "28.01.2026 A new machine helps people die",
         levels: [
             {
                 id: "sarco-pod-lv1", level: "DSE LV1 (Basic)",
@@ -402,7 +409,7 @@
         ]
     },
     {
-        topic: "28.01.2026 Taiwan's Recycling Success",
+        topic: "28.01.2026 Taiwan is good at recycling",
         levels: [
             {
                 id: "taiwan-recycling-lv1", level: "DSE LV1 (Basic)",
@@ -443,7 +450,7 @@
         ]
     },
     {
-        topic: "27.01.2026 Cocoa Farmers in Crisis",
+        topic: "27.01.2026 Farmers cannot sell their cocoa",
         levels: [
             {
                 id: "cocoa-crisis-lv1", level: "DSE LV1 (Basic)",
@@ -483,49 +490,8 @@
             }
         ]
     },
-    {
-        topic: "26.01.2026 A Farm Helps People Eat Well",
-        levels: [
-            {
-                id: "farm-eat-well-lv1", level: "DSE LV1 (Basic)",
-                originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-1/",
-                content: "A farm in the UK is helping people to eat better. Many people do not know how to **cook** fresh food. They usually buy ready meals from shops. The farm shows them how to grow vegetables and prepare **healthy** meals. It is important to eat fresh food for our **bodies**. One woman said she feel much better now. This project makes a big **difference** in the community. Everyone learns to **enjoy** cooking together.",
-                vocab: [
-                    { w: "cook", pos: "v.", d: "to prepare food by heating it", cn: "烹飪", ex: "My mother likes to cook healthy meals for us." },
-                    { w: "healthy", pos: "adj.", d: "good for your body", cn: "健康的", ex: "Eating fruit is a healthy habit." },
-                    { w: "bodies", pos: "n.", d: "the whole physical structure of a person", cn: "身體", ex: "Exercise helps to keep our bodies strong." },
-                    { w: "difference", pos: "n.", d: "a way in which something changes or improves", cn: "改變/影響", ex: "The new park made a big difference to the area." },
-                    { w: "enjoy", pos: "v.", d: "to get pleasure from something", cn: "享受", ex: "I enjoy spending time with my friends." }
-                ]
-            },
-            {
-                id: "farm-eat-well-lv2", level: "DSE LV2-3 (Intermediate)",
-                originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-2/",
-                content: "A unique farm project in the UK is tackling the issue of poor nutrition in the community. Many residents **rely** on processed foods because they lack the skills to cook from scratch. The farm provides a **solution** by teaching people how to cultivate their own vegetables and turn them into nutritious dishes. This **experience** encourages participants to move away from unhealthy eating habits. Organisers believe that understanding where food comes from is essential for **improving** public health. As people learn to prepare fresh ingredients, they become more **independent** and conscious of their daily diet choices.",
-                vocab: [
-                    { w: "rely", pos: "v.", d: "to depend on something", cn: "依賴", ex: "Many students rely on the internet for information." },
-                    { w: "solution", pos: "n.", d: "a way to solve a problem", cn: "解決方法", ex: "The government is looking for a solution to the traffic problem." },
-                    { w: "experience", pos: "n.", d: "knowledge or skill from doing something", cn: "經驗/體驗", ex: "Working at the farm was a great experience." },
-                    { w: "improving", pos: "v.", d: "making something better", cn: "改善", ex: "She is practicing hard for improving her English." },
-                    { w: "independent", pos: "adj.", d: "not needing help from others", cn: "獨立的", ex: "Going to university helps young people become independent." }
-                ]
-            },
-            {
-                id: "farm-eat-well-lv4", level: "DSE LV4-5 (Advanced)",
-                originalUrl: "https://www.newsinlevels.com/products/a-farm-helps-people-eat-well-level-3/",
-                content: "The **sustainability** of urban diets has become a major concern, prompting a British farm to launch an educational initiative. This project targets individuals who have become overly dependent on convenience foods, often due to a lack of culinary knowledge. By providing **hands-on** workshops, the farm empowers citizens to reclaim control over their nutrition. Participants are taught the entire process from soil to table, which fosters a deeper **appreciation** for fresh produce. Experts argue that such grassroots movements are vital for combating the rising rates of diet-related illnesses. Furthermore, the social aspect of the project helps to **strengthen** community bonds as people gather to share skills and meals. This holistic approach not only addresses physical health but also promotes mental well-being through nature-based activities. Ultimately, the **success** of this initiative demonstrates that education is the most powerful tool for driving long-term lifestyle changes and ensuring a healthier future for all generations.",
-                vocab: [
-                    { w: "sustainability", pos: "n.", d: "the quality of being able to continue over a long period", cn: "可持續性", ex: "The sustainability of the environment is very important." },
-                    { w: "hands-on", pos: "adj.", d: "involving direct participation and experience", cn: "實踐的/親自動手的", ex: "The course provides hands-on training for students." },
-                    { w: "appreciation", pos: "n.", d: "understanding the value of something", cn: "賞識/感激", ex: "The school showed its appreciation for the volunteers." },
-                    { w: "strengthen", pos: "v.", d: "to make something stronger", cn: "加強", ex: "The new policy aims to strengthen the economy." },
-                    { w: "success", pos: "n.", d: "the achieving of the results wanted or hoped for", cn: "成功", ex: "Hard work is the key to success in exams." }
-                ]
-            }
-        ]
-    },
    {
-        topic: "24.01.2026 Langoplay: Gamified Learning",
+        topic: "24.01.2026 LangoPlay turns learning English into a game",
         levels: [
             {
                 id: "langoplay-v2-lv1", level: "DSE LV1 (Basic)",
@@ -566,7 +532,7 @@
         ]
     },
     {
-        topic: "21.01.2026 Clone Your Pet in Spain",
+        topic: "21.01.2026 A lab in Spain can clone your pet",
         levels: [
             {
                 id: "clone-pet-lv1", level: "DSE LV1 (Basic)",
