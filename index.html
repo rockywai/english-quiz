@@ -171,12 +171,13 @@
             </div>
         </div>
 
-        <div id="result-screen" class="hidden" style="text-align:center;">
-            <div style="font-size:60px;">🎉</div>
-            <h2>測驗完成！</h2>
-            <p id="upload-status">正在同步進度...</p>
-            <button class="btn-primary" onclick="goHome()">返回目錄頁</button>
-        </div>
+        <div id="result-screen" class="screen hidden">
+    <h2>測驗完成！</h2>
+    <div style="font-size: 2rem; margin: 20px 0; color: var(--primary); font-weight: bold;">
+        得分：<span id="result-score">0%</span>
+    </div>
+    <button class="primary-btn" onclick="goHome()">返回主頁</button>
+</div>
     </div>
 </div>
 
@@ -1127,42 +1128,57 @@ function showFB(q, isCorrect) {
     if(quizIdx < quizPool.length) renderQuiz();
     else showResult();
 }
-   function showResult() {
-    toggleScreen('result-screen'); // 先切換到結果畫面
+  function showResult() {
+    toggleScreen('result-screen');
+    
     const p = Math.round(score / quizPool.length * 100);
     const resultScoreEl = document.getElementById('result-score');
+    const resultHeading = document.querySelector('#result-screen h2');
+    
     // 顯示分數
-    if (resultScoreEl) {
-        resultScoreEl.innerText = `${score} / ${quizPool.length} (${p}%)`;
-    }
-    // 如果及格，存入本地紀錄
+    if (resultScoreEl) resultScoreEl.innerText = `${score} / ${quizPool.length} (${p}%)`;
+    
+    // 根據分數給予評語
+    let rank = p === 100 ? "🌟 完美！你是詞彙大師！" : (p >= 60 ? "👍 做得好！繼續加油！" : "📚 再複習一下，你可以做到的！");
+    if (resultHeading) resultHeading.innerText = `測驗完成！\n${rank}`;
+
+    // 更新本地紀錄
     if (p >= 60) {
         localStorage.setItem('dse_vocab_' + activeArt.id, "done");
     }
-    // 觸發同步到 Google Sheet
+
+    // 呼叫同步函數
     submitScore(p);
 }
+
+// 3. 修正 nextStep (這是點擊測驗最後一題後的動作)
+function nextStep() {
+    quizIdx++;
+    if (quizIdx < quizPool.length) {
+        renderQuiz();
+    } else {
+        // 直接進入結果畫面，不要在那裡等同步
+        showResult();
+    }
+}
     function submitScore(p) {
-    // *** 重要：請確保這裡填入的是你部署 GAS 後得到的 Web App URL ***
-    const url = "https://script.google.com/macros/s/AKfycbzQBI-7S9EQOvI6ZMIUQXyk_l7HM8Bv1VmoqcxckKrSIIyDWd-brsvF5Ov2X_tkRz4dHQ/exec"; 
+    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzQBI-7S9EQOvI6ZMIUQXyk_l7HM8Bv1VmoqcxckKrSIIyDWd-brsvF5Ov2X_tkRz4dHQ/exec")) {
+        console.warn("未設定 GAS URL，跳過雲端同步");
+        return;
+    }
+
     const data = { 
-        id: studentID, 
+        id: studentID, // 這裡統一使用 id
         topic: activeArt.id, 
         score: p 
     };
-    // 使用 fetch 發送數據
-    fetch(url, {
-        method: 'POST',
-        mode: 'no-cors', // 必須使用 no-cors 來繞過跨網域限制
-        cache: 'no-cache',
-        body: JSON.stringify(data)
-    })
-    .then(() => {
-        console.log("數據已成功發送至 Google Sheets");
-    })
-    .catch((error) => {
-        console.error("同步失敗:", error);
-    });
+
+    // 使用 fetch 同步，不阻塞 UI
+    fetch(SCRIPT_URL, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: JSON.stringify(data) 
+    }).catch(e => console.error("同步失敗:", e));
 }
     function speak(t) {
     window.speechSynthesis.cancel();
@@ -1189,24 +1205,6 @@ function showFB(q, isCorrect) {
 function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 function openLeaderboard() { document.getElementById('modal-overlay').classList.remove('hidden'); }
 function closeLeaderboard() { document.getElementById('modal-overlay').classList.add('hidden'); }
-
-function nextStep() {
-    quizIdx++;
-    if(quizIdx < quizPool.length) renderQuiz();
-    else {
-        uploadResult(); 
-        toggleScreen('result-screen');
-        
-        // 根據分數顯示不同評價
-        let rank = "";
-        if(score === 5) rank = "🌟 完美！你是詞彙大師！";
-        else if(score >= 3) rank = "👍 做得好！繼續加油！";
-        else rank = "📚 再複習一下，你可以做到的！";
-        
-        document.querySelector('#result-screen h2').innerText = `測驗完成：${score}/5 \n ${rank}`;
-    }
-}
-
 function uploadResult() {
     const status = document.getElementById('upload-status');
     const data = { 
