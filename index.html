@@ -281,20 +281,23 @@
 
         .hidden { display: none !important; }
 
-          /* 模擬 DSE 考卷樣式 */
+        /* 模擬 DSE 考卷專用樣式 */
         .dse-reading-style {
-            font-family: "Times New Roman", serif;
+            font-family: "Times New Roman", Times, serif !important;
             background-color: #fff;
             padding: 20px;
-            border: 1px solid #000;
-            line-height: 2;
+            border: 1px solid #333;
+            line-height: 2.2; /* 寬行距方便閱讀 */
             text-align: justify;
+            margin-bottom: 20px;
+            position: relative;
         }
+        /* 讓行號呈現專業感 */
         .line-number {
-            color: #888;
+            color: #999;
             font-size: 0.8rem;
+            font-weight: bold;
             margin-right: 10px;
-            user-select: none; /* 防止複選文字時選到行號 */
         }
     </style>
 </head>
@@ -1209,8 +1212,15 @@
     activeArt = levelData;
     toggleScreen('study-screen');
     document.getElementById('nav-title').innerText = levelData.level;
-
+       
     const articleBox = document.getElementById('article-display');
+    
+    // 如果是 LV3，就套用 DSE 考卷樣式，否則移除
+    if (lv.level.includes("LV3")) {
+        articleBox.className = "article-box dse-reading-style";
+    } else {
+        articleBox.className = "article-box";
+    }
     
     // --- 修正位置：先清除內容中所有的 ** 符號 ---
     let cleanMarkdownContent = activeArt.content.replace(/\*\*/g, "");
