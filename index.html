@@ -280,6 +280,22 @@
         .close-btn { align-self: flex-end; cursor: pointer; font-size: 1.5rem; }
 
         .hidden { display: none !important; }
+
+          /* 模擬 DSE 考卷樣式 */
+        .dse-reading-style {
+            font-family: "Times New Roman", serif;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #000;
+            line-height: 2;
+            text-align: justify;
+        }
+        .line-number {
+            color: #888;
+            font-size: 0.8rem;
+            margin-right: 10px;
+            user-select: none; /* 防止複選文字時選到行號 */
+        }
     </style>
 </head>
 <body>
@@ -373,39 +389,42 @@
     topic: "29.01.2026 EU leaders talk about Greenland",
     levels: [
         {
-            id: "greenland-lv1",
-            level: "DSE LV1 (Basic)",
-            content: "EU leaders are visiting Greenland. Greenland is the world’s biggest island. It is part of Denmark but it has its own government. The EU wants to work with Greenland on green energy. Greenland has many important minerals. These minerals are needed for electric cars and wind turbines. The EU also wants to protect the environment. Some people in Greenland are happy about this. They hope it will bring more jobs and money to the island. This is a big step for the EU and Greenland.",
+            id: "greenland-final-lv1",
+            level: "DSE LV1 (Basic Reading)",
+            // 保持原文 8 成相似，最基礎句式
+            content: "EU leaders are meeting because of problems with the US. President Trump talked about Greenland and special taxes for some European countries. The EU says it will protect itself. They say only Denmark and Greenland can decide about Greenland's future. Later, Trump stopped his threats about taxes. He says a deal with NATO can help. EU leaders now feel calmer. However, the problem is not over yet. Trump says Greenland is important for world safety. The EU accepts more US soldiers but says no to new borders. Denmark’s leader is now in Greenland for talks.",
             vocab: [
-                { w: "government", pos: "n.", cn: "政府", d: "the group of people who control a country", ex: "The government is discussing new laws." },
-                { w: "minerals", pos: "n.", cn: "礦物", d: "natural substances found in the ground", ex: "Greenland is rich in rare minerals." },
-                { w: "turbines", pos: "n.", cn: "渦輪機", d: "machines used to produce power", ex: "Wind turbines generate green energy." },
-                { w: "protect", pos: "v.", cn: "保護", d: "to keep something safe from harm", ex: "We must protect the natural environment." },
-                { w: "community", pos: "n.", cn: "社區/群體", d: "a group of people living in the same area", ex: "The local community hopes for more jobs." }
+                { w: "taxes", pos: "n.", cn: "稅項", d: "money paid to the government", ex: "The government puts taxes on imported cars." },
+                { w: "protect", pos: "v.", cn: "保護", d: "to keep something safe", ex: "We need to protect our natural resources." },
+                { w: "future", pos: "n.", cn: "未來", d: "the time that will come", ex: "Only the local people can decide their future." },
+                { w: "safety", pos: "n.", cn: "安全", d: "the state of being safe from danger", ex: "The army is important for national safety." },
+                { w: "meeting", pos: "n.", cn: "會議", d: "an occasion when people come together", ex: "Leaders held an emergency meeting." }
             ]
         },
         {
-            id: "greenland-lv2",
-            level: "DSE LV2-3 (Intermediate)",
-            content: "Top EU officials recently arrived in Greenland, the world's largest island, to discuss a strategic partnership. Although Greenland belongs to Denmark, it enjoys significant autonomy. The primary focus of this visit is to secure a stable supply of critical raw materials. Notably, Greenland possesses vast mineral resources essential for manufacturing wind turbines and electric vehicle batteries. In addition to economic goals, the EU aims to support environmental protection in the region. Local residents expressed optimism, believing that international cooperation will create employment opportunities and boost the local economy. This collaboration marks a significant milestone for both parties.",
+            id: "greenland-final-lv2",
+            level: "DSE LV2 (Intermediate Reading)",
+            // 調低難度：簡化從句，聚焦於核心動詞與名詞
+            content: "European Union leaders held an emergency meeting to discuss problems with the United States. The tension started when President Trump talked about taking control of Greenland and using taxes against European countries. In response, EU leaders said they would defend themselves. They argued that only Denmark and Greenland can decide the island's future. Although Trump later stopped his threats by mentioning a NATO deal, the situation is still unclear. EU officials feel calmer now, but the security issue remains. The EU is willing to accept more US soldiers, but they do not want to change any borders. As a result, Denmark’s leader went to Greenland for more talks.",
             vocab: [
-                { w: "strategic", pos: "adj.", cn: "戰略性的", d: "carefully planned to achieve a specific goal", ex: "The two countries formed a strategic partnership." },
-                { w: "autonomy", pos: "n.", cn: "自治權", d: "the right of a region to govern itself", ex: "The island was granted more autonomy last year." },
-                { w: "critical", pos: "adj.", cn: "至關重要的", d: "extremely important or necessary", ex: "Raw materials are critical for the tech industry." },
-                { w: "optimism", pos: "n.", cn: "樂觀", d: "a feeling that good things will happen", ex: "There is growing optimism about the new project." },
-                { w: "collaboration", pos: "n.", cn: "合作", d: "the act of working together with others", ex: "International collaboration is key to success." }
+                { w: "emergency", pos: "adj.", cn: "緊急的", d: "needed for a sudden dangerous situation", ex: "The leaders held an emergency meeting." },
+                { w: "tension", pos: "n.", cn: "緊張局勢", d: "a feeling of fear or anger between countries", ex: "There is rising tension between the two nations." },
+                { w: "defend", pos: "v.", cn: "防衛/辯護", d: "to protect someone or something from attack", ex: "They must defend their right to decide." },
+                { w: "remains", pos: "v.", cn: "仍然存在", d: "to continue to exist", ex: "The problem remains even after the talk." },
+                { w: "willing", pos: "adj.", cn: "願意的", d: "ready or happy to do something", ex: "They are willing to help the local people." }
             ]
         },
         {
-            id: "greenland-lv3",
-            level: "DSE LV4-5 (Advanced)",
-            content: "European Union leaders have embarked on a high-profile visit to Greenland, aiming to fortify diplomatic and economic ties with the resource-rich territory. While Greenland remains an autonomous constituent of the Kingdom of Denmark, its geopolitical significance has surged due to its abundance of critical minerals. These resources are indispensable for the global transition toward renewable energy, particularly in the production of high-tech components. Furthermore, the EU intends to establish a permanent office in Nuuk to facilitate ongoing dialogue regarding sustainable development and climate preservation. This initiative is perceived as a move to reduce dependency on external suppliers. Local stakeholders generally welcome the prospect of foreign investment, anticipating that it will diversify the economy and alleviate unemployment. Nevertheless, balancing industrial exploitation with environmental conservation remains a formidable challenge for the Greenlandic authorities.",
+            id: "greenland-final-lv3",
+            level: "DSE LV3 (Advanced Reading Part B2)",
+            // 模擬 DSE Reading 格式：加入行號標記 (Line 1, 5, 10...)
+            content: "[1] European Union leaders recently convened an emergency meeting to address rising tensions with the United States regarding Greenland and potential trade punishments. [5] This significant concern followed remarks by President Donald Trump about taking control of Greenland and imposing tariffs against European allies. EU officials asserted that they would defend themselves against such pressure, maintaining that the decision-making power rests solely with Denmark and Greenland. [10] Following the discussions, Trump notably pulled back his threats, suggesting that a deal with NATO leaders could help the US achieve its strategic goals. Although EU officials welcomed this de-escalation, the long-term situation remains complex. While European leaders expressed willingness to accept enhanced US defense support, they steadfastly opposed any territorial alterations or changes to borders. [15] In light of these developments, Denmark’s prime minister initiated a high-level visit to Greenland to reinforce their bilateral cooperation.",
             vocab: [
-                { w: "fortify", pos: "v.", cn: "加強/鞏固", d: "to make a relationship or structure stronger", ex: "The treaty helped fortify the alliance between nations." },
-                { w: "indispensable", pos: "adj.", cn: "不可或缺的", d: "absolutely necessary; cannot be replaced", ex: "Reliable internet has become indispensable in modern life." },
-                { w: "facilitate", pos: "v.", cn: "促進/便利", d: "to make an action or process easier", ex: "The new office will facilitate better communication." },
-                { w: "stakeholders", pos: "n.", cn: "利益相關者", d: "people who are involved in or affected by a project", ex: "The government consulted all stakeholders before the decision." },
-                { w: "formidable", pos: "adj.", cn: "艱巨的/強大的", d: "inspiring fear or respect through being large or difficult", ex: "Solving the climate crisis is a formidable challenge." }
+                { w: "convened", pos: "v.", cn: "召集/開會", d: "to bring together for a formal meeting", ex: "The committee convened to discuss the new policy." },
+                { w: "imposing", pos: "v.", cn: "徵收/強制實行", d: "to officially force a rule or tax", ex: "The government is imposing new restrictions on trade." },
+                { w: "asserted", pos: "v.", cn: "斷言/堅稱", d: "to state clearly that something is true", ex: "The minister asserted that the country would remain neutral." },
+                { w: "enhanced", pos: "adj.", cn: "增強的", d: "improved or increased in quality or amount", ex: "The new deal provides enhanced security." },
+                { w: "alterations", pos: "n.", cn: "改變/更動", d: "a change to something", ex: "They strongly disagreed with any alterations to the borders." }
             ]
         }
     ]
@@ -1201,8 +1220,14 @@
     let sentences = cleanMarkdownContent.split('. ');
     let processedHTML = sentences.map(sentence => {
         if (!sentence.trim()) return "";
-        
         let cleanSentence = sentence.replace(/\.$/, "");
+        if (activeArt.level.includes("LV3")) {
+            // 將 [行號] 變成漂亮的 DSE 標註
+            displayHTML = displayHTML.replace(/\[(\d+)\]/g, '<b class="line-number">[$1]</b>');
+            articleBox.classList.add('dse-reading-style');
+        } else {
+            articleBox.classList.remove('dse-reading-style');
+        }
         
       // 2. 將句子內的每個單字拆分
         let wordsHTML = cleanSentence.split(' ').map(word => {
