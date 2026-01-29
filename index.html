@@ -280,25 +280,6 @@
         .close-btn { align-self: flex-end; cursor: pointer; font-size: 1.5rem; }
 
         .hidden { display: none !important; }
-
-        /* 模擬 DSE 考卷專用樣式 */
-        .dse-reading-style {
-            font-family: "Times New Roman", Times, serif !important;
-            background-color: #fff;
-            padding: 20px;
-            border: 1px solid #333;
-            line-height: 2.2; /* 寬行距方便閱讀 */
-            text-align: justify;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        /* 讓行號呈現專業感 */
-        .line-number {
-            color: #999;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-right: 10px;
-        }
     </style>
 </head>
 <body>
@@ -388,46 +369,46 @@
 
     // --- 資料庫 ---
     const newsGroups = [
-        {
+       {
     topic: "29.01.2026 EU leaders talk about Greenland",
     levels: [
         {
-            id: "greenland-final-lv1",
-            level: "DSE LV1 (Basic Reading)",
-            // 保持原文 8 成相似，最基礎句式
-            content: "EU leaders are meeting because of problems with the US. President Trump talked about Greenland and special taxes for some European countries. The EU says it will protect itself. They say only Denmark and Greenland can decide about Greenland's future. Later, Trump stopped his threats about taxes. He says a deal with NATO can help. EU leaders now feel calmer. However, the problem is not over yet. Trump says Greenland is important for world safety. The EU accepts more US soldiers but says no to new borders. Denmark’s leader is now in Greenland for talks.",
+            id: "greenland-v2-lv1",
+            level: "DSE LV1 (Basic)",
+            // 字數：約 70 字
+            content: "EU leaders held a meeting because of problems with the US. President Trump wanted to control Greenland and put taxes on European countries. The EU said they would protect themselves. They believe only Denmark and Greenland can decide their future. Later, Trump stopped his threats. EU leaders feel calmer now. However, Trump still thinks Greenland is important for world safety. The EU will accept more US soldiers but no new borders.",
             vocab: [
-                { w: "taxes", pos: "n.", cn: "稅項", d: "money paid to the government", ex: "The government puts taxes on imported cars." },
-                { w: "protect", pos: "v.", cn: "保護", d: "to keep something safe", ex: "We need to protect our natural resources." },
-                { w: "future", pos: "n.", cn: "未來", d: "the time that will come", ex: "Only the local people can decide their future." },
-                { w: "safety", pos: "n.", cn: "安全", d: "the state of being safe from danger", ex: "The army is important for national safety." },
-                { w: "meeting", pos: "n.", cn: "會議", d: "an occasion when people come together", ex: "Leaders held an emergency meeting." }
+                { w: "taxes", pos: "n.", cn: "稅項", d: "money paid to the government", ex: "The government puts taxes on imported goods." },
+                { w: "protect", pos: "v.", cn: "保護", d: "to keep something safe", ex: "The EU wants to protect its members." },
+                { w: "future", pos: "n.", cn: "未來", d: "the time that will come", ex: "They must decide their own future." },
+                { w: "safety", pos: "n.", cn: "安全", d: "being safe from danger", ex: "The army protects world safety." },
+                { w: "borders", pos: "n.", cn: "邊界", d: "lines between countries", ex: "The EU said no to new borders." }
             ]
         },
         {
-            id: "greenland-final-lv2",
-            level: "DSE LV2 (Intermediate Reading)",
-            // 調低難度：簡化從句，聚焦於核心動詞與名詞
-            content: "European Union leaders held an emergency meeting to discuss problems with the United States. The tension started when President Trump talked about taking control of Greenland and using taxes against European countries. In response, EU leaders said they would defend themselves. They argued that only Denmark and Greenland can decide the island's future. Although Trump later stopped his threats by mentioning a NATO deal, the situation is still unclear. EU officials feel calmer now, but the security issue remains. The EU is willing to accept more US soldiers, but they do not want to change any borders. As a result, Denmark’s leader went to Greenland for more talks.",
+            id: "greenland-v2-lv2",
+            level: "DSE LV2 (Intermediate)",
+            // 字數：約 85 字
+            content: "EU leaders held an emergency meeting due to tensions with the United States. President Trump suggested taking control of Greenland and threatened tariffs against European allies. In response, the EU insisted that only Denmark and Greenland can decide the island's future. Although Trump later withdrew his threats after a NATO deal, the situation remains complex. EU officials feel calmer, but they disagree with any border changes. Consequently, Denmark's leader traveled to Greenland to discuss how to keep the world safe while maintaining their sovereignty.",
             vocab: [
-                { w: "emergency", pos: "adj.", cn: "緊急的", d: "needed for a sudden dangerous situation", ex: "The leaders held an emergency meeting." },
-                { w: "tension", pos: "n.", cn: "緊張局勢", d: "a feeling of fear or anger between countries", ex: "There is rising tension between the two nations." },
-                { w: "defend", pos: "v.", cn: "防衛/辯護", d: "to protect someone or something from attack", ex: "They must defend their right to decide." },
-                { w: "remains", pos: "v.", cn: "仍然存在", d: "to continue to exist", ex: "The problem remains even after the talk." },
-                { w: "willing", pos: "adj.", cn: "願意的", d: "ready or happy to do something", ex: "They are willing to help the local people." }
+                { w: "emergency", pos: "adj.", cn: "緊急的", d: "sudden and dangerous", ex: "They held an emergency meeting." },
+                { w: "tariffs", pos: "n.", cn: "關稅", d: "taxes on imported goods", ex: "New tariffs make goods expensive." },
+                { w: "withdrew", pos: "v.", cn: "撤回", d: "to take back a promise or threat", ex: "He withdrew his threats later." },
+                { w: "complex", pos: "adj.", cn: "複雜的", d: "difficult to understand", ex: "The political situation is very complex." },
+                { w: "sovereignty", pos: "n.", cn: "主權", d: "the power to govern a country", ex: "Denmark protects its sovereignty." }
             ]
         },
         {
-            id: "greenland-final-lv3",
-            level: "DSE LV3 (Advanced Reading Part B2)",
-            // 模擬 DSE Reading 格式：加入行號標記 (Line 1, 5, 10...)
-            content: "[1] European Union leaders recently convened an emergency meeting to address rising tensions with the United States regarding Greenland and potential trade punishments. [5] This significant concern followed remarks by President Donald Trump about taking control of Greenland and imposing tariffs against European allies. EU officials asserted that they would defend themselves against such pressure, maintaining that the decision-making power rests solely with Denmark and Greenland. [10] Following the discussions, Trump notably pulled back his threats, suggesting that a deal with NATO leaders could help the US achieve its strategic goals. Although EU officials welcomed this de-escalation, the long-term situation remains complex. While European leaders expressed willingness to accept enhanced US defense support, they steadfastly opposed any territorial alterations or changes to borders. [15] In light of these developments, Denmark’s prime minister initiated a high-level visit to Greenland to reinforce their bilateral cooperation.",
+            id: "greenland-v2-lv3",
+            level: "DSE LV3 (Advanced Reading)",
+            // 字數：約 115 字 (DSE B2 格式)
+            content: "[1] European Union leaders convened an emergency meeting following rising tensions with the US over Greenland and potential trade punishments. [5] President Trump’s remarks about acquiring Greenland and imposing tariffs against allies caused significant concern. EU officials asserted their right to defend themselves, maintaining that only Denmark and Greenland can determine the island’s future. [10] Although Trump subsequently pulled back his threats due to a NATO deal, the situation remains unclear. While the EU welcomes increased US defense support, they steadfastly oppose any alterations to borders. [15] Consequently, Denmark’s prime minister traveled to Greenland to reinforce their bilateral cooperation and address global security concerns.",
             vocab: [
-                { w: "convened", pos: "v.", cn: "召集/開會", d: "to bring together for a formal meeting", ex: "The committee convened to discuss the new policy." },
-                { w: "imposing", pos: "v.", cn: "徵收/強制實行", d: "to officially force a rule or tax", ex: "The government is imposing new restrictions on trade." },
-                { w: "asserted", pos: "v.", cn: "斷言/堅稱", d: "to state clearly that something is true", ex: "The minister asserted that the country would remain neutral." },
-                { w: "enhanced", pos: "adj.", cn: "增強的", d: "improved or increased in quality or amount", ex: "The new deal provides enhanced security." },
-                { w: "alterations", pos: "n.", cn: "改變/更動", d: "a change to something", ex: "They strongly disagreed with any alterations to the borders." }
+                { w: "convened", pos: "v.", cn: "召集", d: "to bring together for a formal meeting", ex: "Leaders convened to discuss the crisis." },
+                { w: "acquiring", pos: "v.", cn: "獲取/收購", d: "to get or buy something", ex: "The plan involved acquiring new territory." },
+                { w: "asserted", pos: "v.", cn: "斷言/堅稱", d: "to state clearly that something is true", ex: "She asserted her right to speak." },
+                { w: "steadfastly", pos: "adv.", cn: "堅定地", d: "not changing your opinion", ex: "They steadfastly refused to move." },
+                { w: "bilateral", pos: "adj.", cn: "雙邊的", d: "involving two groups or countries", ex: "They signed a bilateral trade agreement." }
             ]
         }
     ]
@@ -1211,20 +1192,9 @@
    function loadLevel(levelData) {
     activeArt = levelData;
     toggleScreen('study-screen');
-    document.getElementById('nav-title').innerText = lv.level;
-    
-    // 1. 顯示文章內容 (修正重點：確保內容被填入)
+    document.getElementById('nav-title').innerText = levelData.level;
+
     const articleBox = document.getElementById('article-display');
-    
-    // 處理行號：將 [1], [5] 轉換為標籤，並根據 Level 切換 DSE 樣式
-    let htmlContent = lv.content.replace(/\[(\d+)\]/g, '<b class="line-number">[$1]</b>');
-    articleBox.innerHTML = htmlContent;
-    
-    if (lv.level.includes("LV3")) {
-        articleBox.className = "article-box dse-reading-style";
-    } else {
-        articleBox.className = "article-box";
-    }
     
     // --- 修正位置：先清除內容中所有的 ** 符號 ---
     let cleanMarkdownContent = activeArt.content.replace(/\*\*/g, "");
@@ -1234,14 +1204,8 @@
     let sentences = cleanMarkdownContent.split('. ');
     let processedHTML = sentences.map(sentence => {
         if (!sentence.trim()) return "";
+        
         let cleanSentence = sentence.replace(/\.$/, "");
-        if (activeArt.level.includes("LV3")) {
-            // 將 [行號] 變成漂亮的 DSE 標註
-            displayHTML = displayHTML.replace(/\[(\d+)\]/g, '<b class="line-number">[$1]</b>');
-            articleBox.classList.add('dse-reading-style');
-        } else {
-            articleBox.classList.remove('dse-reading-style');
-        }
         
       // 2. 將句子內的每個單字拆分
         let wordsHTML = cleanSentence.split(' ').map(word => {
