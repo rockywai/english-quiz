@@ -1211,11 +1211,15 @@
    function loadLevel(levelData) {
     activeArt = levelData;
     toggleScreen('study-screen');
-    document.getElementById('nav-title').innerText = levelData.level;
-       
+    document.getElementById('nav-title').innerText = lv.level;
+    
+    // 1. 顯示文章內容 (修正重點：確保內容被填入)
     const articleBox = document.getElementById('article-display');
     
-    // 如果是 LV3，就套用 DSE 考卷樣式，否則移除
+    // 處理行號：將 [1], [5] 轉換為標籤，並根據 Level 切換 DSE 樣式
+    let htmlContent = lv.content.replace(/\[(\d+)\]/g, '<b class="line-number">[$1]</b>');
+    articleBox.innerHTML = htmlContent;
+    
     if (lv.level.includes("LV3")) {
         articleBox.className = "article-box dse-reading-style";
     } else {
